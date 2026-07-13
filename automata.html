@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automata voor Eindhoven Zoo — Techniek havo 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#2e7d5b;
+    --green-dark:#1f5a41;
+    --green-light:#e7f4ec;
+    --leaf:#6bbf7c;
+    --sun:#f6b93b;
+    --sun-dark:#e58e26;
+    --clay:#d9694c;
+    --sky:#3a86b8;
+    --ink:#25332e;
+    --paper:#fbf7ee;
+    --card:#ffffff;
+    --line:#dfe7e0;
+    --shadow:0 8px 24px rgba(31,90,65,.10);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Nunito',sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 12% 8%, rgba(107,191,124,.18), transparent 40%),
+      radial-gradient(circle at 90% 4%, rgba(246,185,59,.16), transparent 38%),
+      var(--paper);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:1000px;margin:0 auto;padding:0 22px 80px;}
+  section{margin-top:46px;animation:slideUp .7s ease both;}
+  h1,h2,h3,h4{font-family:'Fredoka',sans-serif;font-weight:600;line-height:1.2;margin:0;}
+
+  /* ---------- Header ---------- */
+  header.hero{
+    position:relative;
+    color:#fff;
+    padding:64px 26px 70px;
+    text-align:center;
+    background:linear-gradient(135deg,var(--green) 0%,var(--green-dark) 60%,#153f2d 100%);
+    overflow:hidden;
+    animation:fadeIn .8s ease both;
+  }
+  header.hero::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:34px;
+    background:radial-gradient(circle at 12px -4px,var(--paper) 14px,transparent 15px) repeat-x;
+    background-size:28px 34px;
+  }
+  .hero-emojis{font-size:2.1rem;letter-spacing:.35em;margin-bottom:10px;animation:sway 4s ease-in-out infinite;}
+  header.hero .eyebrow{
+    display:inline-block;font-family:'Fredoka',sans-serif;font-weight:500;
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);
+    padding:6px 16px;border-radius:999px;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
+  }
+  header.hero h1{font-size:clamp(2.1rem,6vw,3.4rem);font-weight:700;margin:16px 0 6px;text-shadow:0 3px 12px rgba(0,0,0,.2);}
+  header.hero p.sub{font-size:1.12rem;max-width:620px;margin:6px auto 0;opacity:.95;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:24px;}
+  .meta-chip{
+    display:inline-flex;align-items:center;gap:7px;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);
+    padding:8px 15px;border-radius:999px;font-weight:700;font-size:.9rem;
+  }
+
+  /* ---------- PDF button ---------- */
+  .pdf-btn{
+    position:fixed;top:18px;right:18px;z-index:50;
+    font-family:'Fredoka',sans-serif;font-weight:600;font-size:.92rem;
+    color:var(--green-dark);background:var(--sun);
+    border:none;border-radius:999px;padding:11px 20px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(229,142,38,.4);
+    transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
+  }
+  .pdf-btn:hover{transform:translateY(-2px) scale(1.03);background:var(--sun-dark);color:#fff;box-shadow:0 9px 22px rgba(229,142,38,.5);}
+
+  /* ---------- Nav ---------- */
+  nav.tabs{
+    position:sticky;top:0;z-index:40;
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+    padding:12px;margin:0 auto;
+    background:rgba(251,247,238,.9);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.tabs a{
+    text-decoration:none;font-family:'Fredoka',sans-serif;font-weight:500;font-size:.92rem;
+    color:var(--green-dark);background:var(--card);border:1px solid var(--line);
+    padding:8px 16px;border-radius:999px;transition:all .15s ease;
+  }
+  nav.tabs a:hover{background:var(--green);color:#fff;border-color:var(--green);transform:translateY(-1px);}
+  nav.tabs a.rubric-link{background:var(--green-dark);color:#fff;border-color:var(--green-dark);}
+  nav.tabs a.rubric-link:hover{background:var(--sun);color:var(--green-dark);border-color:var(--sun);}
+
+  /* ---------- Section titles ---------- */
+  .sec-title{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+  .sec-title .num{
+    flex:none;width:42px;height:42px;border-radius:12px;
+    display:grid;place-items:center;font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.2rem;
+    background:var(--green-light);color:var(--green-dark);border:1px solid var(--line);
+  }
+  .sec-title h2{font-size:1.6rem;color:var(--green-dark);}
+  .lead{font-size:1.05rem;}
+
+  /* Divider banner for the two big parts */
+  .part-banner{
+    margin-top:56px;padding:20px 26px;border-radius:var(--radius);
+    background:linear-gradient(120deg,var(--green-dark),var(--green));
+    color:#fff;box-shadow:var(--shadow);display:flex;align-items:center;gap:16px;
+    animation:slideUp .7s ease both;
+  }
+  .part-banner .big-emoji{font-size:2.3rem;}
+  .part-banner h2{font-size:1.7rem;}
+  .part-banner p{margin:2px 0 0;opacity:.92;}
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;box-shadow:var(--shadow);
+  }
+  .card + .card{margin-top:16px;}
+
+  /* Ordered/unordered lists */
+  ul.clean{list-style:none;padding:0;margin:12px 0 0;}
+  ul.clean li{position:relative;padding:6px 0 6px 30px;}
+  ul.clean li::before{content:"🐾";position:absolute;left:0;top:6px;font-size:.9rem;}
+  ol.goals{margin:12px 0 0;padding-left:0;list-style:none;counter-reset:g;}
+  ol.goals li{position:relative;padding:9px 0 9px 46px;counter-increment:g;border-bottom:1px dashed var(--line);}
+  ol.goals li:last-child{border-bottom:none;}
+  ol.goals li::before{
+    content:counter(g);position:absolute;left:0;top:8px;
+    width:30px;height:30px;border-radius:9px;background:var(--sun);color:var(--green-dark);
+    font-family:'Fredoka',sans-serif;font-weight:700;display:grid;place-items:center;font-size:.95rem;
+  }
+
+  /* Deelvragen as callout list */
+  ol.dv{margin:12px 0 0;padding-left:0;list-style:none;counter-reset:d;display:grid;gap:10px;}
+  ol.dv li{
+    position:relative;padding:12px 14px 12px 52px;counter-increment:d;
+    background:var(--green-light);border-radius:12px;border:1px solid var(--line);font-weight:600;
+  }
+  ol.dv li::before{
+    content:"?";position:absolute;left:12px;top:11px;
+    width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;
+    font-family:'Fredoka',sans-serif;display:grid;place-items:center;font-weight:700;
+  }
+
+  /* ---------- Denkvraag callout ---------- */
+  .denkvraag{
+    margin:0 0 16px;padding:14px 18px 14px 16px;
+    background:linear-gradient(90deg,#fff6e2,#fdeecb);
+    border:1px solid #f2d79a;border-left:6px solid var(--sun-dark);
+    border-radius:12px;
+  }
+  .denkvraag .tag{
+    display:inline-flex;align-items:center;gap:7px;font-family:'Fredoka',sans-serif;font-weight:600;
+    color:var(--sun-dark);text-transform:uppercase;letter-spacing:.08em;font-size:.78rem;margin-bottom:4px;
+  }
+  .denkvraag p{margin:0;font-weight:600;color:#7a5410;}
+
+  /* ---------- Tables ---------- */
+  .table-scroll{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--line);box-shadow:var(--shadow);}
+  table{border-collapse:collapse;width:100%;background:var(--card);min-width:560px;}
+  th,td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);}
+  thead th{background:var(--green-dark);color:#fff;font-family:'Fredoka',sans-serif;font-weight:500;font-size:.92rem;position:sticky;top:0;}
+  tbody tr:nth-child(even){background:#f7fbf8;}
+  tbody tr:hover{background:var(--green-light);}
+  td strong{color:var(--green-dark);}
+
+  /* ---------- Mechanism cards ---------- */
+  .mech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:14px;}
+  .mech{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;
+    box-shadow:var(--shadow);transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .mech:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(31,90,65,.15);}
+  .mech .icon{font-size:1.6rem;}
+  .mech h4{font-size:1.05rem;color:var(--green-dark);margin:6px 0 4px;}
+  .mech .does{font-size:.9rem;color:#4a5a52;}
+  .mech .fits{margin-top:8px;font-size:.85rem;background:var(--green-light);border-radius:8px;padding:6px 10px;}
+  .mech.base{border:2px solid var(--sun);}
+  .mech.base .badge{display:inline-block;background:var(--sun);color:var(--green-dark);font-family:'Fredoka',sans-serif;font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;margin-bottom:4px;}
+
+  /* ---------- Timeline ---------- */
+  .timeline{position:relative;margin-top:20px;padding-left:8px;}
+  .timeline::before{content:"";position:absolute;left:29px;top:8px;bottom:8px;width:3px;background:linear-gradient(var(--leaf),var(--green-dark));border-radius:2px;}
+  .week-block{position:relative;padding:0 0 22px 74px;}
+  .week-block .dot{
+    position:absolute;left:8px;top:2px;width:44px;height:44px;border-radius:12px;
+    background:var(--green);color:#fff;display:grid;place-items:center;
+    font-family:'Fredoka',sans-serif;font-weight:700;font-size:.78rem;line-height:1;text-align:center;
+    box-shadow:0 4px 10px rgba(31,90,65,.3);z-index:2;
+  }
+  .week-block .dot small{display:block;font-size:.6rem;font-weight:500;opacity:.85;}
+  .week-inner{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);
+  }
+  .week-inner h3{font-size:1.18rem;color:var(--green-dark);}
+  .week-inner p.intro{margin:8px 0 0;}
+  .outcome{
+    margin-top:12px;display:flex;align-items:flex-start;gap:8px;
+    background:var(--green-light);border:1px solid #cfe6d6;border-radius:10px;padding:9px 12px;font-weight:700;color:var(--green-dark);font-size:.92rem;
+  }
+  .outcome::before{content:"🎯";}
+
+  /* ---------- Deliverables / needs ---------- */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .deliver{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);position:relative;}
+  .deliver .num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--clay);color:#fff;font-family:'Fredoka',sans-serif;font-weight:700;margin-bottom:8px;}
+  .leerdoel-tag{display:inline-block;margin-top:10px;font-size:.78rem;background:var(--green-light);color:var(--green-dark);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-weight:700;}
+
+  .need-card h4{display:flex;align-items:center;gap:9px;color:var(--green-dark);font-size:1.1rem;margin-bottom:6px;}
+  .need-card + .need-card{margin-top:14px;}
+  .warn{border-left:6px solid var(--clay);background:#fdf1ee;}
+
+  /* ---------- Rubric ---------- */
+  .rubric-legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 18px;}
+  .lvl-key{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:.86rem;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 13px;}
+  .swatch{width:14px;height:14px;border-radius:4px;display:inline-block;}
+  .sw1{background:#e8b4a8;} .sw2{background:#f4d58d;} .sw3{background:#9ed3a8;} .sw4{background:#5bb98a;}
+
+  table.rubric{min-width:820px;}
+  table.rubric th.crit,table.rubric td.crit{min-width:180px;}
+  table.rubric td{font-size:.88rem;}
+  table.rubric .crit strong{display:block;font-size:.95rem;margin-bottom:4px;}
+  .tagchip{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;text-transform:uppercase;}
+  .tag-prod{background:#e7f4ec;color:var(--green-dark);border:1px solid #bfe0c9;}
+  .tag-proc{background:#e6f0f7;color:#255d80;border:1px solid #b8d5e8;}
+  .weeg{display:inline-block;margin-top:6px;font-family:'Fredoka',sans-serif;font-weight:700;color:var(--clay);}
+  td.c1{background:#fbeae5;} td.c2{background:#fdf5e3;} td.c3{background:#eaf6ec;} td.c4{background:#e0f2e8;}
+
+  .verdeel{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;}
+  .verdeel .vbox{flex:1;min-width:180px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);text-align:center;}
+  .verdeel .vbox .big{font-family:'Fredoka',sans-serif;font-weight:700;font-size:2rem;color:var(--green-dark);}
+  .verdeel .vbox.proc .big{color:var(--sky);}
+
+  ol.tips{margin:14px 0 0;padding-left:0;list-style:none;counter-reset:t;display:grid;gap:12px;}
+  ol.tips li{position:relative;padding:14px 16px 14px 56px;counter-increment:t;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);}
+  ol.tips li::before{content:counter(t);position:absolute;left:14px;top:13px;width:30px;height:30px;border-radius:8px;background:var(--sky);color:#fff;font-family:'Fredoka',sans-serif;font-weight:700;display:grid;place-items:center;}
+  ol.tips li strong{color:var(--green-dark);}
+
+  /* ---------- Footer ---------- */
+  footer{
+    margin-top:60px;padding:34px 24px;text-align:center;color:#fff;
+    background:linear-gradient(135deg,var(--green-dark),#153f2d);border-radius:var(--radius);
+  }
+  footer .foot-emojis{font-size:1.6rem;letter-spacing:.3em;margin-bottom:10px;}
+  footer .foot-meta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px;}
+  footer .foot-meta span{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:6px 15px;font-weight:700;font-size:.88rem;}
+  footer small{display:block;margin-top:16px;opacity:.75;}
+
+  /* ---------- Animations ---------- */
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes sway{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;}}
+
+  @media (max-width:640px){
+    .two-col{grid-template-columns:1fr;}
+    .sec-title h2{font-size:1.35rem;}
+    header.hero{padding:52px 18px 60px;}
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    @page{size:A4;margin:18mm 16mm;}
+    body{background:#fff!important;color:#000!important;font-size:11pt;line-height:1.5;}
+    .wrap{max-width:none;padding:0;}
+    .pdf-btn,nav.tabs,.no-print{display:none!important;}
+    header.hero{color:#000!important;background:#fff!important;border-bottom:3px solid #000;padding:0 0 16px;}
+    header.hero::after{display:none;}
+    header.hero .eyebrow,.meta-chip{background:#fff!important;border:1px solid #000!important;color:#000!important;}
+    header.hero h1,.sec-title h2,.week-inner h3,.mech h4,.deliver .num,.part-banner h2{color:#000!important;}
+    .part-banner{background:#fff!important;color:#000!important;border:2px solid #000;box-shadow:none;}
+    .part-banner p{color:#000!important;}
+    section{animation:none;margin-top:20px;}
+    .card,.mech,.week-inner,.deliver,.need-card,.table-scroll,.verdeel .vbox,ol.tips li{box-shadow:none!important;border:1px solid #999;}
+    .timeline::before,.week-block .dot{background:#555!important;}
+    thead th{background:#333!important;color:#fff!important;}
+    footer{background:#fff!important;color:#000!important;border:2px solid #000;}
+    footer .foot-meta span{background:#fff!important;color:#000!important;border:1px solid #000!important;}
+    h1,h2,h3,h4{page-break-after:avoid;}
+    table,figure,.week-block,.mech,.deliver,ol.tips li{page-break-inside:avoid;}
+    a{color:#000;text-decoration:none;}
+    .denkvraag{background:#fff!important;border:1px solid #000;border-left:4px solid #000;}
+    .denkvraag .tag,.denkvraag p{color:#000!important;}
+    td.c1,td.c2,td.c3,td.c4{background:#fff!important;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<button class="pdf-btn" onclick="window.print()">↓ Downloaden als PDF</button>
+
+<header class="hero">
+  <div class="hero-emojis">🦜🐧🐊🦒🦉</div>
+  <span class="eyebrow">Techniek · havo 2 · Eindhoven Zoo</span>
+  <h1>Automata voor Eindhoven Zoo</h1>
+  <p class="sub">Dieren in beweging — ontwerp en bouw een houten mechaniek dat de beweging van jouw dier tot leven brengt.</p>
+  <div class="meta-row">
+    <span class="meta-chip">📚 Vak: Techniek</span>
+    <span class="meta-chip">🎓 Klas: havo 2</span>
+    <span class="meta-chip">⏱️ 8 lessen × 100 min</span>
+    <span class="meta-chip">👥 Groepjes van 2</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <a href="#context">Context</a>
+  <a href="#opdracht">Opdracht</a>
+  <a href="#leerdoelen">Leerdoelen</a>
+  <a href="#mechanismen">Mechanismen</a>
+  <a href="#stappenplan">Stappenplan</a>
+  <a href="#deliverables">Deliverables</a>
+  <a href="#benodigdheden">Benodigdheden</a>
+  <a href="#rubric" class="rubric-link">★ Beoordelingsrubric</a>
+</nav>
+
+<div class="wrap">
+
+  <div class="part-banner" id="projectdocument">
+    <span class="big-emoji">📄</span>
+    <div>
+      <h2>Projectdocument</h2>
+      <p>Alles wat je nodig hebt om jouw automata te ontwerpen en te bouwen.</p>
+    </div>
+  </div>
+
+  <!-- Context -->
+  <section id="context">
+    <div class="sec-title"><span class="num">🦜</span><h2>Context</h2></div>
+    <div class="card">
+      <p class="lead">Eindhoven Zoo wil een nieuwe tentoonstelling: <strong>"Dieren in beweging"</strong>. In plaats van foto's laat de Zoo bezoekers zien hoe een dier beweegt met behulp van mechaniek. Een pikkende vogel, een waggelende pinguïn, een krokodil die zijn bek opent: allemaal aangedreven door tandwielen, nokken en krukassen achter de schermen.</p>
+      <p>De Zoo heeft jou gevraagd om een <strong>automata</strong> te ontwerpen en te bouwen: een houten kastje met een slinger, waarbij een draaiende beweging wordt omgezet in de beweging van jouw dier. Aan het eind presenteer je jouw automata aan "de Zoo".</p>
+    </div>
+  </section>
+
+  <!-- Opdracht -->
+  <section id="opdracht">
+    <div class="sec-title"><span class="num">🎯</span><h2>De opdracht</h2></div>
+    <div class="card">
+      <p class="lead">Ontwerp en bouw een <strong>werkend automata</strong> dat de beweging van één dier nabootst voor de tentoonstelling van Eindhoven Zoo. Je gebruikt het <strong>nok-mechanisme</strong> als basis en kiest daarnaast een <strong>tweede mechanisme</strong> dat past bij de beweging van jouw dier.</p>
+    </div>
+  </section>
+
+  <!-- Leerdoelen -->
+  <section id="leerdoelen">
+    <div class="sec-title"><span class="num">🏆</span><h2>Leerdoelen</h2></div>
+    <div class="card">
+      <p>Na dit project kun je:</p>
+      <ol class="goals">
+        <li>Uitleggen hoe krukas, nok, tandwiel, excenter, hefboom en nokkenas een beweging overbrengen of omzetten.</li>
+        <li>Bepalen welk mechanisme het beste past bij de gewenste beweging van jouw dier.</li>
+        <li>Ontwerpen hoe techniek en vormgeving in jouw automata logisch samenwerken.</li>
+        <li>Aftekenen, bewerken en monteren van materialen tot een stevig werkend mechanisme.</li>
+        <li>Testen van je mechanisme, fouten opsporen en je ontwerp verbeteren.</li>
+        <li>Veilig werken met machines, gereedschappen en materialen volgens de regels.</li>
+        <li>Presenteren hoe jouw automata werkt en waarom je voor dit mechanisme koos.</li>
+        <li>Samenwerken en feedback geven, ontvangen en verwerken.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Deelvragen -->
+  <section id="deelvragen">
+    <div class="sec-title"><span class="num">❓</span><h2>Deelvragen</h2></div>
+    <div class="card">
+      <ol class="dv">
+        <li>Hoe zet een mechanisme een draaiende beweging om in een andere beweging?</li>
+        <li>Welk mechanisme past het beste bij de beweging van jouw dier?</li>
+        <li>Waarom loopt een mechanisme vast, en hoe los je dat op?</li>
+        <li>Hoe zorg je dat techniek en vormgeving samen één geheel worden?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Mechanismen -->
+  <section id="mechanismen">
+    <div class="sec-title"><span class="num">⚙️</span><h2>De zes mechanismen</h2></div>
+    <p class="lead" style="margin-top:2px">Iedereen leert eerst de <strong>nok</strong> als verplichte basis. Daarna kies je een tweede mechanisme dat bij jouw dier past.</p>
+    <div class="mech-grid">
+      <div class="mech base">
+        <span class="badge">VERPLICHTE BASIS</span>
+        <div class="icon">🥚</div>
+        <h4>Nok</h4>
+        <p class="does">Draaien → op-en-neer duwen</p>
+        <p class="fits">🐾 Pikkende vogel, springende kikker, deinende vis, knikkende giraf</p>
+      </div>
+      <div class="mech">
+        <div class="icon">🔩</div>
+        <h4>Nokkenas</h4>
+        <p class="does">Meerdere nokken op één as</p>
+        <p class="fits">🐾 Meerdere bewegingen tegelijk</p>
+      </div>
+      <div class="mech">
+        <div class="icon">🔄</div>
+        <h4>Krukas</h4>
+        <p class="does">Draaien → heen-en-weer / op-en-neer</p>
+        <p class="fits">🐾 Vleugels vogel, rennende poten, wippende staart</p>
+      </div>
+      <div class="mech">
+        <div class="icon">🌀</div>
+        <h4>Excenter</h4>
+        <p class="does">Draaien met verschoven middelpunt → schudden</p>
+        <p class="fits">🐾 Waggelende pinguïn, trillend olifantsoor</p>
+      </div>
+      <div class="mech">
+        <div class="icon">⚖️</div>
+        <h4>Hefboom</h4>
+        <p class="does">Beweging vergroten of van richting veranderen</p>
+        <p class="fits">🐾 Openende bek krokodil, klappende ooievaarssnavel</p>
+      </div>
+      <div class="mech">
+        <div class="icon">⚙️</div>
+        <h4>Tandwielen / kroonwiel</h4>
+        <p class="does">Draairichting of snelheid overbrengen (90° via kroonwiel)</p>
+        <p class="fits">🐾 Draaiende kop uil</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stappenplan -->
+  <section id="stappenplan">
+    <div class="sec-title"><span class="num">🗺️</span><h2>Stappenplan</h2></div>
+    <p class="lead" style="margin-top:2px">Acht lessen van de opdracht tot de presentatie aan "de Zoo".</p>
+    <div class="timeline">
+
+      <div class="week-block">
+        <div class="dot">LES<small>1</small></div>
+        <div class="week-inner">
+          <h3>De opdracht en jouw dier</h3>
+          <div class="denkvraag">
+            <span class="tag">💡 Denkvraag</span>
+            <p>Wat denk jij dat er achter een pikkende vogel in een tentoonstelling zit? Welke beweging is het moeilijkst om na te maken met techniek?</p>
+          </div>
+          <p class="intro">Je bekijkt de demo's van de zes mechanismen en de opdracht van de Zoo. Elk mechanisme zet een draaiende slinger om in een andere beweging.</p>
+          <ul class="clean">
+            <li>Kies met je groepje een dier en de beweging die je wilt nabootsen.</li>
+            <li>Bekijk de tabel hierboven en noteer welke beweging bij welk mechanisme hoort.</li>
+            <li>Schrijf op: welk dier, welke beweging, en waarom deze past bij de tentoonstelling.</li>
+          </ul>
+          <div class="outcome">Aan het eind van deze les: dier + beweging gekozen en genoteerd.</div>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="dot">LES<small>2</small></div>
+        <div class="week-inner">
+          <h3>Onderzoeken en proefmodel</h3>
+          <div class="denkvraag">
+            <span class="tag">💡 Denkvraag</span>
+            <p>Hoe zou jij met alleen karton en een satéprikker testen of jouw beweging klopt, voordat je in hout gaat werken?</p>
+          </div>
+          <p class="intro">Voordat je hout zaagt, maak je eerst een goedkoop proefmodel (mock-up) van karton. Zo ontdek je fouten terwijl aanpassen nog makkelijk is.</p>
+          <ul class="clean">
+            <li>Onderzoek jouw twee mechanismen: nok + je gekozen tweede mechanisme.</li>
+            <li>Maak schetsen van hoe de as, de nok en je dier aan elkaar zitten.</li>
+            <li>Bouw een kartonnen proefmodel en draai eraan. Werkt de beweging?</li>
+            <li>Noteer wat je moet aanpassen.</li>
+          </ul>
+          <div class="outcome">Aan het eind van deze les: werkend kartonnen proefmodel + schetsen.</div>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="dot">LES<small>3</small></div>
+        <div class="week-inner">
+          <h3>Ontwerp uitwerken en maten bepalen</h3>
+          <div class="denkvraag">
+            <span class="tag">💡 Denkvraag</span>
+            <p>Welke maten bepalen hoe ver jouw dier omhoog komt? Wat gebeurt er als je de nok groter of kleiner maakt?</p>
+          </div>
+          <p class="intro">Nu werk je je ontwerp netjes uit met echte maten.</p>
+          <ul class="clean">
+            <li>Teken je kast (behuizing) uit met exacte maten: multiplex of MDF van 4–6 mm.</li>
+            <li>Bepaal de lengte van je as (rondstok Ø5–8 mm) en de grootte van je nok.</li>
+            <li>Kies waar je lagers komt (kraaltjes, rietjes of split pennen).</li>
+            <li>Leg je materiaal klaar en laat je maten controleren voordat je gaat zagen.</li>
+          </ul>
+          <div class="outcome">Aan het eind van deze les: technische tekening met maten + materiaal klaargelegd.</div>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="dot">LES<small>4</small></div>
+        <div class="week-inner">
+          <h3>Kast zagen en boren</h3>
+          <p class="intro">De boormaat luistert nauw: het boorgat moet precies bij je asdiameter passen, anders klemt of slingert je as.</p>
+          <ul class="clean">
+            <li>Teken je onderdelen af op het hout.</li>
+            <li>Zaag de kast met de figuurzaag of decoupeerzaag.</li>
+            <li>Boor de gaten voor de as bij het begeleide boorstation.</li>
+            <li>Schuur de randen glad.</li>
+          </ul>
+          <div class="outcome">Aan het eind van deze les: gezaagde en geboorde kast.</div>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="dot">LES<small>5</small></div>
+        <div class="week-inner">
+          <h3>Mechaniek bouwen en eerste draaitest</h3>
+          <ul class="clean">
+            <li>Monteer de as door de kast.</li>
+            <li>Bevestig je nok (en je tweede mechanisme) op de as.</li>
+            <li>Zet er een slinger aan.</li>
+            <li>Draai: dit is je eerste draaitest. Loopt hij? Loopt hij vast?</li>
+          </ul>
+          <div class="outcome">Aan het eind van deze les: draaiend basismechaniek.</div>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="dot">LES<small>6</small></div>
+        <div class="week-inner">
+          <h3>Wrijving oplossen en dierfiguur maken</h3>
+          <div class="denkvraag">
+            <span class="tag">💡 Denkvraag</span>
+            <p>Waarom zou jouw automata vastlopen, ook al heb je alles netjes gebouwd? Waar in het mechaniek schuurt het volgens jou het hardst?</p>
+          </div>
+          <p class="intro">Bijna elk automata loopt minstens één keer vast. Dat is geen fout van jou, dat is techniek. Jouw taak: opsporen waar het schuurt (wrijving) en waar het te los zit (speling), en dat bijstellen.</p>
+          <ul class="clean">
+            <li>Zoek de plek waar het wrijft en maak die gladder of ruimer.</li>
+            <li>Voeg een lager toe (kraaltje of rietje) als de as klemt.</li>
+            <li>Maak intussen je dierfiguur van karton of foamboard.</li>
+          </ul>
+          <div class="outcome">Aan het eind van deze les: soepel draaiend mechaniek + dierfiguur klaar.</div>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="dot">LES<small>7</small></div>
+        <div class="week-inner">
+          <h3>Afmonteren en koppelen</h3>
+          <ul class="clean">
+            <li>Koppel je dierfiguur aan het mechaniek.</li>
+            <li>Zorg dat de beweging van het dier klopt met de beweging van de nok.</li>
+            <li>Decoreer je automata zodat het past bij de Zoo-tentoonstelling.</li>
+            <li>Controleer of alles stevig vastzit.</li>
+          </ul>
+          <div class="outcome">Aan het eind van deze les: afgemonteerd, gedecoreerd automata.</div>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="dot">LES<small>8</small></div>
+        <div class="week-inner">
+          <h3>Testen, finetunen en presenteren</h3>
+          <ul class="clean">
+            <li>Test je automata een laatste keer en stel bij waar nodig.</li>
+            <li>Bereid je presentatie voor: welk dier, welke twee mechanismen, waarom die keuze, en welk probleem je hebt opgelost.</li>
+            <li>Presenteer je automata aan "de Zoo".</li>
+            <li>Geef feedback aan een ander groepje en verwerk de feedback op jouw werk.</li>
+          </ul>
+          <div class="outcome">Aan het eind van deze les: presentatie gegeven + feedback verwerkt.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Deliverables -->
+  <section id="deliverables">
+    <div class="sec-title"><span class="num">📦</span><h2>Deliverables</h2></div>
+    <div class="two-col">
+      <div class="deliver">
+        <span class="num">1</span>
+        <p><strong>Werkend automata</strong> met nok-mechanisme + een tweede zelfgekozen mechanisme, dat de beweging van jouw dier nabootst.</p>
+        <span class="leerdoel-tag">Leerdoelen 2, 3, 4, 5</span>
+      </div>
+      <div class="deliver">
+        <span class="num">2</span>
+        <p><strong>Korte presentatie</strong> aan "de Zoo" waarin je uitlegt hoe je automata werkt en waarom je voor deze mechanismen koos.</p>
+        <span class="leerdoel-tag">Leerdoelen 1, 7, 8</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benodigdheden -->
+  <section id="benodigdheden">
+    <div class="sec-title"><span class="num">🧰</span><h2>Benodigdheden</h2></div>
+
+    <div class="card need-card">
+      <h4>🪵 Materialen</h4>
+      <ul class="clean">
+        <li>Multiplex 4–6 mm of MDF voor de kast</li>
+        <li>Karton of foamboard voor de dierfiguren</li>
+        <li>Houten rondstok Ø5–8 mm of satéprikkers als assen</li>
+        <li>Kroonwielen en tandwielen</li>
+        <li>Nokken van multiplex-schijfjes of 3D-print</li>
+        <li>Split pennen, kraaltjes en rietjes als lagers</li>
+        <li>Houtlijm</li>
+      </ul>
+    </div>
+
+    <div class="card need-card">
+      <h4>🔧 Gereedschap</h4>
+      <ul class="clean">
+        <li>Figuurzaag of decoupeerzaag</li>
+        <li>Boormachine met boren die exact bij de asdiameter passen</li>
+        <li>Lijmpistool</li>
+        <li>Schuurpapier</li>
+        <li>Optioneel: lasersnijder en 3D-printer</li>
+      </ul>
+    </div>
+
+    <div class="card need-card warn">
+      <h4>⚠️ Veiligheid</h4>
+      <ul class="clean">
+        <li><strong>Boormachine:</strong> werkstuk vastklemmen, veiligheidsbril op, lange haren vast, begeleide boorstation.</li>
+        <li><strong>Figuur-/decoupeerzaag:</strong> vingers uit de buurt van het zaagblad, alleen onder toezicht.</li>
+        <li><strong>Lijmpistool:</strong> pas op voor brandwonden, altijd op een vaste onderzetter.</li>
+        <li><strong>Lasersnijder:</strong> alleen de docent, afzuiging aan, nooit pvc snijden.</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- ================= RUBRIC ================= -->
+  <div class="part-banner" id="rubric">
+    <span class="big-emoji">📊</span>
+    <div>
+      <h2>Beoordelingsrubric</h2>
+      <p>HAVO 2 (onderbouw) · Techniek · 8 lessen × 100 min · groepjes van 2</p>
+    </div>
+  </div>
+
+  <section style="margin-top:24px">
+    <div class="rubric-legend">
+      <span class="lvl-key"><span class="swatch sw1"></span>Onvoldoende (1–5)</span>
+      <span class="lvl-key"><span class="swatch sw2"></span>Voldoende (6–7)</span>
+      <span class="lvl-key"><span class="swatch sw3"></span>Goed (8–9)</span>
+      <span class="lvl-key"><span class="swatch sw4"></span>Uitstekend (10)</span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="rubric">
+        <thead>
+          <tr>
+            <th class="crit">Criterium</th>
+            <th>Onvoldoende (1–5)</th>
+            <th>Voldoende (6–7)</th>
+            <th>Goed (8–9)</th>
+            <th>Uitstekend (10)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="crit"><strong>1. Mechanismen begrijpen &amp; de juiste keuze maken</strong><span class="tagchip tag-prod">Product</span><br><span class="weeg">15%</span></td>
+            <td class="c1">De leerling kan niet uitleggen hoe de nok of het tweede mechanisme werkt. De keuze is toeval of niet uit te leggen.</td>
+            <td class="c2">De leerling legt in eigen woorden uit hoe de nok een beweging omzet. Noemt waarom het tweede mechanisme bij het dier past, maar de uitleg is nog kort of onvolledig.</td>
+            <td class="c3">De leerling legt duidelijk uit hoe zowel de nok als het tweede mechanisme de beweging overbrengen of omzetten en koppelt de keuze aan de gewenste dierbeweging.</td>
+            <td class="c4">De leerling legt met vaktermen uit hoe beide mechanismen werken én vergelijkt met een afgewezen alternatief: waarom past dít mechanisme het best.</td>
+          </tr>
+          <tr>
+            <td class="crit"><strong>2. Ontwerp: techniek en vormgeving werken samen</strong><span class="tagchip tag-prod">Product</span><br><span class="weeg">15%</span></td>
+            <td class="c1">Geen bruikbaar proefmodel of technische tekening. Techniek en dierfiguur staan los van elkaar.</td>
+            <td class="c2">Er is een kartonnen proefmodel en een technische tekening met enkele maten. Dier en mechanisme passen redelijk bij elkaar.</td>
+            <td class="c3">Proefmodel en technische tekening (mét maten) zijn duidelijk. De beweging van het mechanisme past logisch bij hoe het dier beweegt.</td>
+            <td class="c4">Het ontwerp is doordacht: de tekening klopt met het eindproduct, en de vormgeving versterkt de gekozen beweging. Aanpassingen tijdens het ontwerp zijn zichtbaar verwerkt.</td>
+          </tr>
+          <tr>
+            <td class="crit"><strong>3. Nauwkeurig maken en monteren</strong><span class="tagchip tag-prod">Product</span><br><span class="weeg">20%</span></td>
+            <td class="c1">De kast of het mechaniek is scheef, los of niet af. Slordig afgetekend, gezaagd of geboord.</td>
+            <td class="c2">Onderdelen zijn volgens de maten afgetekend, gezaagd en geboord. De kast staat stevig. Enkele onderdelen zitten wat slordig, maar het geheel houdt.</td>
+            <td class="c3">Kast en mechaniek zijn netjes en op maat. Boorgaten en zaagsnedes nauwkeurig, montage stevig en verzorgd.</td>
+            <td class="c4">Alle onderdelen strak op maat en zorgvuldig gemonteerd. Stevig én netjes afgewerkt; geen loszittende of scheve delen.</td>
+          </tr>
+          <tr>
+            <td class="crit"><strong>4. Testen, wrijving/speling oplossen &amp; verbeteren</strong><span class="tagchip tag-proc">Proces</span><br><span class="weeg">20%</span></td>
+            <td class="c1">De leerling test niet of geeft op als het vastloopt. Het automata draait niet of nauwelijks.</td>
+            <td class="c2">De leerling doet een draaitest, merkt op waar het vastloopt en probeert het op te lossen. Draait, maar hapert soms.</td>
+            <td class="c3">De leerling spoort wrijving en speling gericht op en lost ze op (schuren, ruimte maken, borgen). Draait soepel.</td>
+            <td class="c4">De leerling test meerdere keren, benoemt precies waar en waarom het vastliep en past het ontwerp gericht aan. Draait soepel en betrouwbaar, ook na langer draaien.</td>
+          </tr>
+          <tr>
+            <td class="crit"><strong>5. Veilig werken</strong><span class="tagchip tag-proc">Proces</span><br><span class="weeg">10%</span></td>
+            <td class="c1">Werkt onveilig: geen bril waar nodig, verkeerd gebruik van machine of gereedschap, moet vaak worden gecorrigeerd.</td>
+            <td class="c2">Werkt meestal veilig en houdt zich na een herinnering aan de veiligheidsregels.</td>
+            <td class="c3">Werkt uit zichzelf veilig: juiste bescherming, juist gebruik van gereedschap en machines, opgeruimde werkplek.</td>
+            <td class="c4">Werkt consequent veilig, let ook op de veiligheid van de ander en helpt de werkplek voor iedereen veilig en netjes te houden.</td>
+          </tr>
+          <tr>
+            <td class="crit"><strong>6. Presenteren aan "de Zoo"</strong><span class="tagchip tag-prod">Product</span><br><span class="weeg">10%</span></td>
+            <td class="c1">De presentatie is onduidelijk of ontbreekt. De werking wordt niet uitgelegd.</td>
+            <td class="c2">Laat het automata zien en vertelt kort hoe het werkt en welke mechanismen zijn gebruikt.</td>
+            <td class="c3">Duidelijke presentatie: legt de werking uit én waarom voor deze mechanismen is gekozen, met het werkende automata erbij.</td>
+            <td class="c4">Helder en overtuigend voor "de Zoo": werking, mechanismekeuze én een verbeterpunt of vervolgidee. Beantwoordt vragen goed.</td>
+          </tr>
+          <tr>
+            <td class="crit"><strong>7. Samenwerken &amp; feedback</strong><span class="tagchip tag-proc">Proces</span><br><span class="weeg">10%</span></td>
+            <td class="c1">Taken niet verdeeld; één leerling doet bijna alles of veel onenigheid. Feedback wordt genegeerd.</td>
+            <td class="c2">Verdelen het werk en werken samen. Geven en ontvangen feedback, maar doen er nog weinig mee.</td>
+            <td class="c3">Verdelen taken eerlijk, overleggen en helpen elkaar. Verwerken feedback in hun werk.</td>
+            <td class="c4">Werken sterk samen, verdelen taken slim, gebruiken elkaars sterke punten. Geven bruikbare feedback en verwerken ontvangen feedback zichtbaar.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="verdeel">
+      <div class="vbox"><div class="big">100%</div>Totaal weging</div>
+      <div class="vbox"><div class="big">60%</div>Product</div>
+      <div class="vbox proc"><div class="big">40%</div>Proces</div>
+    </div>
+  </section>
+
+  <!-- Beoordelingstips -->
+  <section id="tips">
+    <div class="sec-title"><span class="num">🧑‍🏫</span><h2>Beoordelingstips voor de docent</h2></div>
+    <ol class="tips">
+      <li><strong>Beoordeel proces tijdens de lessen, niet achteraf.</strong> Veilig werken, testen &amp; verbeteren en samenwerken kun je aan het eind niet meer zien. Loop rond met een notitielijst en noteer per groepje tijdens les 5–6 en les 8.</li>
+      <li><strong>Gebruik voor twijfelgevallen de laagste kolom als vertrekpunt.</strong> Kies het niveau dat een leerling volledig waarmaakt, niet gedeeltelijk.</li>
+      <li><strong>Laat leerlingen zichzelf eerst scoren.</strong> Deel de rubric al in les 3 uit en laat groepjes zich in les 8 vóór jouw beoordeling zelf inschatten op criterium 4 en 7; bespreek het verschil.</li>
+    </ol>
+  </section>
+
+  <footer>
+    <div class="foot-emojis">🦜🐧🐊🦒🦉</div>
+    <h2 style="font-size:1.4rem">Automata voor Eindhoven Zoo</h2>
+    <div class="foot-meta">
+      <span>📚 Techniek</span>
+      <span>🎓 havo 2</span>
+      <span>⏱️ 8 lessen × 100 min</span>
+      <span>👥 Groepjes van 2</span>
+    </div>
+    <small>Dieren in beweging — techniek en vormgeving die samen tot leven komen.</small>
+  </footer>
+
+</div>
+</body>
+</html>
