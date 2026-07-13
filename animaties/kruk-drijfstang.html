@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kruk-drijfstangmechanisme — animatie</title>
+<style>
+  :root{
+    --groen:#2f8f5b; --groen-d:#206b41;
+    --geel:#f6c445; --klei:#d9744b;
+    --inkt:#243b2e; --papier:#f4f7f2; --kaart:#ffffff;
+    --rail:#9fb3a6; --bot:#c9d6cd;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:"Segoe UI",system-ui,sans-serif;
+    background:radial-gradient(120% 120% at 50% 0%, #eef6ee 0%, var(--papier) 60%);
+    color:var(--inkt); min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px;
+  }
+  h1{font-size:clamp(1.4rem,4vw,2rem); margin:.2em 0 .1em; text-align:center}
+  .sub{color:var(--groen-d); font-weight:600; margin:0 0 18px; text-align:center}
+  .kaart{
+    background:var(--kaart); border-radius:20px; padding:18px;
+    box-shadow:0 10px 30px rgba(32,107,65,.12); width:100%; max-width:560px;
+  }
+  svg{width:100%; height:auto; display:block}
+  .flow{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    flex-wrap:wrap; margin:14px 0 4px; font-weight:700;
+  }
+  .chip{background:#eaf4ee; color:var(--groen-d); padding:6px 12px; border-radius:999px; font-size:.9rem}
+  .chip.geel{background:#fdf3d3; color:#8a6a12}
+  .pijl{color:var(--klei); font-size:1.3rem}
+  .controls{display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:16px}
+  button{
+    background:var(--groen); color:#fff; border:0; border-radius:12px;
+    padding:10px 18px; font-size:1rem; font-weight:700; cursor:pointer;
+    transition:transform .1s, background .2s;
+  }
+  button:hover{background:var(--groen-d)} button:active{transform:scale(.96)}
+  label{font-weight:600; font-size:.92rem; display:flex; align-items:center; gap:8px}
+  input[type=range]{accent-color:var(--klei)}
+  .legenda{margin:16px auto 0; max-width:560px; font-size:.92rem; line-height:1.5; color:#3a4d41}
+  .legenda b{color:var(--groen-d)}
+  .lbl{font:600 13px "Segoe UI",sans-serif; fill:var(--inkt)}
+  .lbl-l{fill:var(--klei)}
+</style>
+</head>
+<body>
+  <h1>Het kruk-drijfstangmechanisme</h1>
+  <p class="sub">Draaien wordt omgezet in op-en-neer bewegen</p>
+
+  <div class="kaart">
+    <svg viewBox="0 0 400 330" role="img" aria-label="Animatie van een kruk-drijfstangmechanisme">
+      <!-- ondergrond / kast -->
+      <rect x="60" y="256" width="280" height="46" rx="8" fill="#eef1ec" stroke="var(--bot)"/>
+      <!-- geleider (rails) waarin de slede op en neer gaat -->
+      <rect x="184" y="40" width="32" height="150" rx="6" fill="#f0f4ef" stroke="var(--rail)"/>
+      <line x1="200" y1="44" x2="200" y2="186" stroke="var(--rail)" stroke-width="1" stroke-dasharray="4 5"/>
+
+      <!-- drijfstang -->
+      <line id="rod" x1="200" y1="150" x2="200" y2="250" stroke="var(--klei)" stroke-width="9" stroke-linecap="round"/>
+
+      <!-- krukwiel -->
+      <circle cx="200" cy="250" r="52" fill="#eaf4ee" stroke="var(--groen)" stroke-width="3"/>
+      <circle cx="200" cy="250" r="6" fill="var(--groen-d)"/>
+      <!-- krukarm -->
+      <line id="crank" x1="200" y1="250" x2="242" y2="250" stroke="var(--groen)" stroke-width="8" stroke-linecap="round"/>
+      <!-- krukpen -->
+      <circle id="pin" cx="242" cy="250" r="7" fill="var(--geel)" stroke="var(--groen-d)" stroke-width="2"/>
+
+      <!-- slede -->
+      <rect id="slider" x="182" y="140" width="36" height="22" rx="5" fill="var(--geel)" stroke="#8a6a12" stroke-width="2"/>
+      <!-- dier op de slede -->
+      <text id="dier" x="200" y="120" font-size="34" text-anchor="middle">🦤</text>
+
+      <!-- labels -->
+      <text class="lbl lbl-l" x="150" y="300" text-anchor="end">kruk</text>
+      <line x1="152" y1="296" x2="188" y2="266" stroke="var(--klei)" stroke-width="1"/>
+      <text class="lbl" x="252" y="205" >drijfstang</text>
+      <line x1="250" y1="200" x2="212" y2="200" stroke="var(--inkt)" stroke-width="1"/>
+      <text class="lbl" x="238" y="70">slede</text>
+      <line x1="236" y1="66" x2="216" y2="86" stroke="var(--inkt)" stroke-width="1"/>
+    </svg>
+
+    <div class="flow">
+      <span class="chip">🔄 draaiende beweging</span>
+      <span class="pijl">→</span>
+      <span class="chip geel">↕ op-en-neer beweging</span>
+    </div>
+
+    <div class="controls">
+      <button id="toggle">⏸ Pauze</button>
+      <label>Snelheid
+        <input id="speed" type="range" min="0.2" max="2.5" step="0.1" value="1">
+      </label>
+    </div>
+  </div>
+
+  <p class="legenda">
+    <b>Hoe werkt het?</b> Je draait aan de <b>kruk</b> (de arm op het wiel). De <b>krukpen</b> maakt
+    daardoor rondjes. De <b>drijfstang</b> is met die pen verbonden en duwt en trekt de <b>slede</b>
+    recht op en neer in de geleider. Zo verandert een ronddraaiende beweging in een op-en-neer beweging —
+    perfect voor een pikkende vogel, een springende kikker of een deinende vis.
+  </p>
+
+<script>
+  const svgNS = "http://www.w3.org/2000/svg";
+  const Ox = 200, Oy = 250;   // middelpunt krukwiel
+  const r  = 42;              // krukstraal (bepaalt de slag)
+  const L  = 140;             // lengte drijfstang
+  const pushTop = 30;         // afstand slede-top tot dier
+
+  const crank  = document.getElementById('crank');
+  const pin    = document.getElementById('pin');
+  const rod    = document.getElementById('rod');
+  const slider = document.getElementById('slider');
+  const dier   = document.getElementById('dier');
+  const toggle = document.getElementById('toggle');
+  const speed  = document.getElementById('speed');
+
+  let theta = -Math.PI/2, running = true, last = null;
+
+  function frame(t){
+    if(last === null) last = t;
+    const dt = (t - last) / 1000; last = t;
+    if(running) theta += dt * 2.0 * parseFloat(speed.value);
+
+    const Px = Ox + r * Math.cos(theta);
+    const Py = Oy + r * Math.sin(theta);
+    const ys = Py - Math.sqrt(L*L - (Ox - Px)*(Ox - Px)); // slede zit op verticale lijn x=Ox
+
+    crank.setAttribute('x2', Px); crank.setAttribute('y2', Py);
+    pin.setAttribute('cx', Px);   pin.setAttribute('cy', Py);
+    rod.setAttribute('x1', Px);   rod.setAttribute('y1', Py);
+    rod.setAttribute('x2', Ox);   rod.setAttribute('y2', ys);
+    slider.setAttribute('y', ys - 11);
+    dier.setAttribute('y', ys - pushTop);
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  toggle.addEventListener('click', () => {
+    running = !running;
+    toggle.textContent = running ? '⏸ Pauze' : '▶ Afspelen';
+  });
+</script>
+</body>
+</html>

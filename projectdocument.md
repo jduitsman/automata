@@ -13,7 +13,7 @@ Eindhoven Zoo wil een nieuwe tentoonstelling: **"Dieren in beweging"**. In plaat
 
 ## De opdracht
 
-Ontwerp en bouw een werkend automata dat de beweging van één dier nabootst voor de tentoonstelling van Eindhoven Zoo. Je gebruikt het **nok-mechanisme** als basis en kiest daarnaast een **tweede mechanisme** dat past bij de beweging van jouw dier.
+Ontwerp en bouw een werkend automata dat de beweging van één dier nabootst voor de tentoonstelling van Eindhoven Zoo. Je kiest zelf uit de zes mechanismen welk mechanisme (of eventueel meerdere) het beste past bij de beweging van jouw dier.
 
 ---
 
@@ -41,13 +41,13 @@ Na dit project kun je:
 
 ---
 
-## De zes mechanismen (kies je tweede mechanisme)
+## De zes mechanismen (kies wat past bij jouw dier)
 
-Iedereen leert eerst de **nok** als verplichte basis. Daarna kies je een tweede mechanisme dat bij jouw dier past.
+Bekijk alle zes de mechanismen. Ze zijn gelijkwaardige keuzeopties. Kies zelf het mechanisme dat het beste past bij de beweging van jouw dier. Past er geen enkel mechanisme helemaal? Dan mag je er ook meerdere combineren.
 
 | Mechanisme | Wat het doet | Past bij |
 |---|---|---|
-| **Nok** (basis) | draaien → op-en-neer duwen | pikkende vogel, springende kikker, deinende vis, knikkende giraf |
+| **Nok** | draaien → op-en-neer duwen | pikkende vogel, springende kikker, deinende vis, knikkende giraf |
 | **Nokkenas** | meerdere nokken op één as | meerdere bewegingen tegelijk |
 | **Krukas** | draaien → heen-en-weer / op-en-neer | vleugels vogel, rennende poten, wippende staart |
 | **Excenter** | draaien met verschoven middelpunt → schudden | waggelende pinguïn, trillend olifantsoor |
@@ -76,8 +76,8 @@ Je bekijkt de demo's van de zes mechanismen en de opdracht van de Zoo. Elk mecha
 
 Voordat je hout zaagt, maak je eerst een goedkoop proefmodel (mock-up) van karton. Zo ontdek je fouten terwijl aanpassen nog makkelijk is.
 
-- Onderzoek jouw twee mechanismen: nok + je gekozen tweede mechanisme.
-- Maak schetsen van hoe de as, de nok en je dier aan elkaar zitten.
+- Kies het mechanisme dat het beste bij de beweging van jouw dier past en onderzoek hoe het werkt.
+- Maak schetsen van hoe de as, het mechanisme en je dier aan elkaar zitten.
 - Bouw een kartonnen proefmodel en draai eraan. Werkt de beweging?
 - Noteer wat je moet aanpassen.
 
@@ -85,12 +85,12 @@ Voordat je hout zaagt, maak je eerst een goedkoop proefmodel (mock-up) van karto
 
 ### Les 3 — Ontwerp uitwerken en maten bepalen
 
-> **Welke maten bepalen hoe ver jouw dier omhoog komt? Wat gebeurt er als je de nok groter of kleiner maakt?**
+> **Welke maten bepalen hoe ver jouw dier beweegt? Wat gebeurt er als je de maat of afmeting van je gekozen mechanisme groter of kleiner maakt?**
 
 Nu werk je je ontwerp netjes uit met echte maten.
 
 - Teken je kast (behuizing) uit met exacte maten: multiplex of MDF van 4–6 mm.
-- Bepaal de lengte van je as (rondstok Ø5–8 mm) en de grootte van je nok.
+- Bepaal de lengte van je as (rondstok Ø5–8 mm) en de maten van je gekozen mechanisme.
 - Kies waar je lagers komt (kraaltjes, rietjes of split pennen).
 - Leg je materiaal klaar en laat je maten controleren voordat je gaat zagen.
 
@@ -110,7 +110,7 @@ De boormaat luistert nauw: het boorgat moet precies bij je asdiameter passen, an
 ### Les 5 — Mechaniek bouwen en eerste draaitest
 
 - Monteer de as door de kast.
-- Bevestig je nok (en je tweede mechanisme) op de as.
+- Bevestig je gekozen mechanisme op de as.
 - Zet er een slinger aan.
 - Draai: dit is je **eerste draaitest**. Loopt hij? Loopt hij vast?
 
@@ -131,7 +131,7 @@ Bijna elk automata loopt minstens één keer vast. Dat is geen fout van jou, dat
 ### Les 7 — Afmonteren en koppelen
 
 - Koppel je dierfiguur aan het mechaniek.
-- Zorg dat de beweging van het dier klopt met de beweging van de nok.
+- Zorg dat de beweging van het dier klopt met de beweging van je gekozen mechanisme.
 - Decoreer je automata zodat het past bij de Zoo-tentoonstelling.
 - Controleer of alles stevig vastzit.
 
@@ -140,7 +140,7 @@ Bijna elk automata loopt minstens één keer vast. Dat is geen fout van jou, dat
 ### Les 8 — Testen, finetunen en presenteren
 
 - Test je automata een laatste keer en stel bij waar nodig.
-- Bereid je presentatie voor: welk dier, welke twee mechanismen, waarom die keuze, en welk probleem je hebt opgelost.
+- Bereid je presentatie voor: welk dier, welk mechanisme (of welke mechanismen), waarom die keuze, en welk probleem je hebt opgelost.
 - Presenteer je automata aan "de Zoo".
 - Geef feedback aan een ander groepje en verwerk de feedback op jouw werk.
 
@@ -150,8 +150,8 @@ Bijna elk automata loopt minstens één keer vast. Dat is geen fout van jou, dat
 
 ## Deliverables
 
-1. **Werkend automata** met nok-mechanisme + een tweede zelfgekozen mechanisme, dat de beweging van jouw dier nabootst (leerdoelen 2, 3, 4, 5).
-2. **Korte presentatie aan "de Zoo"** waarin je uitlegt hoe je automata werkt en waarom je voor deze mechanismen koos (leerdoelen 1, 7, 8).
+1. **Werkend automata** met een zelfgekozen mechanisme (of meerdere mechanismen), dat de beweging van jouw dier nabootst (leerdoelen 2, 3, 4, 5).
+2. **Korte presentatie aan "de Zoo"** waarin je uitlegt hoe je automata werkt en waarom je voor dit mechanisme koos (leerdoelen 1, 7, 8).
 
 ---
 
