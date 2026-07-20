@@ -13,7 +13,7 @@ Eindhoven Zoo wil een nieuwe tentoonstelling: **"Dieren in beweging"**. In plaat
 
 ## De opdracht
 
-Ontwerp en bouw een werkend automata dat de beweging van één dier nabootst voor de tentoonstelling van Eindhoven Zoo. Je kiest zelf uit de zes mechanismen welk mechanisme (of eventueel meerdere) het beste past bij de beweging van jouw dier.
+Ontwerp en bouw een werkend automata dat de beweging van één dier nabootst voor de tentoonstelling van Eindhoven Zoo. Je kiest een mechanisme dat past bij de beweging van jouw dier.
 
 ---
 
@@ -34,16 +34,22 @@ Na dit project kun je:
 
 ## Deelvragen
 
-1. **Hoe** zet een mechanisme een draaiende beweging om in een andere beweging?
-2. **Welk** mechanisme past het beste bij de beweging van jouw dier?
-3. **Waarom** loopt een mechanisme vast, en **hoe** los je dat op?
-4. **Hoe** zorg je dat techniek en vormgeving samen één geheel worden?
+Deze vragen volgen de 5W1H-methode: wie, wat, waar, wanneer, waarom en hoe.
+
+1. **Wie** komt er straks naar jouw automata kijken, en wat moet die bezoeker meteen aan de beweging herkennen?
+2. **Wat** gebeurt er in een mechanisme waardoor een draaiende beweging verandert in de beweging van jouw dier?
+3. **Waar** in de kast komen je as, nok en lagers, zodat alles precies op één lijn zit en soepel draait?
+4. **Wanneer** loopt een mechanisme vast, en wat doe je om dat te voorkomen?
+5. **Waarom** past het ene mechanisme beter bij de beweging van jouw dier dan het andere?
+6. **Hoe** zorg je dat techniek en vormgeving samen één geheel worden?
 
 ---
 
-## De zes mechanismen (kies wat past bij jouw dier)
+## Mechanismen (kies wat past bij jouw dier)
 
-Bekijk alle zes de mechanismen. Ze zijn gelijkwaardige keuzeopties. Kies zelf het mechanisme dat het beste past bij de beweging van jouw dier. Past er geen enkel mechanisme helemaal? Dan mag je er ook meerdere combineren.
+Je kiest een mechanisme dat past bij de beweging van je dier. Er zijn heel veel verschillende manieren om de ene soort beweging om te zetten in een andere. Hieronder staan een paar van de meest gebruikte.
+
+Past geen enkele van deze in je ontwerp? Kijk dan eens op [507movements.com](https://507movements.com).
 
 | Mechanisme | Wat het doet | Past bij |
 |---|---|---|
@@ -68,7 +74,33 @@ Je bekijkt de demo's van de zes mechanismen en de opdracht van de Zoo. Elk mecha
 - Bekijk de tabel hierboven en noteer welke beweging bij welk mechanisme hoort.
 - Schrijf op: welk dier, welke beweging, en waarom deze past bij de tentoonstelling.
 
-**Aan het eind van deze les:** dier + beweging gekozen en genoteerd.
+**Onderzoeksopdracht: zoek drie voorbeelden**
+
+Zoek online naar bestaande automata. Het gaat altijd om **dieren of beestjes** — geen machines, geen poppetjes.
+
+Kies een zoekterm die past bij de beweging die jouw dier maakt:
+
+| Beweging | Zoektermen |
+|---|---|
+| **op en neer** | `automata pecking bird` · `automata jumping frog` · `automata nodding giraffe` |
+| **klapperen / vleugels** | `automata flapping wings` · `automata butterfly automaton` · `automata flying bird` |
+| **heen en weer / lopen** | `automata walking dog` · `automata galloping horse` · `automata running animal` |
+| **schudden / waggelen** | `automata waddling penguin` · `automata wiggling fish` · `automata shaking dog` |
+| **open en dicht** | `automata snapping crocodile` · `automata barking dog` · `automata roaring lion` |
+| **draaien** | `automata owl head turning` · `automata turning head animal` |
+| **kruipen / golven** | `automata swimming fish` · `automata slithering snake` · `automata crawling caterpillar` |
+
+Werkt een term niet? Vervang het dier door dat van jou: `automata` + `[jouw dier]` + `[de beweging]`. Voeg `cardboard` of `wooden` toe als je wilt zien hoe het gebouwd is.
+
+Print **drie voorbeelden** uit en plak ze in je dummy. Schrijf bij elk voorbeeld drie dingen op:
+
+1. **Welke beweging** maakt het dier precies? (op en neer, heen en weer, draaien, schudden, open en dicht)
+2. **Welk mechanisme** denk je dat erachter zit? Waaraan zie je dat?
+3. **Wat neem je mee** naar jouw eigen ontwerp — en wat juist niet?
+
+Je hoeft nog niets na te maken. Je verzamelt ideeën en je traint je oog: leren zien wélk mechanisme een beweging maakt.
+
+**Aan het eind van deze les:** dier + beweging gekozen en genoteerd, en drie voorbeelden uitgeprint en beschreven in je dummy.
 
 ### Les 2 — Onderzoeken en proefmodel
 

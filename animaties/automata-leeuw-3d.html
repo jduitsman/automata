@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De brullende leeuw — één schijf, twee bewegingen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --board:#b9b1a1; --sheet:#fbfaf7; --ink:#22262b; --steel:#767e87;
+    --blue:#1e5f8c; --red:#c43b2e; --amber:#b07a12; --grijs:#8d8a85; --line:#d7d3ca;
+    --grid:rgba(30,95,140,.07);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--board);color:var(--ink);
+    font-family:'Source Serif 4',Georgia,serif;font-size:17px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{
+    max-width:1040px;margin:22px auto 40px;background:var(--sheet);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),
+                     linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:26px 26px;
+    border:1px solid #8f8778;box-shadow:0 14px 40px rgba(0,0,0,.22);padding:14px;
+  }
+  .frame{border:1px solid var(--steel);padding:0 clamp(16px,4vw,36px) 32px;}
+  h1,h2,h3{font-family:'Archivo',system-ui,sans-serif;font-weight:700;line-height:1.15;margin:0;}
+  p{margin:0 0 .8em;}
+  a{color:var(--blue);}
+  :focus-visible{outline:2px solid var(--red);outline-offset:2px;}
+
+  header{border-bottom:2px solid var(--ink);padding:26px 0 14px;margin-bottom:20px;}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);}
+  header h1{font-size:clamp(1.7rem,4.4vw,2.7rem);text-transform:uppercase;letter-spacing:-.01em;margin-top:2px;}
+  header p{margin:8px 0 0;color:var(--steel);font-style:italic;max-width:58ch;}
+  .terug{display:inline-block;margin-bottom:14px;font-family:'Archivo',sans-serif;font-weight:600;
+    font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--red);text-decoration:none;}
+  .terug:hover{text-decoration:underline;}
+
+  .viewer{border:1px solid var(--ink);background:#fff;position:relative;}
+  .viewer canvas{display:block;width:100%;touch-action:none;}
+  #doek{cursor:grab;}
+  #doek:active{cursor:grabbing;}
+  #namen{position:absolute;inset:0;pointer-events:none;}
+  .hint{
+    position:absolute;left:12px;bottom:10px;
+    font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--steel);pointer-events:none;
+  }
+  .geen-webgl{padding:40px 24px;text-align:center;color:var(--steel);font-style:italic;}
+
+  .drive{
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    border:1px solid var(--ink);border-top:none;border-left:5px solid var(--red);
+    padding:12px 16px;background:var(--sheet);
+  }
+  .drive button{
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--red);color:#fff;border:none;padding:10px 18px;cursor:pointer;
+  }
+  .drive button:hover{background:#a52f24;}
+  .drive button.uit{background:#fff;color:var(--ink);border:1px solid var(--line);}
+  .drive button.uit:hover{background:#f1efe9;}
+  .drive label{display:flex;align-items:center;gap:10px;flex:1;min-width:210px;
+    font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--steel);}
+  .drive input[type=range]{flex:1;accent-color:var(--red);min-width:110px;}
+  .hoek{font-family:'Space Mono',monospace;font-weight:700;color:var(--ink);font-size:.82rem;min-width:50px;text-align:right;}
+
+  .legenda{display:flex;gap:20px;flex-wrap:wrap;margin:16px 0 26px;
+    font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--steel);}
+  .legenda span{display:flex;align-items:center;gap:7px;}
+  .legenda i{width:22px;height:3px;display:inline-block;}
+
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin:34px 0 14px;}
+  .sec-head h2{font-size:1.3rem;text-transform:uppercase;white-space:nowrap;}
+  .sec-head .rule{flex:1;height:1px;background:var(--line);}
+
+  .kern{border:1px solid var(--ink);border-left:5px solid var(--blue);padding:16px 18px;margin-bottom:20px;}
+  .kern .reken{font-family:'Space Mono',monospace;font-size:1.02rem;color:var(--blue);font-weight:700;}
+  .kern .reken b{color:var(--red);}
+  .kern p{margin:8px 0 0;}
+
+  .keten{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;}
+  .keten div{border:1px solid var(--line);border-top:3px solid var(--blue);padding:13px 15px;}
+  .keten div.rood{border-top-color:var(--red);}
+  .keten .stap{font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.14em;color:var(--steel);}
+  .keten h3{font-size:.98rem;text-transform:uppercase;margin:3px 0 5px;}
+  .keten p{font-size:.94rem;margin:0;}
+
+  .let-op{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
+  .let-op div{border:1px solid var(--line);border-top:3px solid var(--red);padding:14px 16px;}
+  .let-op h3{font-size:1rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:5px;}
+  .let-op p{font-size:.96rem;margin:0;}
+  .maat{font-family:'Space Mono',monospace;font-size:.74rem;color:var(--blue);display:block;margin-top:7px;}
+
+  .denk{border-left:2px solid var(--red);padding:4px 0 4px 14px;margin-top:26px;max-width:62ch;}
+  .denk-label{font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red);}
+  .denk p{font-style:italic;margin:3px 0 0;}
+
+  footer{border-top:2px solid var(--ink);margin-top:36px;padding-top:12px;
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--steel);}
+
+  @media (max-width:560px){
+    body{font-size:16px;}
+    .sheet{margin:0;border:none;padding:8px;}
+    .frame{padding:0 14px 24px;}
+  }
+  @media print{
+    @page{size:A4;margin:16mm;}
+    body{background:#fff;}
+    .sheet{margin:0;padding:0;border:none;box-shadow:none;background:#fff;background-image:none;}
+    .frame{border:none;padding:0;}
+    .drive,.hint,.terug{display:none!important;}
+    .viewer{border:1px solid #999;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+<div class="frame">
+
+  <a class="terug" href="../automata.html">← Terug naar het projectdocument</a>
+
+  <header>
+    <div class="eyebrow">Automata · voorbeeld · één schijf, twee bewegingen</div>
+    <h1>De brullende leeuw</h1>
+    <p>Op de schijf zitten twee pennen, recht tegenover elkaar. De ene trekt aan de bek, de andere aan de staart. Eén slinger, twee bewegingen — en ze lopen precies uit de pas.</p>
+  </header>
+
+  <div class="viewer">
+    <canvas id="doek" aria-label="Draaibare 3D-doorkijk: één krukschijf met twee pennen drijft via twee drijfstangen zowel de onderkaak als de staart van een leeuw aan."></canvas>
+    <canvas id="namen" aria-hidden="true"></canvas>
+    <div class="hint">Sleep om te draaien</div>
+  </div>
+
+  <div class="drive">
+    <button id="knop" type="button" aria-pressed="true">Pauze</button>
+    <label for="slinger">Slinger
+      <input id="slinger" type="range" min="0" max="360" step="1" value="0" aria-label="Slinger: draai de as met de hand">
+      <span class="hoek" id="hoek">0°</span>
+    </label>
+    <button id="namenknop" class="uit" type="button" aria-pressed="true">Namen uit</button>
+  </div>
+
+  <div class="legenda">
+    <span><i style="background:var(--blue)"></i>blauw = de constructie</span>
+    <span><i style="background:var(--red)"></i>rood = wat beweegt</span>
+    <span><i style="background:var(--grijs)"></i>grijs = wat stil staat</span>
+    <span><i style="background:var(--amber)"></i>geel = het lager</span>
+  </div>
+
+  <div class="sec-head"><h2>Twee pennen, twee bewegingen</h2><span class="rule"></span></div>
+  <div class="kern">
+    <div class="reken">pen 1 op 0° · pen 2 op <b>180°</b> — dezelfde schijf</div>
+    <p>Beide pennen zitten even ver uit het hart, maar recht tegenover elkaar. Staat pen 1 boven, dan staat pen 2 onder. Daardoor gaat de <strong>bek open</strong> op het moment dat de <strong>staart</strong> juist de andere kant op zwaait. Zet je pen 2 op een kwartslag in plaats van een halve, dan verschuift de timing en gaan bek en staart met elkaar mee in plaats van tegen elkaar in.</p>
+    <p><strong>De pen bepaalt wát er beweegt en wannéér.</strong> Dat is het hele trucje van dit soort automata: je hoeft er geen tweede as voor bij te bouwen.</p>
+  </div>
+
+  <div class="sec-head"><h2>De keten van beweging</h2><span class="rule"></span></div>
+  <div class="keten">
+    <div>
+      <div class="stap">STAP 1</div>
+      <h3>De slinger</h3>
+      <p>Zit vast op de as van de schijf. Eén as, meer heb je niet nodig.</p>
+    </div>
+    <div>
+      <div class="stap">STAP 2</div>
+      <h3>De schijf</h3>
+      <p>Draait rond. De twee pennen erop maken allebei een rondje, maar niet tegelijk op dezelfde plek.</p>
+    </div>
+    <div class="rood">
+      <div class="stap">STAP 3A</div>
+      <h3>Naar de bek</h3>
+      <p>Drijfstang van pen 1 naar de onderkaak. De kaak draait om een pen achter in de kop: de bek gaat open en dicht.</p>
+    </div>
+    <div class="rood">
+      <div class="stap">STAP 3B</div>
+      <h3>Naar de staart</h3>
+      <p>Drijfstang van pen 2 naar de staart. Die draait om een eigen draaipunt in het lijf en zwaait heen en weer.</p>
+    </div>
+  </div>
+
+  <div class="sec-head"><h2>Waar het misgaat</h2><span class="rule"></span></div>
+  <div class="let-op">
+    <div>
+      <h3>Twee stangen op één pen</h3>
+      <p>Verleidelijk, maar dan bewegen bek en staart precies gelijk en oogt het levenloos. Gebruik twee pennen op verschillende plekken: dáár zit de levendigheid.</p>
+      <span class="maat">2 pennen, ± 180° uit elkaar</span>
+    </div>
+    <div>
+      <h3>De stangen lopen elkaar in de weg</h3>
+      <p>Twee stangen in hetzelfde vlak botsen. Leg ze op verschillende dieptes: de ene vóór de schijf, de andere erachter, of gebruik langere pennen.</p>
+      <span class="maat">let op de dikte van je lagen</span>
+    </div>
+    <div>
+      <h3>De kaak valt open</h3>
+      <p>De onderkaak hangt aan één pen. Zit hij te los, dan klappert hij. Zit hij te vast, dan draait de schijf niet meer rond.</p>
+      <span class="maat">pen Ø3 mm → gat Ø3,5 mm</span>
+    </div>
+    <div>
+      <h3>De schijf zit uit het hart</h3>
+      <p>De schroef in het midden is de as. Zit die scheef, dan slaat de hele schijf en trekken je stangen ongelijk. Boor dat gat als eerste, en precies.</p>
+      <span class="maat">as door het hart van de schijf</span>
+    </div>
+  </div>
+
+  <div class="denk">
+    <span class="denk-label">Denkvraag</span>
+    <p>Zet de slinger stil op 0° en dan op 180°. Wat doet de bek, en wat doet de staart? Wat zou er gebeuren als je een dérde pen op de schijf zet — en wat kun je daar bij jouw dier mee laten bewegen?</p>
+  </div>
+
+  <footer>
+    <span>Automata — Dieren in beweging</span>
+    <span>Techniek · havo 2</span>
+    <span>Voorbeeld: één schijf, twee bewegingen</span>
+  </footer>
+
+</div>
+</div>
+
+<script>
+(() => {
+  const doek = document.getElementById('doek');
+  const naamDoek = document.getElementById('namen');
+  const TAU = Math.PI * 2;
+
+  const gl = doek.getContext('webgl', { antialias: true, alpha: false });
+  if (!gl) {
+    doek.parentNode.innerHTML =
+      '<div class="geen-webgl">Deze browser kan geen 3D tonen. Open de pagina in een andere browser.</div>';
+    return;
+  }
+  const ctx2d = naamDoek.getContext('2d');
+
+  /* ══════════ 1. De maten ══════════
+     De as wijst naar je toe (z). Alles ligt in één plat vlak, in lagen achter elkaar. */
+
+  /* ── DE HARTLIJN VAN DE AS ──
+     De schijf, het lager, het boorgat en de slinger hangen allemaal aan deze lijn.
+     De twee krukpennen draaien eromheen — allebei even ver uit het hart.          */
+  const AS = { x: 26, y: 32 };
+  const AS_R = 3.2;
+  const LAGER_IN = 3.9, LAGER_UIT = 6;
+  const GAT_AS = LAGER_UIT + 0.25;
+
+  const SCHIJF_R = 17;     // de krukschijf
+  const KRUK_R = 5;        // hoe ver de pennen uit het hart zitten = de slag
+  const FASE2 = Math.PI;   // pen 2 staat een halve slag verdraaid ten opzichte van pen 1
+
+  /* ── DE TWEE DRAAIPUNTEN IN HET DIER ── */
+  const KAAK = { x: 4, y: 58 };      // de onderkaak draait hierom
+  const KAAK_ARM = 12, KAAK_STANG = 32;
+
+  const STAART = { x: -14, y: 40 };  // de staart draait hierom
+  const STAART_ARM = 14, STAART_STANG = 38;
+
+  const Z_MANEN = [-22, -16], Z_LIJF = [-16, -10], Z_KOP = [-10, -4];
+  const Z_BEWEEG = [-4, 2], Z_SCHIJF = [4, 9], Z_STANG = 13;
+
+  const KLEUR = {
+    hout:  [.84, .87, .90],
+    as:    [.12, .37, .55],   // blauw: de constructie
+    schijf:[.20, .48, .66],
+    rood:  [.77, .23, .18],   // rood: wat beweegt
+    rust:  [.55, .53, .51],   // grijs: wat stil staat
+    manen: [.62, .60, .57],
+    lager: [.69, .48, .07],   // geel: het lager
+    oog:   [.13, .15, .17],
+  };
+
+  /* ── de stand van het hele mechanisme bij slingerhoek t ──
+     Twee keer dezelfde berekening: een pen op de schijf, een arm om een draaipunt,
+     en een drijfstang ertussen. Het snijpunt van twee cirkels geeft de stand.     */
+  const scharnier = (pen, piv, arm, stang) => {
+    const dx = pen.x - piv.x, dy = pen.y - piv.y;
+    const c = Math.hypot(dx, dy);
+    const ux = dx / c, uy = dy / c;
+    const a = (arm * arm - stang * stang + c * c) / (2 * c);
+    const h = Math.sqrt(Math.max(0, arm * arm - a * a));
+    const B = { x: piv.x + a * ux - h * uy, y: piv.y + a * uy + h * ux };
+    return { B, beta: Math.atan2(B.y - piv.y, B.x - piv.x) };
+  };
+
+  const kinematiek = t => {
+    const pen1 = { x: AS.x + KRUK_R * Math.cos(t), y: AS.y + KRUK_R * Math.sin(t) };
+    const pen2 = { x: AS.x + KRUK_R * Math.cos(t + FASE2), y: AS.y + KRUK_R * Math.sin(t + FASE2) };
+    const k = scharnier(pen1, KAAK, KAAK_ARM, KAAK_STANG);
+    const s = scharnier(pen2, STAART, STAART_ARM, STAART_STANG);
+    return { pen1, pen2, kaak: k, staart: s };
+  };
+
+  // de standen waarin de leeuw getekend is
+  const RUST = kinematiek(Math.PI / 2);
+  const BETA_KAAK = RUST.kaak.beta, BETA_STAART = RUST.staart.beta;
+
+  const stand = t => {
+    const k = kinematiek(t);
+    k.hoekKaak = k.kaak.beta - BETA_KAAK;
+    k.hoekStaart = k.staart.beta - BETA_STAART;
+    return k;
+  };
+
+  /* ══════════ 2. Geometrie ══════════ */
+
+  let P = [], N = [], C = [], L = [];
+  const nul = () => { P = []; N = []; C = []; L = []; };
+
+  const normaal = (a, b, c) => {
+    const ux = b.x - a.x, uy = b.y - a.y, uz = b.z - a.z;
+    const vx = c.x - a.x, vy = c.y - a.y, vz = c.z - a.z;
+    const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    const len = Math.hypot(nx, ny, nz) || 1;
+    return [nx / len, ny / len, nz / len];
+  };
+  const driehoek = (a, b, c, kl) => {
+    const n = normaal(a, b, c);
+    for (const p of [a, b, c]) {
+      P.push(p.x, p.y, p.z); N.push(n[0], n[1], n[2]); C.push(kl[0], kl[1], kl[2]);
+    }
+  };
+  const lijn = (a, b) => L.push(a.x, a.y, a.z, b.x, b.y, b.z);
+
+  const vlak = (pts, kl, rand = true) => {
+    for (let i = 1; i < pts.length - 1; i++) driehoek(pts[0], pts[i], pts[i + 1], kl);
+    if (rand) for (let i = 0; i < pts.length; i++) lijn(pts[i], pts[(i + 1) % pts.length]);
+  };
+  const schijfVlak = (mid, ring, kl, rand = true) => {
+    for (let i = 0; i < ring.length; i++) {
+      driehoek(mid, ring[i], ring[(i + 1) % ring.length], kl);
+      if (rand) lijn(ring[i], ring[(i + 1) % ring.length]);
+    }
+  };
+
+  const balk = (x0, x1, y0, y1, z0, z1, kl) => {
+    const p = (x, y, z) => ({ x, y, z });
+    vlak([p(x0,y0,z1), p(x1,y0,z1), p(x1,y1,z1), p(x0,y1,z1)], kl);
+    vlak([p(x1,y0,z0), p(x0,y0,z0), p(x0,y1,z0), p(x1,y1,z0)], kl);
+    vlak([p(x0,y0,z0), p(x0,y0,z1), p(x0,y1,z1), p(x0,y1,z0)], kl);
+    vlak([p(x1,y0,z1), p(x1,y0,z0), p(x1,y1,z0), p(x1,y1,z1)], kl);
+    vlak([p(x0,y1,z1), p(x1,y1,z1), p(x1,y1,z0), p(x0,y1,z0)], kl);
+    vlak([p(x0,y0,z0), p(x1,y0,z0), p(x1,y0,z1), p(x0,y0,z1)], kl);
+  };
+
+  const staaf = (a, b, r, n, kl) => {
+    const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
+    const len = Math.hypot(dx, dy, dz) || 1;
+    const d = { x: dx / len, y: dy / len, z: dz / len };
+    const hulp = Math.abs(d.y) < 0.9 ? { x: 0, y: 1, z: 0 } : { x: 1, y: 0, z: 0 };
+    let u = { x: d.y * hulp.z - d.z * hulp.y, y: d.z * hulp.x - d.x * hulp.z, z: d.x * hulp.y - d.y * hulp.x };
+    const ul = Math.hypot(u.x, u.y, u.z) || 1;
+    u = { x: u.x / ul, y: u.y / ul, z: u.z / ul };
+    const v = { x: d.y * u.z - d.z * u.y, y: d.z * u.x - d.x * u.z, z: d.x * u.y - d.y * u.x };
+    const ring = (p, i) => {
+      const w = (i / n) * TAU, cw = Math.cos(w) * r, sw = Math.sin(w) * r;
+      return { x: p.x + cw * u.x + sw * v.x, y: p.y + cw * u.y + sw * v.y, z: p.z + cw * u.z + sw * v.z };
+    };
+    const A2 = [], B2 = [];
+    for (let i = 0; i < n; i++) {
+      const pa = ring(a, i), pb = ring(b, i), qa = ring(a, i + 1), qb = ring(b, i + 1);
+      vlak([pa, pb, qb, qa], kl, false);
+      A2.push(pa); B2.push(pb);
+    }
+    schijfVlak(a, A2.slice().reverse(), kl);
+    schijfVlak(b, B2, kl);
+  };
+
+  const ringZ = (z0, z1, cx, cy, rin, rout, n, kl) => {
+    const p = (r, i) => {
+      const u = (i / n) * TAU;
+      return { x: cx + r * Math.cos(u), y: cy + r * Math.sin(u) };
+    };
+    const q = (z, a) => ({ x: a.x, y: a.y, z });
+    for (let i = 0; i < n; i++) {
+      const bu = p(rout, i), bv = p(rout, i + 1), bi = p(rin, i), bj = p(rin, i + 1);
+      vlak([q(z0,bu), q(z1,bu), q(z1,bv), q(z0,bv)], kl, false);
+      vlak([q(z1,bi), q(z0,bi), q(z0,bj), q(z1,bj)], kl, false);
+      vlak([q(z0,bu), q(z0,bv), q(z0,bj), q(z0,bi)], kl, false);
+      vlak([q(z1,bv), q(z1,bu), q(z1,bi), q(z1,bj)], kl, false);
+      lijn(q(z0,bu), q(z0,bv)); lijn(q(z1,bu), q(z1,bv));
+      lijn(q(z0,bi), q(z0,bj)); lijn(q(z1,bi), q(z1,bj));
+    }
+  };
+
+  const plaatGat = (z0, z1, x0, x1, y0, y1, cx, cy, r, kl, n = 28) => {
+    const Pt = (z, x, y) => ({ x, y, z });
+    const hoeken = [[x0,y0],[x1,y0],[x1,y1],[x0,y1]];
+    const norm = a => (a % TAU + TAU) % TAU;
+    const alle = [...Array.from({ length: n }, (_, i) => norm(i / n * TAU)),
+                  ...hoeken.map(([x, y]) => norm(Math.atan2(y - cy, x - cx)))].sort((a, b) => a - b);
+    alle.push(alle[0] + TAU);
+    const rand = a => {
+      const dx = Math.cos(a), dy = Math.sin(a);
+      const tx = dx > 1e-9 ? (x1 - cx) / dx : dx < -1e-9 ? (x0 - cx) / dx : Infinity;
+      const ty = dy > 1e-9 ? (y1 - cy) / dy : dy < -1e-9 ? (y0 - cy) / dy : Infinity;
+      const s = Math.min(tx, ty);
+      return [cx + s * dx, cy + s * dy];
+    };
+    const gat = a => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    for (let i = 0; i < alle.length - 1; i++) {
+      const a = alle[i], b = alle[i + 1];
+      if (b - a < 1e-6) continue;
+      const [gx, gy] = gat(a), [hx, hy] = gat(b);
+      const [rx, ry] = rand(a), [sx, sy] = rand(b);
+      vlak([Pt(z1,gx,gy), Pt(z1,hx,hy), Pt(z1,sx,sy), Pt(z1,rx,ry)], kl, false);
+      vlak([Pt(z0,rx,ry), Pt(z0,sx,sy), Pt(z0,hx,hy), Pt(z0,gx,gy)], kl, false);
+      vlak([Pt(z0,gx,gy), Pt(z0,hx,hy), Pt(z1,hx,hy), Pt(z1,gx,gy)], kl, false);
+      lijn(Pt(z0,gx,gy), Pt(z0,hx,hy));
+      lijn(Pt(z1,gx,gy), Pt(z1,hx,hy));
+    }
+    for (let i = 0; i < 4; i++) {
+      const [a1, b1] = hoeken[i], [a2, b2] = hoeken[(i + 1) % 4];
+      vlak([Pt(z0,a1,b1), Pt(z0,a2,b2), Pt(z1,a2,b2), Pt(z1,a1,b1)], kl);
+    }
+  };
+
+  const draaiOm = (p, piv, hk) => {
+    if (!piv) return p;
+    const c = Math.cos(hk), s = Math.sin(hk);
+    const dx = p[0] - piv.x, dy = p[1] - piv.y;
+    return [piv.x + dx * c - dy * s, piv.y + dx * s + dy * c];
+  };
+
+  // een bolle vorm (kop, snuit, kaak)
+  const figuur = (vorm, z0, z1, kl, piv = null, hk = 0) => {
+    const pts = vorm.map(p => draaiOm(p, piv, hk));
+    const voor = pts.map(([x, y]) => ({ x, y, z: z1 }));
+    const achter = pts.map(([x, y]) => ({ x, y, z: z0 }));
+    for (let i = 0; i < pts.length; i++) {
+      const j = (i + 1) % pts.length;
+      vlak([voor[i], voor[j], achter[j], achter[i]], kl, false);
+      lijn(voor[i], voor[j]); lijn(achter[i], achter[j]);
+    }
+    vlak(voor, kl, false);
+    vlak(achter.slice().reverse(), kl, false);
+  };
+
+  // een stervormige vorm (de manen, de schijf): waaier vanuit het middelpunt
+  const ster = (ring, mid, z0, z1, kl, piv = null, hk = 0) => {
+    const pts = ring.map(p => draaiOm(p, piv, hk));
+    const m = draaiOm([mid.x, mid.y], piv, hk);
+    const voor = pts.map(([x, y]) => ({ x, y, z: z1 }));
+    const achter = pts.map(([x, y]) => ({ x, y, z: z0 }));
+    schijfVlak({ x: m[0], y: m[1], z: z1 }, voor, kl, false);
+    schijfVlak({ x: m[0], y: m[1], z: z0 }, achter.slice().reverse(), kl, false);
+    for (let i = 0; i < pts.length; i++) {
+      const j = (i + 1) % pts.length;
+      vlak([voor[i], voor[j], achter[j], achter[i]], kl, false);
+      lijn(voor[i], voor[j]); lijn(achter[i], achter[j]);
+    }
+  };
+
+  // een taps toelopende vorm: de staart
+  const veer = (mid, breed, z0, z1, kl, piv, hk) => {
+    const p = mid.map(m => draaiOm(m, piv, hk));
+    const links = [], rechts = [];
+    for (let i = 0; i < p.length; i++) {
+      const a = p[Math.max(i - 1, 0)], b = p[Math.min(i + 1, p.length - 1)];
+      const dx = b[0] - a[0], dy = b[1] - a[1];
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = -dy / len, ny = dx / len;
+      const w = breed[i] / 2;
+      links.push([p[i][0] + nx * w, p[i][1] + ny * w]);
+      rechts.push([p[i][0] - nx * w, p[i][1] - ny * w]);
+    }
+    const V = ([x, y], z) => ({ x, y, z });
+    for (let i = 0; i < p.length - 1; i++) {
+      vlak([V(links[i],z1), V(links[i+1],z1), V(rechts[i+1],z1), V(rechts[i],z1)], kl, false);
+      vlak([V(rechts[i],z0), V(rechts[i+1],z0), V(links[i+1],z0), V(links[i],z0)], kl, false);
+      vlak([V(links[i],z0), V(links[i+1],z0), V(links[i+1],z1), V(links[i],z1)], kl, false);
+      vlak([V(rechts[i+1],z0), V(rechts[i],z0), V(rechts[i],z1), V(rechts[i+1],z1)], kl, false);
+      lijn(V(links[i],z1), V(links[i+1],z1));   lijn(V(rechts[i],z1), V(rechts[i+1],z1));
+      lijn(V(links[i],z0), V(links[i+1],z0));   lijn(V(rechts[i],z0), V(rechts[i+1],z0));
+    }
+    const e = p.length - 1;
+    vlak([V(links[0],z0), V(rechts[0],z0), V(rechts[0],z1), V(links[0],z1)], kl);
+    vlak([V(rechts[e],z0), V(links[e],z0), V(links[e],z1), V(rechts[e],z1)], kl);
+  };
+
+  const rond = (cx, cy, r, n) =>
+    Array.from({ length: n }, (_, i) => [cx + r * Math.cos(i / n * TAU), cy + r * Math.sin(i / n * TAU)]);
+
+  // de manen: een uitgezaagde ster met ongelijke punten, zoals je hem uitzaagt
+  const manenRing = (cx, cy, rin, rout, n) => {
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * TAU, b = ((i + 0.5) / n) * TAU;
+      const r = rout * (0.82 + 0.22 * ((i * 7) % 5) / 4);   // ongelijke punten
+      pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+      pts.push([cx + rin * Math.cos(b), cy + rin * Math.sin(b)]);
+    }
+    return pts;
+  };
+
+  const MANEN_MID = { x: 6, y: 72 };
+  const MANEN = manenRing(MANEN_MID.x, MANEN_MID.y, 25, 40, 17);
+  const KOP = rond(8, 70, 20, 26);
+  const SNUIT = rond(28, 62, 11, 20);
+  const OOG = rond(20, 74, 2.2, 10);
+  const NEUS = rond(38, 62, 3, 10);
+  const ONDERKAAK = [[2, 60], [38, 56], [40, 46], [6, 50]];
+  const STAART_MID = [[-14, 42], [-25, 47], [-35, 54], [-43, 64]];
+  const STAART_BREED = [9, 8, 7, 6];
+  const KWAST = rond(-45, 68, 7, 14);
+  const SCHIJF = rond(AS.x, AS.y, SCHIJF_R, 32);
+
+  const bouw = t => {
+    nul();
+    const s = stand(t);
+
+    // ── voet en lijf
+    balk(-58, 58, 0, 6, -28, 28, KLEUR.hout);
+    plaatGat(Z_LIJF[0], Z_LIJF[1], -18, 46, 6, 44, AS.x, AS.y, GAT_AS, KLEUR.hout);
+
+    // ── de manen: één grote uitgezaagde plaat achter de kop
+    ster(MANEN, MANEN_MID, Z_MANEN[0], Z_MANEN[1], KLEUR.manen);
+
+    // ── de kop staat stil
+    figuur(KOP, Z_KOP[0], Z_KOP[1], KLEUR.rust);
+    figuur(SNUIT, Z_KOP[0], Z_KOP[1], KLEUR.rust);
+    figuur(OOG, Z_KOP[1], Z_KOP[1] + 1, KLEUR.oog);
+    figuur(NEUS, Z_KOP[1], Z_KOP[1] + 1, KLEUR.oog);
+
+    // ── de onderkaak en de staart draaien elk om hun eigen draaipunt
+    figuur(ONDERKAAK, Z_BEWEEG[0], Z_BEWEEG[1], KLEUR.rood, KAAK, s.hoekKaak);
+    veer(STAART_MID, STAART_BREED, Z_BEWEEG[0], Z_BEWEEG[1], KLEUR.rood, STAART, s.hoekStaart);
+    figuur(KWAST, Z_BEWEEG[0], Z_BEWEEG[1], KLEUR.rood, STAART, s.hoekStaart);
+
+    // ── de as en het lager
+    ringZ(Z_LIJF[0] - 1, Z_LIJF[1] + 1, AS.x, AS.y, LAGER_IN, LAGER_UIT, 20, KLEUR.lager);
+    staaf({ x: AS.x, y: AS.y, z: -20 }, { x: AS.x, y: AS.y, z: 24 }, AS_R, 16, KLEUR.as);
+
+    // ── de krukschijf, met de twee pennen erop
+    ster(SCHIJF, AS, Z_SCHIJF[0], Z_SCHIJF[1], KLEUR.schijf);
+    staaf({ x: s.pen1.x, y: s.pen1.y, z: Z_SCHIJF[0] }, { x: s.pen1.x, y: s.pen1.y, z: Z_STANG + 3 }, 1.8, 10, KLEUR.as);
+    staaf({ x: s.pen2.x, y: s.pen2.y, z: Z_SCHIJF[0] }, { x: s.pen2.x, y: s.pen2.y, z: Z_STANG + 3 }, 1.8, 10, KLEUR.as);
+
+    // ── de twee drijfstangen: dun staaldraad, zodat je ze niet verwart met de kaak zelf
+    staaf({ x: s.pen1.x, y: s.pen1.y, z: Z_STANG }, { x: s.kaak.B.x, y: s.kaak.B.y, z: Z_STANG }, 1.3, 10, KLEUR.rood);
+    staaf({ x: s.pen2.x, y: s.pen2.y, z: Z_STANG }, { x: s.staart.B.x, y: s.staart.B.y, z: Z_STANG }, 1.3, 10, KLEUR.rood);
+
+    // ── de pennen in de kaak en de staart, en de twee draaipunten
+    staaf({ x: s.kaak.B.x, y: s.kaak.B.y, z: Z_BEWEEG[0] }, { x: s.kaak.B.x, y: s.kaak.B.y, z: Z_STANG + 3 }, 1.8, 10, KLEUR.as);
+    staaf({ x: s.staart.B.x, y: s.staart.B.y, z: Z_BEWEEG[0] }, { x: s.staart.B.x, y: s.staart.B.y, z: Z_STANG + 3 }, 1.8, 10, KLEUR.as);
+    staaf({ x: KAAK.x, y: KAAK.y, z: Z_KOP[0] }, { x: KAAK.x, y: KAAK.y, z: Z_BEWEEG[1] + 3 }, 2, 12, KLEUR.as);
+    staaf({ x: STAART.x, y: STAART.y, z: Z_LIJF[0] }, { x: STAART.x, y: STAART.y, z: Z_BEWEEG[1] + 3 }, 2, 12, KLEUR.as);
+
+    // ── de slinger, vóór op de as
+    const sx = AS.x + 15 * Math.cos(t), sy = AS.y + 15 * Math.sin(t);
+    staaf({ x: AS.x, y: AS.y, z: 22 }, { x: sx, y: sy, z: 22 }, 3, 12, KLEUR.as);
+    staaf({ x: sx, y: sy, z: 22 }, { x: sx, y: sy, z: 36 }, 3.4, 14, KLEUR.as);
+
+    return s;
+  };
+
+  /* ══════════ 3. WebGL ══════════ */
+
+  const maakProgramma = (vsBron, fsBron) => {
+    const maak = (soort, bron) => {
+      const sh = gl.createShader(soort);
+      gl.shaderSource(sh, bron);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
+      return sh;
+    };
+    const p = gl.createProgram();
+    gl.attachShader(p, maak(gl.VERTEX_SHADER, vsBron));
+    gl.attachShader(p, maak(gl.FRAGMENT_SHADER, fsBron));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    return p;
+  };
+
+  const progVlak = maakProgramma(`
+    attribute vec3 aPos; attribute vec3 aNor; attribute vec3 aKleur;
+    uniform mat4 uMVP; uniform mat4 uMV;
+    varying vec3 vNor; varying vec3 vKleur;
+    void main(){
+      gl_Position = uMVP * vec4(aPos, 1.0);
+      vNor = mat3(uMV) * aNor;
+      vKleur = aKleur;
+    }`, `
+    precision mediump float;
+    varying vec3 vNor; varying vec3 vKleur;
+    void main(){
+      vec3 n = normalize(vNor);
+      if (!gl_FrontFacing) n = -n;
+      vec3 licht = normalize(vec3(-0.35, 0.78, 0.52));
+      float d = max(dot(n, licht), 0.0);
+      float f = 0.42 + 0.58 * d;
+      gl_FragColor = vec4(vKleur * f, 1.0);
+    }`);
+
+  const progLijn = maakProgramma(`
+    attribute vec3 aPos;
+    uniform mat4 uMVP;
+    void main(){ gl_Position = uMVP * vec4(aPos, 1.0); }`, `
+    precision mediump float;
+    void main(){ gl_FragColor = vec4(0.13, 0.15, 0.17, 0.5); }`);
+
+  const bufPos = gl.createBuffer(), bufNor = gl.createBuffer(),
+        bufKleur = gl.createBuffer(), bufLijn = gl.createBuffer();
+
+  const zetBuffer = (buf, data, plek, maat) => {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(plek);
+    gl.vertexAttribPointer(plek, maat, gl.FLOAT, false, 0, 0);
+  };
+
+  const maal = (a, b) => {
+    const r = new Float32Array(16);
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
+      let s = 0;
+      for (let k = 0; k < 4; k++) s += a[k * 4 + j] * b[i * 4 + k];
+      r[i * 4 + j] = s;
+    }
+    return r;
+  };
+  const perspectief = (fov, aspect, dichtbij, ver) => {
+    const f = 1 / Math.tan(fov / 2), nf = 1 / (dichtbij - ver);
+    return new Float32Array([
+      f / aspect, 0, 0, 0,  0, f, 0, 0,
+      0, 0, (ver + dichtbij) * nf, -1,  0, 0, 2 * ver * dichtbij * nf, 0,
+    ]);
+  };
+  const verschuif = (x, y, z) => new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1]);
+  const draaiOmY = a => {
+    const c = Math.cos(a), s = Math.sin(a);
+    return new Float32Array([c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1]);
+  };
+  const draaiOmX = a => {
+    const c = Math.cos(a), s = Math.sin(a);
+    return new Float32Array([1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]);
+  };
+
+  let hoekY = -0.26, hoekX = 0.08;
+  const AFSTAND = 250;
+  const MIKPUNT = { x: 2, y: 56, z: 0 };
+  let W = 1000, H = 620, dpr = 1, MVP = null, MV = null;
+
+  const camera = () => {
+    MV = maal(verschuif(0, 0, -AFSTAND),
+         maal(draaiOmX(hoekX),
+         maal(draaiOmY(hoekY), verschuif(-MIKPUNT.x, -MIKPUNT.y, -MIKPUNT.z))));
+    MVP = maal(perspectief(36 * Math.PI / 180, W / H, 20, 1400), MV);
+  };
+
+  const naarScherm = p => {
+    const x = MVP[0]*p.x + MVP[4]*p.y + MVP[8]*p.z + MVP[12];
+    const y = MVP[1]*p.x + MVP[5]*p.y + MVP[9]*p.z + MVP[13];
+    const w = MVP[3]*p.x + MVP[7]*p.y + MVP[11]*p.z + MVP[15];
+    return { x: (x / w * 0.5 + 0.5) * W, y: (1 - (y / w * 0.5 + 0.5)) * H };
+  };
+
+  const teken = () => {
+    camera();
+    gl.viewport(0, 0, doek.width, doek.height);
+    gl.clearColor(1, 1, 1, 1);
+    gl.enable(gl.DEPTH_TEST);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.useProgram(progVlak);
+    gl.enable(gl.POLYGON_OFFSET_FILL);
+    gl.polygonOffset(1, 1);
+    gl.uniformMatrix4fv(gl.getUniformLocation(progVlak, 'uMVP'), false, MVP);
+    gl.uniformMatrix4fv(gl.getUniformLocation(progVlak, 'uMV'), false, MV);
+    zetBuffer(bufPos, new Float32Array(P), gl.getAttribLocation(progVlak, 'aPos'), 3);
+    zetBuffer(bufNor, new Float32Array(N), gl.getAttribLocation(progVlak, 'aNor'), 3);
+    zetBuffer(bufKleur, new Float32Array(C), gl.getAttribLocation(progVlak, 'aKleur'), 3);
+    gl.drawArrays(gl.TRIANGLES, 0, P.length / 3);
+    gl.disable(gl.POLYGON_OFFSET_FILL);
+
+    gl.useProgram(progLijn);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.uniformMatrix4fv(gl.getUniformLocation(progLijn, 'uMVP'), false, MVP);
+    zetBuffer(bufLijn, new Float32Array(L), gl.getAttribLocation(progLijn, 'aPos'), 3);
+    gl.drawArrays(gl.LINES, 0, L.length / 3);
+    gl.disable(gl.BLEND);
+  };
+
+  const NAAM_KLEUR = { blauw: '#1e5f8c', rood: '#c43b2e', geel: '#8a5f0e' };
+  const tekenNamen = (s, aan) => {
+    ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx2d.clearRect(0, 0, W, H);
+    if (!aan) return;
+    const n = [
+      { p: { x: AS.x, y: AS.y - SCHIJF_R, z: Z_SCHIJF[1] }, uit: [64, 42], txt: 'krukschijf', kl: 'blauw' },
+      { p: { x: s.pen1.x, y: s.pen1.y, z: Z_STANG }, uit: [58, -46], txt: 'pen 1', kl: 'blauw' },
+      { p: { x: s.pen2.x, y: s.pen2.y, z: Z_STANG }, uit: [72, 6], txt: 'pen 2', kl: 'blauw' },
+      { p: { x: (s.pen1.x + s.kaak.B.x) / 2, y: (s.pen1.y + s.kaak.B.y) / 2, z: Z_STANG }, uit: [70, -18], txt: 'naar de bek', kl: 'rood' },
+      { p: { x: (s.pen2.x + s.staart.B.x) / 2, y: (s.pen2.y + s.staart.B.y) / 2, z: Z_STANG }, uit: [-52, 44], txt: 'naar de staart', kl: 'rood' },
+      { p: { x: KAAK.x, y: KAAK.y, z: Z_BEWEEG[1] }, uit: [-70, -30], txt: 'draaipunt bek', kl: 'blauw' },
+      { p: { x: STAART.x, y: STAART.y, z: Z_BEWEEG[1] }, uit: [-64, 30], txt: 'draaipunt staart', kl: 'blauw' },
+      { p: { x: AS.x, y: AS.y, z: Z_LIJF[1] }, uit: [78, 30], txt: 'lager', kl: 'geel' },
+    ];
+    ctx2d.font = '600 13px "Space Mono", monospace';
+    for (const l of n) {
+      const p = naarScherm(l.p);
+      const tx = p.x + l.uit[0], ty = p.y + l.uit[1];
+      ctx2d.strokeStyle = NAAM_KLEUR[l.kl];
+      ctx2d.lineWidth = 1;
+      ctx2d.beginPath(); ctx2d.moveTo(p.x, p.y); ctx2d.lineTo(tx, ty); ctx2d.stroke();
+      ctx2d.beginPath(); ctx2d.arc(p.x, p.y, 2.6, 0, TAU);
+      ctx2d.fillStyle = NAAM_KLEUR[l.kl]; ctx2d.fill();
+      const rechts = l.uit[0] > 0;
+      ctx2d.textAlign = rechts ? 'left' : 'right';
+      const bw = ctx2d.measureText(l.txt).width;
+      ctx2d.fillStyle = 'rgba(255,255,255,.86)';
+      ctx2d.fillRect(rechts ? tx + 3 : tx - bw - 7, ty - 13, bw + 8, 17);
+      ctx2d.fillStyle = NAAM_KLEUR[l.kl];
+      ctx2d.fillText(l.txt, rechts ? tx + 6 : tx - 4, ty);
+    }
+  };
+
+  /* ══════════ 4. Bediening ══════════ */
+
+  const knop = document.getElementById('knop');
+  const slinger = document.getElementById('slinger');
+  const hoek = document.getElementById('hoek');
+  const namenKnop = document.getElementById('namenknop');
+
+  const stil = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let theta = 0, draait = !stil, vorige = null, toonNamen = true;
+
+  const meet = () => {
+    const b = doek.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.round(b.width); H = Math.round(b.width * 0.62);
+    for (const c of [doek, naamDoek]) {
+      c.width = W * dpr; c.height = H * dpr;
+      c.style.height = H + 'px';
+    }
+  };
+
+  const beeld = () => {
+    const s = bouw(theta);
+    teken();
+    tekenNamen(s, toonNamen);
+    const g = Math.round(((theta % TAU) + TAU) % TAU * 180 / Math.PI);
+    slinger.value = g;
+    hoek.textContent = g + '°';
+  };
+
+  const zet = aan => {
+    draait = aan;
+    knop.textContent = aan ? 'Pauze' : 'Draaien';
+    knop.setAttribute('aria-pressed', String(aan));
+  };
+
+  knop.addEventListener('click', () => zet(!draait));
+  slinger.addEventListener('input', () => {
+    zet(false);
+    theta = slinger.value * Math.PI / 180;
+    beeld();
+  });
+  namenKnop.addEventListener('click', () => {
+    toonNamen = !toonNamen;
+    namenKnop.textContent = toonNamen ? 'Namen uit' : 'Namen aan';
+    namenKnop.setAttribute('aria-pressed', String(toonNamen));
+    beeld();
+  });
+
+  let sleept = false, lx = 0, ly = 0;
+  doek.addEventListener('pointerdown', e => {
+    sleept = true; lx = e.clientX; ly = e.clientY;
+    doek.setPointerCapture(e.pointerId);
+  });
+  doek.addEventListener('pointermove', e => {
+    if (!sleept) return;
+    hoekY += (e.clientX - lx) * 0.008;
+    hoekX = Math.max(-0.3, Math.min(1.0, hoekX + (e.clientY - ly) * 0.006));
+    lx = e.clientX; ly = e.clientY;
+    if (!draait) beeld();
+  });
+  const los = () => { sleept = false; };
+  doek.addEventListener('pointerup', los);
+  doek.addEventListener('pointercancel', los);
+
+  doek.tabIndex = 0;
+  doek.addEventListener('keydown', e => {
+    const k = { ArrowLeft: [-.1, 0], ArrowRight: [.1, 0], ArrowUp: [0, -.08], ArrowDown: [0, .08] }[e.key];
+    if (!k) return;
+    e.preventDefault();
+    hoekY += k[0];
+    hoekX = Math.max(-0.3, Math.min(1.0, hoekX + k[1]));
+    if (!draait) beeld();
+  });
+
+  const frame = nu => {
+    requestAnimationFrame(frame);   // eerst het volgende beeldje aanvragen: een fout in
+                                    // het tekenen mag de animatie niet stilzetten
+    if (vorige === null) vorige = nu;
+    const dt = Math.min((nu - vorige) / 1000, .05);
+    vorige = nu;
+    if (draait) theta += dt * 1.0;
+    beeld();
+  };
+
+  window.addEventListener('resize', () => { meet(); beeld(); });
+  meet();
+  zet(draait);
+  beeld();
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>

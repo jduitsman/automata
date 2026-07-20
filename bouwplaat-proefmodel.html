@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Bouwplaat proefmodel — de excenter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#22262b; --steel:#767e87; --blue:#1e5f8c; --red:#c43b2e; --line:#d7d3ca;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:#b9b1a1;color:var(--ink);
+    font-family:'Source Serif 4',Georgia,serif;font-size:10.5pt;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .blad{
+    width:210mm;height:297mm;background:#fff;margin:10mm auto;padding:10mm;
+    box-shadow:0 8px 26px rgba(0,0,0,.25);
+    position:relative;overflow:hidden;
+  }
+  h1,h2,h3{font-family:'Archivo',system-ui,sans-serif;font-weight:700;line-height:1.15;margin:0;}
+  p{margin:0 0 .6em;}
+
+  .kop{border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:10px;
+       display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .kop h2{font-size:13pt;text-transform:uppercase;letter-spacing:.01em;}
+  .kop .blad-nr{font-family:'Space Mono',monospace;font-size:7.5pt;letter-spacing:.14em;
+                text-transform:uppercase;color:var(--steel);}
+
+  svg{display:block;}
+  .voet{position:absolute;left:10mm;right:10mm;bottom:6mm;
+        display:flex;justify-content:space-between;align-items:flex-end;gap:10px;
+        font-family:'Space Mono',monospace;font-size:7pt;letter-spacing:.1em;
+        text-transform:uppercase;color:var(--steel);}
+
+  /* ---- blad 1: instructies ---- */
+  h1{font-size:22pt;text-transform:uppercase;margin-bottom:2px;}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:7.5pt;letter-spacing:.16em;
+           text-transform:uppercase;color:var(--blue);}
+  .intro{font-style:italic;color:var(--steel);max-width:62ch;margin:6px 0 14px;}
+  .sec{font-family:'Archivo',sans-serif;font-weight:700;font-size:9pt;letter-spacing:.06em;
+       text-transform:uppercase;color:var(--blue);border-top:1px solid var(--line);
+       padding-top:6px;margin:12px 0 6px;}
+  table{border-collapse:collapse;width:100%;font-size:9pt;}
+  th,td{text-align:left;padding:3px 6px 3px 0;vertical-align:top;
+        border-bottom:1px dotted var(--line);}
+  th{font-family:'Space Mono',monospace;font-size:7pt;letter-spacing:.1em;
+     text-transform:uppercase;color:var(--steel);font-weight:400;}
+  td.nr{font-family:'Space Mono',monospace;font-weight:700;color:var(--blue);width:26px;}
+  td.aantal{font-family:'Space Mono',monospace;width:34px;}
+  td.maat{font-family:'Space Mono',monospace;font-size:8pt;color:var(--steel);width:96px;}
+  ol.stap{margin:0;padding-left:0;list-style:none;counter-reset:s;}
+  ol.stap li{counter-increment:s;position:relative;padding:3px 0 3px 24px;font-size:9.5pt;}
+  ol.stap li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:4px;
+    font-family:'Space Mono',monospace;font-size:7.5pt;font-weight:700;color:var(--red);}
+  .waarschuw{border:1px solid var(--red);border-left:4px solid var(--red);
+             padding:8px 10px;margin-top:10px;font-size:9pt;background:#fdf4f3;}
+  .waarschuw b{font-family:'Archivo',sans-serif;}
+  .twee{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+  @media print{
+    @page{size:A4;margin:0;}
+    body{background:#fff;}
+    .blad{margin:0;box-shadow:none;page-break-after:always;}
+    .blad:last-child{page-break-after:auto;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ BLAD 1 — INSTRUCTIES ══════════ -->
+<section class="blad">
+  <div class="eyebrow">Automata · proefmodel · les 2</div>
+  <h1>Bouwplaat: de excenter</h1>
+  <p class="intro">Print deze bladen op ware grootte, plak ze op karton, knip de onderdelen uit en zet ze in elkaar. Je bouwt het proefmodel waarmee je je beweging test vóórdat je hout gaat zagen.</p>
+
+  <div class="waarschuw">
+    <b>Print op ware grootte.</b> Zet in het printvenster de schaal op <b>100 %</b> (niet "passend maken"). Controleer daarna met een liniaal de controlelat onderaan elk blad: die moet precies 100 mm zijn. Klopt hij niet, dan klopt je hele mechaniek straks niet.
+  </div>
+
+  <div class="sec">Wat je uitknipt (blad 2 t/m 5)</div>
+  <table>
+    <thead><tr><th>Nr</th><th>Onderdeel</th><th>Aantal</th><th>Maat</th><th>Waarvoor</th></tr></thead>
+    <tbody>
+      <tr><td class="nr">1</td><td>Zijwand</td><td class="aantal">2×</td><td class="maat">92 × 150</td><td>Draagt de as. Het gat zit precies in het midden, dus links en rechts zijn hetzelfde.</td></tr>
+      <tr><td class="nr">2</td><td>Achterwand</td><td class="aantal">1×</td><td class="maat">100 × 150</td><td>Houdt de kist haaks. De voorkant blijft open, zodat je naar binnen kunt kijken.</td></tr>
+      <tr><td class="nr">3</td><td>Bodem</td><td class="aantal">1×</td><td class="maat">106 × 92</td><td>Hierop komen de wanden te staan.</td></tr>
+      <tr><td class="nr">4</td><td>Deksel</td><td class="aantal">1×</td><td class="maat">106 × 92</td><td>Met de geleidesleuf. Hier komt de duwstang doorheen.</td></tr>
+      <tr><td class="nr">5</td><td>Tussenschot</td><td class="aantal">1×</td><td class="maat">100 × 30</td><td>Tweede geleiding, hoog in de kist. Zonder dit schot gaat je duwstang wiebelen.</td></tr>
+      <tr><td class="nr">6</td><td>Excenterschijf</td><td class="aantal">2×</td><td class="maat">Ø 46</td><td>Het asgat zit <b>8 mm uit het midden</b>. Dít gat bepaalt je hele slag.</td></tr>
+      <tr><td class="nr">7</td><td>Keerschijf</td><td class="aantal">2×</td><td class="maat">Ø 56</td><td>Groter dan de schijf. Sluit de band op, zodat die er niet af kan glijden.</td></tr>
+      <tr><td class="nr">8</td><td>Excenterband</td><td class="aantal">2×</td><td class="maat">gat Ø 48</td><td>Glijdt om de schijf en volgt het verschoven middelpunt. De arm gaat naar de duwstang.</td></tr>
+      <tr><td class="nr">9</td><td>Duwstang</td><td class="aantal">1×</td><td class="maat">15 × 115</td><td>Gaat recht op en neer door de sleuven. Een strip in een sleuf kan niet draaien.</td></tr>
+      <tr><td class="nr">10</td><td>Dierplaatje</td><td class="aantal">2×</td><td class="maat">50 × 35</td><td>Schuif je over de duwstang. Hierop komt straks jouw dier.</td></tr>
+      <tr><td class="nr">11</td><td>Slingerarm</td><td class="aantal">2×</td><td class="maat">60 × 16</td><td>Twee lagen op elkaar. Hiermee draai je aan de as.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="twee">
+    <div>
+      <div class="sec">Wat je zelf meeneemt</div>
+      <table>
+        <tbody>
+          <tr><td>Karton, 3 mm</td><td class="maat">grijskarton of dubbelgolf</td></tr>
+          <tr><td>Satéprikker Ø 3 mm</td><td class="maat">1× as (145 mm) + 1× handvat (45 mm)</td></tr>
+          <tr><td>Rietje</td><td class="maat">2× 12 mm (lagers) + 2× 8 mm (afstandhouders)</td></tr>
+          <tr><td>Splitpen Ø 3 mm</td><td class="maat">1× (het scharnier)</td></tr>
+          <tr><td>Lijm</td><td class="maat">lijmstift + lijmpistool</td></tr>
+          <tr><td>Prikpen en schaar</td><td class="maat">of een snijmes op een snijmat</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="sec">Wat je ermee gaat meten</div>
+      <p style="font-size:9.5pt">Het asgat in de schijf zit <b>8 mm uit het midden</b>. Dat heet de <b>excentriciteit</b>.</p>
+      <p style="font-family:'Space Mono',monospace;font-size:10pt;color:var(--blue);font-weight:700">
+        slag = 2 × excentriciteit = 16 mm</p>
+      <p style="font-size:9.5pt">Draai aan de slinger en meet met een liniaal hoe ver je duwstang op en neer gaat. Er hoort 16 mm uit te komen. Komt dat niet uit, dan zit je asgat niet goed.</p>
+      <p style="font-size:9.5pt">Wil je een grotere slag voor jouw dier? Prik het asgat verder uit het midden. Een kleinere slag? Dichter bij het midden.</p>
+    </div>
+  </div>
+
+  <div class="sec">Zo zet je hem in elkaar</div>
+  <ol class="stap">
+    <li>Plak de bladen met een lijmstift op karton. Laat ze goed drogen en knip daarna pas uit.</li>
+    <li>Prik alle gaten met een prikpen door de gemarkeerde middelpunten. Maak ze daarna op maat.</li>
+    <li>Lijm de twee <b>excenterschijven</b> (6) op elkaar, met de asgaten precies over elkaar. Doe hetzelfde met de twee <b>keerschijven</b> (7) en met de twee <b>excenterbanden</b> (8).</li>
+    <li>Schuif de band (8) om de schijf (6). Hij moet los ronddraaien. Lijm nu aan beide kanten een keerschijf (7) op de schijf — <b>niet aan de band</b>. De band zit nu opgesloten en kan er niet meer af.</li>
+    <li>Zet de zijwanden (1) en de achterwand (2) op de bodem (3). Duw twee stukjes rietje van 12 mm in de asgaten: dat zijn je lagers.</li>
+    <li>Schuif de as door het linkerlager, dan door de excenterschijf, dan door het rechterlager. Zet de schijf met twee stukjes rietje van 8 mm op zijn plek, midden in de kist.</li>
+    <li>Verbind de arm van de band met de <b>duwstang</b> (9) met de splitpen. Buig de splitpen niet te strak: het moet een scharnier blijven.</li>
+    <li>Lijm het <b>tussenschot</b> (5) tussen de zijwanden, met de duwstang al door de sleuf. Zet daarna het <b>deksel</b> (4) erop, ook met de duwstang door de sleuf.</li>
+    <li>Lijm de twee <b>slingerarmen</b> (11) op elkaar en zet ze op het uiteinde van de as. Steek het korte stokje in het buitenste gat: dat is je handvat.</li>
+    <li>Draai langzaam een hele slag rond. Hapert hij? Zoek de plek waar het schuurt en maak die ruimer. <b>Schuif de dierplaatjes</b> (10) pas over de duwstang als alles soepel rondloopt.</li>
+  </ol>
+
+  <div class="voet">
+    <span>Automata — Techniek havo 2</span>
+    <span>Bouwplaat proefmodel · blad 1 van 5</span>
+  </div>
+</section>
+
+<!-- de bladen met onderdelen worden hieronder getekend -->
+<div id="bladen"></div>
+
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const BLAD_B = 190, BLAD_H = 272;   // tekengebied in mm (A4 min de marges)
+
+  /* ══════════ maten van het proefmodel (mm) ══════════ */
+  const K = 3;                 // dikte karton
+  const IN_B = 100;            // inwendige breedte (tussen de zijwanden)
+  const IN_H = 150;            // inwendige hoogte
+  const W_DIEP = 92;           // diepte van de zijwand = diepte van de kist
+  const AS_H = 50;             // hoogte van de as boven de bodem
+  const AS_Z = W_DIEP / 2;     // de as zit precies midden in de diepte,
+                               // daarom zijn beide zijwanden hetzelfde
+
+  const EXC = 8;               // excentriciteit: asgat 8 mm uit het hart van de schijf
+  const SCHIJF_D = 46;         // Ø excenterschijf
+  const KEER_D = 56;           // Ø keerschijf: groter, sluit de band op
+  const BAND_GAT = 48;         // gat in de band: 1 mm speling om de schijf
+  const BAND_BUITEN = 64;      // buitenmaat van de ring
+  const ARM = 50;              // van het schijfmiddelpunt tot de scharnierpen
+  const ARM_B = 14;            // breedte van de arm
+
+  const STANG_B = 15, STANG_L = 115;   // duwstang
+  const SLEUF_B = 4, SLEUF_L = 17;     // geleidesleuf: 1 mm ruimer dan de strip
+  const STANG_X = 54.5;        // hart van de duwstang, gemeten vanaf de linker binnenwand
+  const GAT_AS = 7;            // gat in de zijwand: hier gaat het rietje (het lager) in
+  const GAT_PEN = 4;           // gat voor de splitpen
+  const GAT_PRIK = 4;          // gat voor de satéprikker
+
+  /* ══════════ tekengereedschap ══════════ */
+  const el = (ouder, tag, attrs) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    ouder.appendChild(n);
+    return n;
+  };
+  const groep = (svg, x, y) => el(svg, 'g', { transform: `translate(${x} ${y})` });
+
+  const SNIJ = { fill: '#fff', stroke: '#22262b', 'stroke-width': .4 };
+  const snijRechthoek = (g, w, h) => el(g, 'rect', { x: 0, y: 0, width: w, height: h, ...SNIJ });
+  const snijCirkel = (g, cx, cy, r) => el(g, 'circle', { cx, cy, r, ...SNIJ });
+
+  // een gat: middelpunt aankruisen (daar prik je), plus de cirkel op ware maat
+  const gat = (g, cx, cy, d, txt) => {
+    el(g, 'circle', { cx, cy, r: d / 2, fill: 'none', stroke: '#1e5f8c', 'stroke-width': .35 });
+    el(g, 'path', {                       // kruisje op het middelpunt: hier prik je
+      d: `M${cx - 2.6} ${cy} H${cx + 2.6} M${cx} ${cy - 2.6} V${cy + 2.6}`,
+      stroke: '#1e5f8c', 'stroke-width': .35, fill: 'none',
+    });
+    if (txt) {
+      const t = el(g, 'text', {
+        x: cx + d / 2 + 2, y: cy - 1.6, fill: '#1e5f8c',
+        'font-family': 'Space Mono, monospace', 'font-size': 3,
+      });
+      t.textContent = txt;
+    }
+  };
+
+  // een sleuf: rechthoekig gat, want daarin kan de duwstang niet draaien
+  const sleuf = (g, cx, cy, b, l, txt) => {
+    el(g, 'rect', {
+      x: cx - b / 2, y: cy - l / 2, width: b, height: l,
+      fill: 'none', stroke: '#1e5f8c', 'stroke-width': .35,
+    });
+    if (txt) {
+      const t = el(g, 'text', {
+        x: cx + b / 2 + 2.5, y: cy + 1, fill: '#1e5f8c',
+        'font-family': 'Space Mono, monospace', 'font-size': 3,
+      });
+      t.textContent = txt;
+    }
+  };
+
+  const naam = (g, x, y, nr, txt, sub) => {
+    const a = el(g, 'text', { x, y, fill: '#22262b', 'font-family': 'Archivo, sans-serif', 'font-size': 4.4, 'font-weight': 700 });
+    a.textContent = nr + '  ' + txt;
+    if (sub) {
+      const b = el(g, 'text', { x, y: y + 4.4, fill: '#767e87', 'font-family': 'Space Mono, monospace', 'font-size': 3.1 });
+      b.textContent = sub;
+    }
+  };
+
+  // maatlijn met pijlen: laat de leerling zien wat hij meet
+  const maat = (g, x1, y1, x2, y2, txt, kleur = '#c43b2e') => {
+    el(g, 'line', { x1, y1, x2, y2, stroke: kleur, 'stroke-width': .3, 'stroke-dasharray': '2 1.4' });
+    const hoek = Math.atan2(y2 - y1, x2 - x1);
+    for (const [px, py, s] of [[x1, y1, 1], [x2, y2, -1]]) {
+      const a = hoek + s * 0.4, b = hoek - s * 0.4;
+      el(g, 'path', {
+        d: `M${px + Math.cos(a) * 2.2 * s} ${py + Math.sin(a) * 2.2 * s} L${px} ${py} L${px + Math.cos(b) * 2.2 * s} ${py + Math.sin(b) * 2.2 * s}`,
+        stroke: kleur, 'stroke-width': .3, fill: 'none',
+      });
+    }
+    const t = el(g, 'text', {
+      x: (x1 + x2) / 2 + 2, y: (y1 + y2) / 2 - 1.4, fill: kleur,
+      'font-family': 'Space Mono, monospace', 'font-size': 3.1, 'font-weight': 700,
+    });
+    t.textContent = txt;
+  };
+
+  // controlelat: hiermee check je of je op ware grootte hebt geprint
+  const controlelat = svg => {
+    const g = groep(svg, 0, BLAD_H - 6);
+    el(g, 'line', { x1: 0, y1: 4, x2: 100, y2: 4, stroke: '#22262b', 'stroke-width': .4 });
+    for (let i = 0; i <= 100; i += 10) {
+      el(g, 'line', { x1: i, y1: 4, x2: i, y2: i % 50 === 0 ? 0 : 1.8, stroke: '#22262b', 'stroke-width': .4 });
+    }
+    const t = el(g, 'text', { x: 104, y: 4, fill: '#c43b2e', 'font-family': 'Space Mono, monospace', 'font-size': 3.2, 'font-weight': 700 });
+    t.textContent = 'CONTROLE: deze lat is precies 100 mm';
+  };
+
+  /* ══════════ de bladen ══════════ */
+  const bladen = document.getElementById('bladen');
+  const maakBlad = (titel, nr) => {
+    const s = document.createElement('section');
+    s.className = 'blad';
+    s.innerHTML = `<div class="kop"><h2>${titel}</h2>
+      <span class="blad-nr">bouwplaat proefmodel · blad ${nr} van 5</span></div>`;
+    const svg = el(s, 'svg', {
+      width: BLAD_B + 'mm', height: BLAD_H + 'mm',
+      viewBox: `0 0 ${BLAD_B} ${BLAD_H}`,
+    });
+    bladen.appendChild(s);
+    controlelat(svg);
+    return svg;
+  };
+
+  /* ---- blad 2: de twee zijwanden ---- */
+  {
+    const svg = maakBlad('Blad 2 — Zijwanden', 2);
+    for (let i = 0; i < 2; i++) {
+      const g = groep(svg, 2 + i * (W_DIEP + 6), 14);
+      snijRechthoek(g, W_DIEP, IN_H);
+      // het asgat zit midden in de diepte: daarom zijn links en rechts identiek
+      gat(g, AS_Z, IN_H - AS_H, GAT_AS, 'Ø7');
+      maat(g, 0, IN_H - AS_H, AS_Z, IN_H - AS_H, '46');
+      maat(g, AS_Z, IN_H, AS_Z, IN_H - AS_H, '50');
+      naam(g, 3, 8, '1', 'ZIJWAND  2×', '92 × 150 mm · gat voor het rietje (lager)');
+      const t = el(g, 'text', { x: 3, y: IN_H - 4, fill: '#767e87', 'font-family': 'Space Mono, monospace', 'font-size': 3 });
+      t.textContent = 'onderkant — hier op de bodem';
+    }
+  }
+
+  /* ---- blad 3: achterwand en bodem ---- */
+  {
+    const svg = maakBlad('Blad 3 — Achterwand en bodem', 3);
+    const a = groep(svg, 2, 14);
+    snijRechthoek(a, IN_B, IN_H);
+    naam(a, 3, 8, '2', 'ACHTERWAND  1×', '100 × 150 mm · past tussen de zijwanden');
+
+    const b = groep(svg, 2, 14 + IN_H + 10);
+    snijRechthoek(b, IN_B + 2 * K, W_DIEP);
+    naam(b, 3, 8, '3', 'BODEM  1×', '106 × 92 mm · hierop staan de wanden');
+  }
+
+  /* ---- blad 4: deksel, tussenschot, duwstang, dierplaatjes, slingerarmen ---- */
+  {
+    const svg = maakBlad('Blad 4 — Deksel, geleiding en duwstang', 4);
+
+    // deksel: de sleuf ligt boven de as (midden in de diepte) en naast de schijf
+    const d = groep(svg, 2, 14);
+    snijRechthoek(d, IN_B + 2 * K, W_DIEP);
+    sleuf(d, K + STANG_X, W_DIEP / 2, SLEUF_B, SLEUF_L, '4 × 17');
+    maat(d, 0, W_DIEP / 2, K + STANG_X, W_DIEP / 2, '57,5');
+    naam(d, 3, 8, '4', 'DEKSEL  1×', '106 × 92 mm · met geleidesleuf');
+
+    // tussenschot: dezelfde sleuf, hoog in de kist
+    const s = groep(svg, 2, 118);
+    snijRechthoek(s, IN_B, 30);
+    sleuf(s, STANG_X, 15, SLEUF_B, SLEUF_L, '4 × 17');
+    naam(s, 3, 8, '5', 'TUSSENSCHOT  1×', '100 × 30 mm · tweede geleiding, op 125 mm hoogte');
+
+    // duwstang: een strip, want die kan in een sleuf niet draaien
+    const p = groep(svg, 2, 164);
+    naam(p, 20, -7, '9', 'DUWSTANG  1×', '15 × 115 mm · gat voor de splitpen op 8 mm van het uiteinde');
+    snijRechthoek(p, STANG_L, STANG_B);
+    gat(p, 8, STANG_B / 2, GAT_PEN, '');
+
+    // dierplaatjes: schuif je over de duwstang
+    for (let i = 0; i < 2; i++) {
+      const q = groep(svg, 118, 14 + i * 44);
+      snijRechthoek(q, 50, 35);
+      sleuf(q, 25, 22, K + .5, STANG_B + .5, '');
+      naam(q, 3, 8, '10', 'DIERPLAATJE  2×', '50 × 35 mm · sleuf voor de duwstang');
+    }
+
+    // slingerarmen: twee lagen op elkaar gelijmd
+    for (let i = 0; i < 2; i++) {
+      const r = groep(svg, 118, 112 + i * 32);
+      naam(r, 0, -8, '11', 'SLINGERARM  2×', '60 × 16 mm · hart op hart 42 mm');
+      snijRechthoek(r, 60, 16);
+      gat(r, 9, 8, GAT_PRIK, '');
+      gat(r, 51, 8, GAT_PRIK, '');
+    }
+  }
+
+  /* ---- blad 5: het hart van de excenter ---- */
+  {
+    const svg = maakBlad('Blad 5 — De excenter', 5);
+
+    // de excenterband: ring om de schijf, met een arm naar de duwstang
+    const bandPad = () => {
+      const R = BAND_BUITEN / 2, w = ARM_B / 2;
+      const y0 = -Math.sqrt(R * R - w * w);          // waar de arm de ring raakt
+      const pts = [[w, y0], [w, -ARM]];
+      for (let i = 0; i <= 24; i++) {                // ronde kop om de scharnierpen
+        const a = -(i / 24) * Math.PI;
+        pts.push([w * Math.cos(a) + 0, -ARM + w * Math.sin(a)]);
+      }
+      pts.push([-w, y0]);
+      const f1 = Math.atan2(y0, -w), f2 = Math.atan2(y0, w) - 2 * Math.PI;
+      for (let i = 0; i <= 80; i++) {                // de ring, de lange weg rond
+        const a = f1 + (f2 - f1) * (i / 80);
+        pts.push([R * Math.cos(a), R * Math.sin(a)]);
+      }
+      return 'M' + pts.map(p => p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' L') + ' Z';
+    };
+
+    for (let i = 0; i < 2; i++) {
+      const g = groep(svg, 34 + i * 78, 70);
+      el(g, 'path', { d: bandPad(), ...SNIJ });
+      el(g, 'circle', { cx: 0, cy: 0, r: BAND_GAT / 2, fill: '#fff', stroke: '#22262b', 'stroke-width': .4 });
+      gat(g, 0, -ARM, GAT_PEN, 'Ø4');
+      el(g, 'circle', { cx: 0, cy: 0, r: .8, fill: '#1e5f8c' });
+      maat(g, 0, 0, 0, -ARM, '50');
+      naam(g, -30, 42, '8', 'EXCENTERBAND  2×', 'gat Ø48 · glijdt om de schijf');
+    }
+
+    // de keerschijven: groter dan de schijf, sluiten de band op
+    for (let i = 0; i < 2; i++) {
+      const g = groep(svg, 30 + i * 62, 160);
+      naam(g, -28, -34, '7', 'KEERSCHIJF  2×', 'Ø56 · asgat 8 mm uit het midden');
+      snijCirkel(g, 0, 0, KEER_D / 2);
+      el(g, 'circle', { cx: 0, cy: 0, r: .8, fill: '#767e87' });           // hart van de schijf
+      gat(g, 0, -EXC, GAT_PRIK, 'Ø4');                                      // asgat: uit het hart!
+      maat(g, 0, 0, 0, -EXC, '8');
+    }
+
+    // de excenterschijven: hierop draait de band
+    for (let i = 0; i < 2; i++) {
+      const g = groep(svg, 30 + i * 62, 234);
+      naam(g, -24, -30, '6', 'EXCENTERSCHIJF  2×', 'Ø46 · asgat 8 mm uit het midden');
+      snijCirkel(g, 0, 0, SCHIJF_D / 2);
+      el(g, 'circle', { cx: 0, cy: 0, r: .8, fill: '#767e87' });
+      gat(g, 0, -EXC, GAT_PRIK, 'Ø4');
+      maat(g, 0, 0, 0, -EXC, '8');
+    }
+
+    // uitleg, rechts naast de schijven — hier zit de hele truc van dit model
+    const u = el(svg, 'text', { x: 132, y: 142, fill: '#c43b2e', 'font-family': 'Archivo, sans-serif', 'font-size': 4.4, 'font-weight': 700 });
+    u.textContent = 'LET OP: het asgat';
+    const regels = [
+      'Het asgat zit niet in het',
+      'midden, maar 8 mm ernaast.',
+      'Daardoor maakt het middelpunt',
+      'van de schijf een rondje om',
+      'de as — en dát duwt je',
+      'duwstang op en neer.',
+      '',
+      'slag = 2 × 8 = 16 mm',
+      '',
+      'Grotere slag nodig? Prik het',
+      'gat verder uit het midden.',
+      'Precies in het midden:',
+      'geen beweging.',
+    ];
+    regels.forEach((r, i) => {
+      const t = el(svg, 'text', {
+        x: 132, y: 150 + i * 4.4, fill: i === 7 ? '#1e5f8c' : '#22262b',
+        'font-family': i === 7 ? 'Space Mono, monospace' : 'Source Serif 4, serif',
+        'font-size': i === 7 ? 3.6 : 3.4, 'font-weight': i === 7 ? 700 : 400,
+      });
+      t.textContent = r;
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
