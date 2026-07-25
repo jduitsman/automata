@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layout-voorbeelden · Automata havo 2</title>
+<style>
+  :root{--ink:#1b2320;--muted:#6b7770;--line:#e2e0d6;--paper:#faf8f2}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;line-height:1.55}
+  .wrap{max-width:960px;margin:0 auto;padding:40px 22px 70px}
+  h1{font-size:clamp(28px,5vw,42px);margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:17px;max-width:60ch}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    display:flex;flex-direction:column;text-decoration:none;color:inherit;
+    transition:transform .12s,box-shadow .12s}
+  .card:hover{transform:translateY(-4px);box-shadow:0 16px 30px -20px rgba(0,0,0,.4)}
+  .swatch{height:96px;display:flex}
+  .swatch span{flex:1}
+  .a1{background:#0F3D3A}.a2{background:#F6B12B}.a3{background:#FF6A4D}
+  .b1{background:#1E5FA8}.b2{background:#FF7A1A}.b3{background:#F6F8F4}
+  .c1{background:#2FA866}.c2{background:#3AA0E3}.c3{background:#FFC53D}.c4{background:#FF5C5C}
+  .card .body{padding:16px 18px 20px}
+  .tag{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+  .card h2{font-size:21px;margin:4px 0 8px}
+  .card p{font-size:14.5px;color:#4a544f;margin:0 0 12px}
+  .open{font-weight:700;font-size:14px;color:#0F3D3A}
+  .card:hover .open{text-decoration:underline}
+  .note{margin-top:30px;background:#fff;border:1px solid var(--line);border-left:4px solid #F6B12B;
+    border-radius:0 12px 12px 0;padding:16px 18px;font-size:15px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Layout-voorbeelden — Automata (havo 2)</h1>
+  <p class="sub">Drie richtingen voor een leukere, bij 13-jarigen passende leerlingpagina. Zelfde inhoud, andere sfeer. Open ze, klik op de knoppen (aan de slinger draaien, denkvraag onthullen) en kies er één — daarna zet ik het héle project in die stijl om.</p>
+
+  <div class="grid">
+    <a class="card" href="richting-a-mechanisch-theater.html">
+      <div class="swatch"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+      <div class="body">
+        <div class="tag">Richting A</div>
+        <h2>Mechanisch Theater</h2>
+        <p>Warm en kinetisch, als een expo vol bewegende dieren. In de hero draai je écht aan de slinger en de vogel pikt mee.</p>
+        <span class="open">Open voorbeeld →</span>
+      </div>
+    </a>
+
+    <a class="card" href="richting-b-maker-blueprint.html">
+      <div class="swatch"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+      <div class="body">
+        <div class="tag">Richting B</div>
+        <h2>Maker Blueprint</h2>
+        <p>Werkplaats-sfeer: ruitjespapier, techniektekening met maatlijnen, tape-labels en een bouwchecklist. Techy maar speels.</p>
+        <span class="open">Open voorbeeld →</span>
+      </div>
+    </a>
+
+    <a class="card" href="richting-c-doodle-zoo.html">
+      <div class="swatch"><span class="c1"></span><span class="c2"></span><span class="c3"></span><span class="c4"></span></div>
+      <div class="body">
+        <div class="tag">Richting C</div>
+        <h2>Doodle Zoo</h2>
+        <p>Comic-stijl met dikke lijnen, tekstballonnen bij de denkvragen en gekke beestjes. Het meest speels — jongste gevoel.</p>
+        <span class="open">Open voorbeeld →</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="note">
+    <b>Let op:</b> dit zijn losse voorbeelden met dummy-inhoud (een hero, drie mechanismen, één denkvraag en de planning) — nog niet het volledige project. Zeg welke richting je het leukst vindt (of een mix, bijv. “A maar minder druk”), dan werk ik die stijl uit tot de complete leerlingpagina + PDF.
+  </div>
+</div>
+</body>
+</html>

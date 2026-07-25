@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automata-simulator — de heer krokodil</title>
+<style>
+  :root{
+    /* Technische tekentaal (röntgen-modus) */
+    --beweeg:#2e9e5b; --beweeg-d:#1f7a44;
+    --vast:#64748b; --draai:#e63329; --scharnier:#2f6fb0; --as:#141414; --lager:#c8901f;
+    --hulp:#94a3b8;
+    --inkt:#26201a; --papier:#efe7db; --kaart:#fbf7f0; --rand:#e6ddcd;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    background:radial-gradient(140% 140% at 50% 0%, #efe9dd 0%, #e4dccd 65%);
+    color:var(--inkt); min-height:100vh; padding:22px 14px 60px;
+  }
+  h1{font-size:clamp(1.4rem,3.4vw,2rem); margin:.1em 0 .05em; text-align:center; letter-spacing:.01em}
+  .sub{color:#7a6a53; font-weight:600; margin:0 0 16px; text-align:center}
+
+  .wrap{max-width:1000px; margin:0 auto}
+  .stage-wrap{position:relative; background:var(--kaart);
+    background-image:radial-gradient(120% 90% at 50% 12%, #fffdf8 0%, #f6efe2 70%);
+    border:1px solid var(--rand); border-radius:18px;
+    box-shadow:0 14px 40px rgba(60,45,25,.16), inset 0 1px 0 #fffdf7; padding:8px}
+  svg#stage{width:100%; height:auto; display:block; border-radius:12px}
+
+  .info{position:absolute; top:16px; right:16px; background:rgba(255,252,245,.94);
+    backdrop-filter:blur(4px); border:1px solid var(--rand); border-radius:12px;
+    padding:11px 13px; font-size:.82rem; line-height:1.5; min-width:196px;
+    box-shadow:0 6px 18px rgba(60,45,25,.14)}
+  .info h3{margin:0 0 6px; font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:#8a7658}
+  .info .row{display:flex; justify-content:space-between; gap:10px}
+  .info .row span:first-child{color:#6b5c46}
+  .info .row b{font-variant-numeric:tabular-nums; color:var(--inkt)}
+
+  .controls{display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px;
+    justify-content:center; margin:16px auto 6px; max-width:1000px}
+  button{background:#3a8f4a; color:#fff; border:0; border-radius:11px;
+    padding:9px 15px; font-size:.95rem; font-weight:700; cursor:pointer; transition:transform .08s, background .18s}
+  button:hover{background:#2c6e39} button:active{transform:scale(.95)}
+  button.sec{background:#e7dcc7; color:#4a3f2c}
+  button.sec:hover{background:#dccdb0}
+  .ctl-group{display:flex; align-items:center; gap:8px}
+  label.slider{font-weight:600; font-size:.9rem; display:flex; align-items:center; gap:8px}
+  input[type=range]{accent-color:#3a8f4a; width:150px}
+
+  .modi{display:flex; flex-wrap:wrap; gap:10px 14px; justify-content:center; align-items:center;
+    margin:14px auto 0; max-width:1000px}
+  .modi label{display:flex; align-items:center; gap:7px; font-weight:600; font-size:.9rem;
+    background:#fbf7f0; border:1px solid var(--rand); border-radius:999px; padding:7px 13px; cursor:pointer}
+  .modi input{accent-color:#3a8f4a; width:16px; height:16px}
+  .segment{display:inline-flex; background:#e7dcc7; border-radius:999px; padding:3px; gap:3px}
+  .segment button{background:transparent; color:#6b5c46; padding:6px 14px; font-size:.9rem; border-radius:999px}
+  .segment button.actief{background:#3a8f4a; color:#fff}
+
+  .legenda{max-width:1000px; margin:18px auto 0; display:flex; flex-wrap:wrap;
+    gap:8px 18px; justify-content:center; font-size:.85rem}
+  .legenda .item{display:flex; align-items:center; gap:7px; color:#5c4f3a}
+  .legenda .dot{width:14px; height:14px; border-radius:4px; flex:0 0 auto}
+  .uitleg{max-width:840px; margin:20px auto 0; font-size:.92rem; line-height:1.6; color:#4a3f2c}
+  .uitleg b{color:#2c6e39}
+  .voetnoot{max-width:840px; margin:14px auto 0; font-size:.78rem; color:#8a7658; text-align:center}
+
+  .lbl{font:600 12.5px "Segoe UI",sans-serif}
+  .lbl-txt{fill:var(--inkt)}
+  .lbl-lijn{stroke:var(--inkt); stroke-width:1}
+  text{user-select:none}
+
+  /* ---- Röntgen-modus: mechaniek in technische kleuren, hout/figuur naar de achtergrond ---- */
+  #stage.modus-tech .kast-vlak{opacity:.22}
+  #stage.modus-tech .kast-rand{fill:#d9ccb4; opacity:.5}
+  #stage.modus-tech .karakter{opacity:.16}
+  #stage.modus-tech .krok-arm{opacity:.4}
+  #stage.modus-tech .nok{fill:#eaf6ef; stroke:var(--beweeg); stroke-width:3}
+  #stage.modus-tech .krukwiel{fill:#eaf6ef; stroke:var(--beweeg); stroke-width:3}
+  #stage.modus-tech .volger{fill:var(--beweeg); stroke:var(--beweeg-d)}
+  #stage.modus-tech .drijfstang{stroke:var(--beweeg); stroke-width:8}
+  #stage.modus-tech .as-lijn{stroke:var(--as)}
+  #stage.modus-tech .lager-ring{fill:var(--lager); stroke:#8a6410}
+  #stage.modus-tech .slinger{stroke:var(--beweeg)}
+  #stage.modus-tech .slinger-knop{fill:var(--beweeg); stroke:var(--beweeg-d)}
+  #stage.modus-tech .punt-draai{fill:var(--draai); stroke:#fff}
+  #stage.modus-tech .punt-schar{fill:var(--scharnier); stroke:#fff}
+</style>
+</head>
+<body>
+  <h1>De heer krokodil — automata-simulator</h1>
+  <p class="sub">Eén slinger, één as, twee bewegingen: de bek opent (nok) en de arm brengt de sigaret omhoog (krukas)</p>
+
+  <div class="wrap">
+    <div class="stage-wrap">
+      <svg id="stage" viewBox="0 0 1000 720" role="img"
+           aria-label="Interactieve houten automata: een krokodil met hoge hoed die zijn bek opent en een sigaret naar zijn mond brengt"
+           tabindex="0"></svg>
+
+      <div class="info" id="infopaneel">
+        <h3>Live meetwaarden</h3>
+        <div class="row"><span>Krukhoek</span><b id="i-hoek">0°</b></div>
+        <div class="row"><span>Rotatiesnelheid</span><b id="i-snelheid">0 °/s</b></div>
+        <div class="row"><span>Omwentelingen</span><b id="i-omw">0</b></div>
+        <div class="row"><span>Bek open</span><b id="i-bek">0°</b></div>
+        <div class="row"><span>Volgerpositie</span><b id="i-volger">0,0 mm</b></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctl-group">
+        <button id="btn-start">▶ Start</button>
+        <button id="btn-reset" class="sec">⟲ Reset</button>
+      </div>
+      <div class="ctl-group">
+        <button id="btn-terug" class="sec" title="Eén stap achteruit">⏪ Frame −</button>
+        <button id="btn-vooruit" class="sec" title="Eén stap vooruit">Frame + ⏩</button>
+      </div>
+      <label class="slider">Snelheid
+        <input id="speed" type="range" min="0.25" max="3" step="0.05" value="1">
+        <b id="speed-val" style="font-variant-numeric:tabular-nums">1,00×</b>
+      </label>
+    </div>
+
+    <div class="modi">
+      <span class="segment" role="group" aria-label="Weergave">
+        <button id="v-hout" class="actief">🪵 Hout</button>
+        <button id="v-tech">🔧 Techniek</button>
+      </span>
+      <label><input type="checkbox" id="m-onderdelen"> Labels</label>
+      <label><input type="checkbox" id="m-analyse"> Bewegingslijnen</label>
+      <label><input type="checkbox" id="m-exploded"> Exploded view</label>
+    </div>
+
+    <div class="legenda" id="legenda-tech" style="display:none">
+      <div class="item"><span class="dot" style="background:var(--beweeg)"></span>bewegend deel</div>
+      <div class="item"><span class="dot" style="background:var(--vast)"></span>vaste constructie</div>
+      <div class="item"><span class="dot" style="background:var(--draai);border-radius:50%"></span>draaipunt</div>
+      <div class="item"><span class="dot" style="background:var(--scharnier);border-radius:50%"></span>scharnier</div>
+      <div class="item"><span class="dot" style="background:var(--as)"></span>as</div>
+      <div class="item"><span class="dot" style="background:var(--lager)"></span>lager</div>
+    </div>
+
+    <p class="uitleg">
+      Draai aan de <b>slinger</b> rechts. Die zit op de <b>as</b> die in twee <b>lagers</b> door de kast loopt.
+      Op de as zitten twee mechanismen: een <b>nok</b> die via een <b>volger</b> de <b>bovenkaak</b> optilt
+      (bek open), en een <b>krukas</b> die via een <b>drijfstang</b> de <b>arm</b> omhoog zwaait (sigaret naar de mond).
+      Dezelfde draaiing, twee heel verschillende bewegingen — en ze werken samen: net als de bek opengaat,
+      komt de sigaret erbij.
+    </p>
+    <p class="voetnoot">
+      Zet de weergave op <b>Techniek</b> voor de röntgenblik: het hout en de figuur vervagen en het mechaniek
+      krijgt de technische kleuren, met labels, bewegingslijnen en exploded view. De nok en de krukschijf staan
+      <b>op hun kant op de as</b> (edge-on), precies zoals in de componentenlijst — je ziet ze dus als smalle
+      schijven die de volgers opduwen. De beweging is volledig doorgerekend (excenter + vierstangenmechanisme);
+      in de analyse-modus tonen de stippellijncirkels de werkelijke rotatie die je edge-on als op-en-neer ziet.
+    </p>
+  </div>
+
+<script>
+"use strict";
+/* =====================================================================
+   AUTOMATA-SIMULATOR — de heer krokodil
+   Warme houten weergave + technische röntgen-weergave, in één SVG.
+   Vanilla JS, geen frameworks, geen externe bronnen.
+
+     1. MODEL / constanten
+     2. Kinematica (pure functies)
+     3. defs (houtnerf, gradients, schaduw)
+     4. build*(): kast, mechaniek, krokodil, overlays — één keer opbouwen
+     5. update(): per frame posities & hoeken
+     6. lus + bediening
+   ===================================================================== */
+
+const svgNS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById("stage");
+
+/* ---------- 1. MODEL ---------- */
+const AS_Y = 520;                      // hartlijn van de as
+
+// Kast (grenen kubus, cabinet-oblique diepte naar rechtsboven)
+const BOX = { x0:300, x1:700, y0:380, y1:660, T:34, dx:26, dy:-18 };
+BOX.ix0 = BOX.x0 + BOX.T;  BOX.ix1 = BOX.x1 - BOX.T;      // opening
+BOX.iy0 = BOX.y0 + BOX.T;  BOX.iy1 = BOX.y1 - BOX.T;
+
+// Nok-station (bek): EXCENTER edge-on op de as → volger → hefboom (bovenkaak).
+// De schijf staat op zijn kant op de horizontale as (zoals in de componentenlijst):
+// van voren zie je hem als smalle ellips die op- en neer bobt.
+const CAM = { x:430, y:AS_Y };
+const eBek = 17;                       // excentriciteit nok (heffing = 2·eBek)
+const Rdisc_bek = 34;                  // straal nokschijf (edge-on: verticale halve-as)
+const discW = 12;                      // halve dikte van een schijf edge-on
+const MOUTH_MAX = 34 * Math.PI/180;
+const H_JAW = { x:455, y:250 };        // scharnier bovenkaak (draaipunt)
+const JAW_TAB = { x:446, y:266 };      // aangrijppunt volger op de bovenkaak (ruststand)
+
+// Krukas-station (arm): KRUKAS edge-on → drijfstang → tuimelaar(arm).
+// De krukpen draait in werkelijkheid rond; edge-on zie je die cirkel als een
+// op-en-neer beweging op de aslijn.
+const O2 = { x:590, y:AS_Y };          // krukas-hart (draaipunt)
+const Rdisc_kruk = 30;                 // straal krukschijf (edge-on getekend)
+const rPin = 22;                       // krukstraal (edge-on: pen bobt ± rPin)
+const S2 = { x:540, y:315 };           // schouder-scharnier (draaipunt van de arm)
+const rod2 = 190, aArm = 52;
+const PHI = 45 * Math.PI/180;          // vaste hoek tuimelaarstomp → onderarm (winkelhaak)
+const LARM = 176;                      // lengte onderarm (schouder → sigaret)
+
+const xBearL = BOX.ix0, xBearR = BOX.ix1;   // lagers op de binnenwanden
+const bearR = 15, bearHole = 9;
+const crankHandleR = 36;               // slingerarm rechts
+
+/* ---------- 2. KINEMATICA ---------- */
+// BEK — excenter: de heffing van de volger = e·(1−cos θ), 0 t/m 2·eBek.
+// Zelfde formule stuurt de bekopening én de op-en-neer stand van de schijf.
+function bekLift(theta){ return eBek * (1 - Math.cos(theta)); }        // 0 … 2·eBek
+function bekOpen(theta){ return (bekLift(theta) / (2*eBek)) * MOUTH_MAX; }
+// Zuivere excenter: het asgat zit altijd e uit het schijfhart; het hart bobt dus
+// op/neer terwijl het gat op de aslijn (AS_Y) blijft.
+function bekDiscCenterY(theta){ return AS_Y + eBek * Math.cos(theta); }
+function bekContactY(theta){ return bekDiscCenterY(theta) - Rdisc_bek; } // bovenkant = volgervoet
+
+// ARM — krukas edge-on: de pen draait rond (in het echt), van voren zie je die
+// cirkel als een verticale beweging op de aslijn. Daarna drijfstang → tuimelaar.
+function armPin(theta){ return { x:O2.x, y:AS_Y + rPin*Math.cos(theta) }; }
+function arm(theta){
+  const P = armPin(theta);
+  const dx = P.x - S2.x, dy = P.y - S2.y, d = Math.hypot(dx, dy);
+  const aa = (aArm*aArm - rod2*rod2 + d*d) / (2*d);
+  const h  = Math.sqrt(Math.max(0, aArm*aArm - aa*aa));  // cirkel-cirkel-snijding, lock-vrij
+  const fx = S2.x + aa*dx/d, fy = S2.y + aa*dy/d;
+  const Q = { x: fx - h*dy/d, y: fy + h*dx/d };          // tuimelaarstomp-eind
+  const psi = Math.atan2(Q.y - S2.y, Q.x - S2.x);
+  return { P, Q, psi, arm: psi + PHI };                  // arm = stomp + winkelhaak
+}
+
+/* ---------- Kleine helpers ---------- */
+function el(name, attrs){
+  const e = document.createElementNS(svgNS, name);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function groep(parent, attrs){ const g = el("g", attrs||{}); parent.appendChild(g); return g; }
+function graden(rad){ return rad*180/Math.PI; }
+function padVan(pts, gesloten){
+  return pts.map((p,i)=>(i?"L":"M")+p.x.toFixed(2)+" "+p.y.toFixed(2)).join(" ") + (gesloten?" Z":"");
+}
+
+/* ---------- Explode-offsets ---------- */
+const OFFSET = {
+  hoed:[0,-150], kop:[0,-92], onderkaak:[0,-60], bovenkaak:[26,-118],
+  romp:[0,-18], arm:[64,-30], krok:[0,0],
+  nok:[-46,20], volger:[-46,-70], krukwiel:[46,26], drijf:[70,-14],
+  lagerL:[-42,0], lagerR:[42,0], as:[0,0]
+};
+
+/* ---------- 3. defs ---------- */
+function buildDefs(){
+  const defs = el("defs", {});
+  defs.innerHTML = `
+    <linearGradient id="wTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6e3ba"/><stop offset="1" stop-color="#e7cd98"/></linearGradient>
+    <linearGradient id="wRight" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#cda869"/><stop offset="1" stop-color="#a97f45"/></linearGradient>
+    <linearGradient id="wFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0d6a0"/><stop offset=".5" stop-color="#e4c489"/><stop offset="1" stop-color="#d3ac6c"/></linearGradient>
+    <radialGradient id="wDisc" cx=".38" cy=".34" r=".75">
+      <stop offset="0" stop-color="#f0d19a"/><stop offset=".7" stop-color="#d7ac6c"/><stop offset="1" stop-color="#bd8f4e"/></radialGradient>
+    <linearGradient id="brass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#efcf63"/><stop offset=".5" stop-color="#caa129"/><stop offset="1" stop-color="#9c7815"/></linearGradient>
+    <linearGradient id="interior" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a6a3f"/><stop offset="1" stop-color="#5e4526"/></linearGradient>
+    <linearGradient id="hat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3f45"/><stop offset="1" stop-color="#16191d"/></linearGradient>
+    <linearGradient id="suit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#333941"/><stop offset="1" stop-color="#191d22"/></linearGradient>
+    <linearGradient id="krokG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4aa159"/><stop offset="1" stop-color="#2f7d3f"/></linearGradient>
+    <radialGradient id="floor" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#000" stop-opacity=".26"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <pattern id="grain" width="120" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(0)">
+      <path d="M0 4 Q 30 1 60 4 T 120 4" fill="none" stroke="#a97f45" stroke-width="1" opacity=".22"/>
+      <path d="M0 11 Q 40 8 70 12 T 120 10" fill="none" stroke="#a97f45" stroke-width="1" opacity=".16"/>
+    </pattern>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#3a2a12" flood-opacity="0.28"/></filter>`;
+  stage.appendChild(defs);
+}
+
+/* ---------- 4. Opbouw ---------- */
+const R = {};                 // referenties naar dynamische elementen
+function explodeG(parent, key){ const g = groep(parent, {}); g.dataset.off = key; return g; }
+
+function build(){
+  buildDefs();
+  // Lagen
+  const lagSchaduw = groep(stage, {});
+  const lagKastAchter = groep(stage, {});     // diepte-vlakken + achterwand
+  const lagMech = groep(stage, {});           // mechaniek (in de opening)
+  const lagKastVoor = groep(stage, {});       // voorframe (met opening + sleuven)
+  const lagSlinger = groep(stage, {});        // as-uiteinde + handslinger rechts
+  const lagKrok = groep(stage, {});           // krokodil bovenop
+  const lagHulp = groep(stage, {stroke:"var(--hulp)", fill:"none", "stroke-width":"1.2",
+                    "stroke-dasharray":"5 5", opacity:"0", "pointer-events":"none"});
+  const lagLabel = groep(stage, {opacity:"0", "pointer-events":"none"});
+  R.lagHulp = lagHulp; R.lagLabel = lagLabel;
+
+  buildSchaduw(lagSchaduw);
+  buildKastAchter(lagKastAchter);
+  buildMechaniek(lagMech);
+  buildKastVoor(lagKastVoor);
+  buildSlinger(lagSlinger);
+  buildKrokodil(lagKrok);
+  buildHulplijnen();
+  buildLabels();
+}
+
+/* --- Schaduw op de ondergrond --- */
+function buildSchaduw(g){
+  g.appendChild(el("ellipse", {cx:(BOX.x0+BOX.x1)/2+10, cy:BOX.y1+34, rx:250, ry:34, fill:"url(#floor)"}));
+}
+
+/* --- Kast: diepte-vlakken + donkere achterwand --- */
+function buildKastAchter(g){
+  const {x0,x1,y0,y1,dx,dy,ix0,ix1,iy0,iy1} = BOX;
+  // bovenvlak (waar de figuur op staat)
+  g.appendChild(el("path", {class:"kast-vlak", fill:"url(#wTop)", stroke:"#b98f52", "stroke-width":"1",
+    d:`M ${x0} ${y0} L ${x1} ${y0} L ${x1+dx} ${y0+dy} L ${x0+dx} ${y0+dy} Z`}));
+  // rechtervlak (zijkant, hier komt de slinger uit)
+  g.appendChild(el("path", {class:"kast-vlak", fill:"url(#wRight)", stroke:"#8a6636", "stroke-width":"1",
+    d:`M ${x1} ${y0} L ${x1+dx} ${y0+dy} L ${x1+dx} ${y1+dy} L ${x1} ${y1} Z`}));
+  // achterwand van de opening (donker, met diepte-parallellogram bovenin)
+  g.appendChild(el("rect", {class:"kast-vlak", x:ix0, y:iy0, width:ix1-ix0, height:iy1-iy0, fill:"url(#interior)"}));
+  g.appendChild(el("path", {class:"kast-vlak", fill:"#4d3820", opacity:".55",
+    d:`M ${ix0} ${iy0} L ${ix1} ${iy0} L ${ix1+dx*0.7} ${iy0+dy*0.7} L ${ix0+dx*0.7} ${iy0+dy*0.7} Z`}));
+}
+
+/* --- Kast: voorframe met opening + twee sleuven voor de stoterstangen --- */
+function buildKastVoor(g){
+  const {x0,x1,y0,y1,ix0,ix1,iy0,iy1} = BOX;
+  // even-odd: buitenrand − opening − sleuf(bek) − sleuf(arm)
+  const d =
+    `M ${x0} ${y0} H ${x1} V ${y1} H ${x0} Z ` +
+    `M ${ix0} ${iy0} H ${ix1} V ${iy1} H ${ix0} Z ` +
+    `M 424 ${y0} h 13 v ${iy0-y0} h -13 Z ` +
+    `M 509 ${y0} h 16 v ${iy0-y0} h -16 Z`;
+  g.appendChild(el("path", {class:"kast-rand", d, "fill-rule":"evenodd", fill:"url(#wFront)",
+    stroke:"#b98f52", "stroke-width":"1.5", filter:"url(#soft)"}));
+  g.appendChild(el("path", {class:"kast-rand", d, "fill-rule":"evenodd", fill:"url(#grain)"}));
+  // binnenrand-schaduw voor diepte
+  g.appendChild(el("rect", {class:"kast-vlak", x:ix0, y:iy0, width:ix1-ix0, height:iy1-iy0,
+    fill:"none", stroke:"#3a2a12", "stroke-opacity":".35", "stroke-width":"3"}));
+}
+
+/* --- Mechaniek: as, lagers, nok, volger, krukas, drijfstang --- */
+function buildMechaniek(g){
+  // as
+  R.asLijn = el("line", {class:"as-lijn", x1:326, y1:AS_Y, x2:706, y2:AS_Y,
+    stroke:"#5a4a34", "stroke-width":"9", "stroke-linecap":"round"});
+  g.appendChild(R.asLijn);
+
+  // lagers (ring waar de as met speling doorheen loopt)
+  function lager(cx, key){
+    const gl = explodeG(g, key);
+    gl.appendChild(el("path", {class:"lager-ring", "fill-rule":"evenodd", fill:"url(#brass)", stroke:"#7a5e10", "stroke-width":"1.5",
+      d:`M ${cx-bearR} ${AS_Y} a ${bearR} ${bearR} 0 1 0 ${2*bearR} 0 a ${bearR} ${bearR} 0 1 0 ${-2*bearR} 0 Z`
+       + `M ${cx-bearHole} ${AS_Y} a ${bearHole} ${bearHole} 0 1 1 ${2*bearHole} 0 a ${bearHole} ${bearHole} 0 1 1 ${-2*bearHole} 0 Z`}));
+  }
+  lager(xBearL,"lagerL"); lager(xBearR,"lagerR");
+
+  // NOK (excenter, edge-on) + VOLGER (bek-aandrijving)
+  // Schijf op zijn kant = smalle verticale ellips; hij bobt op/neer terwijl het
+  // asgat op de aslijn blijft — precies zoals de nok in je componentenlijst.
+  const gNok = explodeG(g,"nok");
+  R.nokSchijf = el("ellipse", {class:"nok", cx:CAM.x, cy:CAM.y, rx:discW, ry:Rdisc_bek,
+    fill:"url(#wDisc)", stroke:"#9c7233", "stroke-width":"2"});
+  gNok.appendChild(R.nokSchijf);
+
+  const gVol = explodeG(g,"volger");
+  R.volger = el("line", {class:"volger", stroke:"#caa46a", "stroke-width":"9", "stroke-linecap":"round"});
+  R.volgerVoet = el("circle", {class:"volger", r:5, fill:"#8a5f28"});
+  gVol.appendChild(R.volger); gVol.appendChild(R.volgerVoet);
+
+  // KRUKAS (edge-on) + DRIJFSTANG (arm-aandrijving)
+  // De schijf staat concentrisch op de as (bobt niet); alleen de krukpen loopt
+  // op/neer — de edge-on projectie van een ronddraaiende krukpen.
+  const gKruk = explodeG(g,"krukwiel");
+  R.krukSchijf = el("ellipse", {class:"krukwiel", cx:O2.x, cy:O2.y, rx:discW, ry:Rdisc_kruk,
+    fill:"url(#wDisc)", stroke:"#9c7233", "stroke-width":"2"});
+  gKruk.appendChild(R.krukSchijf);
+
+  const gDrijf = explodeG(g,"drijf");
+  // houten conrod (drijfstang) — in techniek-modus wordt hij groen
+  R.drijf = el("line", {class:"drijfstang", stroke:"#c19a5e", "stroke-width":"9", "stroke-linecap":"round"});
+  R.drijfKern = el("line", {class:"drijfstang", stroke:"#a87d44", "stroke-width":"3", "stroke-linecap":"round"});
+  gDrijf.appendChild(R.drijf); gDrijf.appendChild(R.drijfKern);
+
+  // Draaipunten (asgat) + scharnieren (krukpen, drijfstang-oog): deuvels in hout, rood/blauw in techniek
+  R.puntCam = el("circle", {class:"punt-draai", cx:CAM.x, cy:AS_Y, r:5, fill:"#6a4a24", stroke:"#e0cfa8", "stroke-width":"1.5"});
+  R.puntO2  = el("circle", {class:"punt-draai", cx:O2.x, cy:AS_Y, r:5.5, fill:"#6a4a24", stroke:"#e0cfa8", "stroke-width":"1.5"});
+  R.schP    = el("circle", {class:"punt-schar", r:5, fill:"#6a4a24", stroke:"#e0cfa8", "stroke-width":"1.5"});  // krukpen
+  R.schQ    = el("circle", {class:"punt-schar", r:5, fill:"#6a4a24", stroke:"#e0cfa8", "stroke-width":"1.5"});  // drijfstang-oog
+  [R.puntCam,R.puntO2,R.schP,R.schQ].forEach(e=>g.appendChild(e));
+}
+
+/* --- As-uiteinde + handslinger rechts --- */
+function buildSlinger(g){
+  const ex = BOX.x1 + BOX.dx;      // uiteinde op het rechtervlak
+  g.appendChild(el("line", {class:"as-lijn", x1:706, y1:AS_Y, x2:ex+6, y2:AS_Y+BOX.dy*0.4,
+    stroke:"#4a3c28", "stroke-width":"8", "stroke-linecap":"round"}));
+  R.slingerG = groep(g,{});
+  const sy0 = AS_Y+BOX.dy*0.4;
+  R.slingerArm = el("line", {class:"slinger", x1:ex+6, y1:sy0, x2:ex+6, y2:sy0-crankHandleR,
+    stroke:"#6a4a24", "stroke-width":"9", "stroke-linecap":"round"});
+  R.slingerGrip = el("line", {class:"slinger", x2:ex+6, y2:sy0-crankHandleR,
+    x1:ex+6+22, y1:sy0-crankHandleR, stroke:"#6a4a24", "stroke-width":"9", "stroke-linecap":"round"});
+  R.slingerKnop = el("circle", {class:"slinger-knop", r:10, fill:"url(#wDisc)", stroke:"#8a5f28", "stroke-width":"2",
+    cx:ex+6+22, cy:sy0-crankHandleR});
+  R.slingerG.appendChild(R.slingerArm); R.slingerG.appendChild(R.slingerGrip); R.slingerG.appendChild(R.slingerKnop);
+}
+
+/* --- De krokodil (bovenop de kast) --- */
+function buildKrokodil(gRoot){
+  const g = groep(gRoot, {class:"karakter"});
+
+  // --- benen / schoenen (staan op het bovenvlak) ---
+  const gRomp = explodeG(g,"romp");
+  gRomp.appendChild(el("rect", {x:432, y:330, width:20, height:52, rx:5, fill:"#8f99a6"})); // broek links
+  gRomp.appendChild(el("rect", {x:470, y:330, width:20, height:52, rx:5, fill:"#7d8794"})); // broek rechts
+  gRomp.appendChild(el("path", {d:"M 424 382 q -6 8 6 10 h 26 v -12 Z", fill:"#1c1f24"}));   // schoen links
+  gRomp.appendChild(el("path", {d:"M 462 382 q -6 8 6 10 h 26 v -12 Z", fill:"#14171b"}));   // schoen rechts
+  // koffertje naast de voeten
+  gRomp.appendChild(el("rect", {x:500, y:352, width:34, height:30, rx:3, fill:"#20242a", stroke:"#0f1114"}));
+  gRomp.appendChild(el("rect", {x:512, y:346, width:10, height:8, rx:2, fill:"none", stroke:"#20242a", "stroke-width":"3"}));
+  // jasje (torso)
+  gRomp.appendChild(el("path", {fill:"url(#suit)", stroke:"#0f1114", "stroke-width":"1.2",
+    d:"M 430 250 Q 462 232 494 250 L 500 336 Q 462 348 424 336 Z"}));
+  // revers + overhemd + das
+  gRomp.appendChild(el("path", {fill:"#efe7db", d:"M 452 250 L 466 250 L 462 300 L 456 300 Z"})); // hemd
+  gRomp.appendChild(el("path", {fill:"#c0392b", stroke:"#8f271c", "stroke-width":".8",
+    d:"M 456 258 L 462 258 L 466 300 L 459 308 L 452 300 Z"}));                                   // das
+  gRomp.appendChild(el("path", {fill:"none", stroke:"#0f1114", "stroke-width":"1.4",
+    d:"M 452 250 L 444 292 M 466 250 L 476 292"}));                                                // revers
+  // achterste arm (hand in de zij) — vast
+  gRomp.appendChild(el("path", {class:"krok-arm", fill:"url(#krokG)", stroke:"#256b34", "stroke-width":"1",
+    d:"M 492 262 q 26 6 24 40 q -2 20 -22 22 q 10 -18 2 -32 q -6 -12 -20 -18 Z"}));
+
+  // --- kop (vast) met onderkaak; bovenkaak apart (scharniert) ---
+  const gKop = explodeG(g,"kop");
+  // hals
+  gKop.appendChild(el("path", {fill:"url(#krokG)", stroke:"#256b34", "stroke-width":"1",
+    d:"M 440 250 Q 452 236 470 244 L 466 262 Q 452 268 442 260 Z"}));
+  // schedel + onderkaak (samen vast)
+  R.kopVast = groep(gKop,{});
+  R.kopVast.appendChild(el("path", {fill:"url(#krokG)", stroke:"#256b34", "stroke-width":"1.2",
+    d:"M 470 250 Q 452 236 430 240 Q 470 214 480 236 Q 486 246 470 250 Z"}));  // achterhoofd
+  // onderkaak (vast aan de kop) — lange snuit naar links
+  R.onderkaak = explodeG(gKop,"onderkaak");
+  R.onderkaak.appendChild(el("path", {fill:"url(#krokG)", stroke:"#256b34", "stroke-width":"1.2",
+    d:"M 455 258 L 360 268 Q 350 270 360 276 L 455 274 Q 470 268 455 258 Z"}));
+  // tandjes onderkaak
+  for(let i=0;i<7;i++){ const x=372+i*12; R.onderkaak.appendChild(el("path", {fill:"#fff", stroke:"#cbb", "stroke-width":".4",
+    d:`M ${x} 266 l 4 -7 l 4 7 Z`})); }
+
+  // bovenkaak (scharniert om H_JAW)
+  R.bovenkaak = explodeG(gKop,"bovenkaak");
+  const bk = groep(R.bovenkaak,{});           // roteert om H_JAW
+  R.bovenkaakRot = bk;
+  bk.appendChild(el("path", {fill:"url(#krokG)", stroke:"#256b34", "stroke-width":"1.2",
+    d:"M 455 250 L 360 246 Q 348 246 358 240 Q 452 214 470 236 Q 476 248 455 250 Z"})); // bovenkaak
+  // oog
+  bk.appendChild(el("circle", {cx:452, cy:232, r:9, fill:"#fff", stroke:"#256b34", "stroke-width":"1"}));
+  bk.appendChild(el("circle", {cx:450, cy:233, r:4, fill:"#14201a"}));
+  // neusgat
+  bk.appendChild(el("circle", {cx:366, cy:240, r:2.4, fill:"#1c3a24"}));
+  // tandjes bovenkaak (wijzen omlaag)
+  for(let i=0;i<7;i++){ const x=372+i*12; bk.appendChild(el("path", {fill:"#fff", stroke:"#cbb", "stroke-width":".4",
+    d:`M ${x} 250 l 4 7 l 4 -7 Z`})); }
+  // rode mondbinnenkant (zichtbaar bij openen) — ligt tussen onder- en bovenkaak
+  R.mond = el("path", {fill:"#b5372e", d:"M 360 258 L 455 258 L 455 266 L 360 268 Z"});
+  gKop.insertBefore(R.mond, R.onderkaak);   // mond onder de kaken
+
+  // hoge hoed (op de schedel, vast)
+  const gHoed = explodeG(gKop,"hoed");
+  gHoed.appendChild(el("path", {fill:"url(#hat)", d:"M 430 224 Q 460 216 486 224 L 484 232 Q 458 238 432 232 Z"})); // rand
+  gHoed.appendChild(el("path", {fill:"url(#hat)", d:"M 438 190 Q 458 184 476 190 L 480 226 Q 458 232 434 226 Z"})); // bol
+  gHoed.appendChild(el("rect", {x:436, y:214, width:44, height:7, rx:2, fill:"#7a1f18"}));                            // band
+
+  // --- voorste arm (beweegt): schouder S2 → sigaret ---
+  R.armG = explodeG(g,"arm");
+  R.armRot = groep(R.armG,{});               // roteert om S2 met arm-hoek
+  // bovenarm/mouw (zwart) + onderarm (groen) + hand + sigaret, getekend in ruststand langs +x vanaf S2
+  R.armRot.appendChild(el("rect", {x:0, y:-11, width:96, height:22, rx:11, fill:"url(#suit)", stroke:"#0f1114", "stroke-width":"1",
+    transform:`translate(${S2.x} ${S2.y})`}));                       // mouw
+  R.armRot.appendChild(el("rect", {x:92, y:-9, width:70, height:18, rx:9, fill:"url(#krokG)", stroke:"#256b34", "stroke-width":"1",
+    transform:`translate(${S2.x} ${S2.y})`}));                       // groene onderarm
+  R.armRot.appendChild(el("circle", {cx:S2.x+164, cy:S2.y, r:11, fill:"url(#krokG)", stroke:"#256b34", "stroke-width":"1"})); // hand
+  // sigaret + houder
+  R.armRot.appendChild(el("line", {x1:S2.x+164, y1:S2.y, x2:S2.x+188, y2:S2.y, stroke:"#caa46a", "stroke-width":"3", "stroke-linecap":"round"}));
+  R.armRot.appendChild(el("rect", {x:S2.x+188, y:S2.y-3, width:18, height:6, rx:2, fill:"#f4efe6", stroke:"#ddd6c8", "stroke-width":".5"}));
+  R.armRot.appendChild(el("rect", {x:S2.x+206, y:S2.y-3, width:4, height:6, fill:"#e0762a"}));     // gloeiend uiteinde
+  // schoudergewricht (scharnier)
+  R.schS2 = el("circle", {class:"punt-schar", cx:S2.x, cy:S2.y, r:5, fill:"#6a4a24", stroke:"#e0cfa8", "stroke-width":"1.5"});
+  R.armG.appendChild(R.schS2);
+}
+
+/* ---------- Analyse-hulplijnen ---------- */
+function buildHulplijnen(){
+  const g = R.lagHulp;
+  // "Ware" rotatie: de nok en de krukpen draaien echt rond; edge-on projecteert
+  // die cirkel op de aslijn tot een op-en-neer beweging (stippellijn = werkelijke cirkel).
+  g.appendChild(el("circle", {cx:CAM.x, cy:AS_Y, r:eBek}));    // excentriciteitscirkel nok
+  g.appendChild(el("circle", {cx:O2.x, cy:AS_Y, r:rPin}));     // krukcirkel
+  // verticale slag die je er edge-on van ziet
+  g.appendChild(el("line", {x1:CAM.x, y1:AS_Y-Rdisc_bek-2*eBek-6, x2:CAM.x, y2:AS_Y-Rdisc_bek+6,
+    "marker-start":"url(#pijl)", "marker-end":"url(#pijl)"}));
+  g.appendChild(el("line", {x1:O2.x, y1:AS_Y-rPin, x2:O2.x, y2:AS_Y+rPin,
+    "marker-start":"url(#pijl)", "marker-end":"url(#pijl)"}));
+  // baan van het drijfstang-oog Q en van de sigaret (armtip)
+  const qp=[]; for(let a=0;a<=Math.PI*2+0.001;a+=Math.PI/60) qp.push(arm(a).Q);
+  g.appendChild(el("path", {d:padVan(qp,true)}));
+  const tp=[]; for(let a=0;a<=Math.PI*2+0.001;a+=Math.PI/60){ const k=arm(a);
+    tp.push({x:S2.x+LARM*Math.cos(k.arm), y:S2.y+LARM*Math.sin(k.arm)}); }
+  g.appendChild(el("path", {d:padVan(tp,true)}));
+  const kruis=(c)=>{ g.appendChild(el("line",{x1:c.x-16,y1:c.y,x2:c.x+16,y2:c.y})); g.appendChild(el("line",{x1:c.x,y1:c.y-16,x2:c.x,y2:c.y+16})); };
+  kruis(O2); kruis(CAM); kruis(S2); kruis(H_JAW);
+}
+
+/* ---------- Onderwijs-labels ---------- */
+function label(tekst, x, y, naarX, naarY){
+  const g = groep(R.lagLabel, {});
+  g.appendChild(el("line", {x1:x, y1:y, x2:naarX, y2:naarY, class:"lbl-lijn"}));
+  const t = el("text", {x:x, y:y, class:"lbl lbl-txt", "text-anchor": x<naarX?"end":"start"});
+  t.textContent = tekst; g.appendChild(t);
+  g.appendChild(el("circle", {cx:naarX, cy:naarY, r:2.5, fill:"var(--inkt)"}));
+  return g;
+}
+function labelNaar(g,x,y){ const l=g.querySelector("line"),d=g.querySelector("circle"); l.setAttribute("x2",x); l.setAttribute("y2",y); d.setAttribute("cx",x); d.setAttribute("cy",y); }
+function buildLabels(){
+  label("nok (excenter)", 250, 590, CAM.x-discW, AS_Y+Rdisc_bek-6);
+  label("volger", 250, 460, CAM.x-8, 460);
+  label("bovenkaak (hefboom)", 250, 226, H_JAW.x-30, 246);
+  label("draaipunt bek", 250, 300, H_JAW.x, H_JAW.y);
+  label("as", 250, 520, 360, AS_Y);
+  label("lager", 250, 630, xBearL, AS_Y+bearR);
+  label("krukas", 770, 630, O2.x+discW, AS_Y+Rdisc_kruk-6);
+  label("schouder (draaipunt)", 780, 300, S2.x, S2.y);
+  R.lblPin   = label("krukpen", 790, 500, 0,0);
+  R.lblDrijf = label("drijfstang", 800, 420, 0,0);
+  R.lblArm   = label("arm (roterende beweging)", 300, 170, 0,0);
+  label("slinger (invoer)", 830, 560, BOX.x1+BOX.dx+6, AS_Y+BOX.dy*0.4);
+}
+
+/* ---------- 5. update() ---------- */
+function update(theta, E){
+  // -- BEK: excenter (edge-on, bobt) → volger → bovenkaak --
+  const open = bekOpen(theta);
+  const discCY = bekDiscCenterY(theta);
+  const contactY = bekContactY(theta);
+  R.nokSchijf.setAttribute("cy", discCY);       // schijf bobt; asgat (puntCam) blijft op AS_Y
+  // bovenkaak roteert (open = tip omhoog = negatieve schermrotatie)
+  R.bovenkaakRot.setAttribute("transform", `rotate(${-graden(open)} ${H_JAW.x} ${H_JAW.y})`);
+  const tab = roteer(JAW_TAB, H_JAW, -open);
+  R.volger.setAttribute("x1", CAM.x); R.volger.setAttribute("y1", contactY);
+  R.volger.setAttribute("x2", tab.x); R.volger.setAttribute("y2", tab.y);
+  R.volgerVoet.setAttribute("cx", CAM.x); R.volgerVoet.setAttribute("cy", contactY);
+  R.mond.setAttribute("opacity", 0.35 + 0.65*(open/MOUTH_MAX));
+
+  // -- ARM: krukas (edge-on, pen bobt) → drijfstang → arm --
+  const k = arm(theta);
+  for(const rod of [R.drijf, R.drijfKern]){
+    rod.setAttribute("x1", k.P.x); rod.setAttribute("y1", k.P.y);
+    rod.setAttribute("x2", k.Q.x); rod.setAttribute("y2", k.Q.y);
+  }
+  R.armRot.setAttribute("transform", `rotate(${graden(k.arm)} ${S2.x} ${S2.y})`);
+  R.schP.setAttribute("cx", k.P.x); R.schP.setAttribute("cy", k.P.y);
+  R.schQ.setAttribute("cx", k.Q.x); R.schQ.setAttribute("cy", k.Q.y);
+
+  // -- slinger draait mee --
+  const sx = BOX.x1+BOX.dx+6, sy = AS_Y+BOX.dy*0.4;
+  R.slingerG.setAttribute("transform", `rotate(${graden(theta)} ${sx} ${sy})`);
+
+  // -- dynamische labels --
+  if(R.lblDrijf) labelNaar(R.lblDrijf, (k.P.x+k.Q.x)/2, (k.P.y+k.Q.y)/2);
+  if(R.lblPin)   labelNaar(R.lblPin, k.P.x, k.P.y);
+  if(R.lblArm)   labelNaar(R.lblArm, S2.x+LARM*Math.cos(k.arm), S2.y+LARM*Math.sin(k.arm));
+
+  // -- infopaneel --
+  const hoekDeg = ((graden(theta)%360)+360)%360;
+  document.getElementById("i-hoek").textContent = hoekDeg.toFixed(0)+"°";
+  document.getElementById("i-bek").textContent = graden(open).toFixed(0)+"°";
+  document.getElementById("i-volger").textContent = bekLift(theta).toFixed(1).replace(".",",")+" mm";
+}
+function roteer(p, c, hoek){   // roteer punt p om c over 'hoek' (rad, schermrotatie negatief in update)
+  const s=Math.sin(-hoek), co=Math.cos(-hoek), dx=p.x-c.x, dy=p.y-c.y;
+  return { x:c.x+dx*co-dy*s, y:c.y+dx*s+dy*co };
+}
+
+function setExplode(E){
+  stage.querySelectorAll("[data-off]").forEach(gr=>{
+    const o = OFFSET[gr.dataset.off] || [0,0];
+    // groepen die zelf al een rotatie-transform krijgen in update() niet overschrijven
+    if(gr === R.armG || gr.dataset.off==="bovenkaak"){ gr.setAttribute("transform",`translate(${o[0]*E} ${o[1]*E})`); return; }
+    gr.setAttribute("transform", `translate(${o[0]*E} ${o[1]*E})`);
+  });
+}
+
+/* ---------- 6. Lus + bediening ---------- */
+const OMEGA = 1.05, STAP = Math.PI/60;
+let hoek=0, totaal=0, draait=false, snelheid=1, explode=0, explodeDoel=0, vorige=null;
+
+function tekenAlles(){
+  update(hoek, explode);
+  const rpm=(draait?OMEGA*snelheid:0)*60/(2*Math.PI), degs=(draait?OMEGA*snelheid:0)*180/Math.PI;
+  document.getElementById("i-snelheid").textContent = degs.toFixed(0)+" °/s ("+rpm.toFixed(1).replace(".",",")+" rpm)";
+  document.getElementById("i-omw").textContent = Math.max(0, Math.floor(totaal/(2*Math.PI)));
+}
+function lus(t){
+  requestAnimationFrame(lus);
+  if(vorige===null) vorige=t;
+  const dt=Math.min(0.05,(t-vorige)/1000); vorige=t;
+  if(draait){ const d=OMEGA*snelheid*dt; hoek+=d; totaal+=d; }
+  if(Math.abs(explode-explodeDoel)>0.001){ explode+=(explodeDoel-explode)*Math.min(1,dt*8); setExplode(explode); }
+  tekenAlles();
+}
+function stap(r){ const d=STAP*r; hoek+=d; totaal+=d; if(totaal<0) totaal=0; setExplode(explode); tekenAlles(); }
+
+const btnStart=document.getElementById("btn-start");
+function zetDraait(a){ draait=a; btnStart.textContent = a?"⏸ Pauze":"▶ Start"; }
+btnStart.addEventListener("click",()=>zetDraait(!draait));
+document.getElementById("btn-reset").addEventListener("click",()=>{ hoek=0; totaal=0; vorige=null; tekenAlles(); });
+document.getElementById("btn-vooruit").addEventListener("click",()=>{ zetDraait(false); stap(+1); });
+document.getElementById("btn-terug").addEventListener("click",()=>{ zetDraait(false); stap(-1); });
+
+const speed=document.getElementById("speed");
+speed.addEventListener("input",()=>{ snelheid=parseFloat(speed.value); document.getElementById("speed-val").textContent=snelheid.toFixed(2).replace(".",",")+"×"; });
+
+document.getElementById("m-onderdelen").addEventListener("change",e=>{ R.lagLabel.style.opacity=e.target.checked?"1":"0"; });
+document.getElementById("m-analyse").addEventListener("change",e=>{ R.lagHulp.style.opacity=e.target.checked?"1":"0"; });
+document.getElementById("m-exploded").addEventListener("change",e=>{ explodeDoel=e.target.checked?1:0; });
+
+const vHout=document.getElementById("v-hout"), vTech=document.getElementById("v-tech"), legT=document.getElementById("legenda-tech");
+function zetWeergave(tech){
+  stage.classList.toggle("modus-tech", tech);
+  vTech.classList.toggle("actief", tech); vHout.classList.toggle("actief", !tech);
+  legT.style.display = tech ? "flex" : "none";
+}
+vHout.addEventListener("click",()=>zetWeergave(false));
+vTech.addEventListener("click",()=>zetWeergave(true));
+
+stage.addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight"){ zetDraait(false); stap(+1); e.preventDefault(); }
+  else if(e.key==="ArrowLeft"){ zetDraait(false); stap(-1); e.preventDefault(); }
+  else if(e.key===" "){ zetDraait(!draait); e.preventDefault(); }
+});
+
+/* ---------- Start ---------- */
+build();
+const params=new URLSearchParams(location.search);
+if(params.has("hoek")){ const dg=parseFloat(params.get("hoek"))||0; hoek=dg*Math.PI/180; totaal=hoek; }
+if(params.get("weergave")==="tech") zetWeergave(true);
+if(params.has("toon")){ const a=params.get("toon").split(",");
+  if(a.includes("onderdelen")){ document.getElementById("m-onderdelen").checked=true; R.lagLabel.style.opacity="1"; }
+  if(a.includes("analyse")){ document.getElementById("m-analyse").checked=true; R.lagHulp.style.opacity="1"; }
+  if(a.includes("exploded")){ document.getElementById("m-exploded").checked=true; explode=explodeDoel=1; setExplode(1); }
+}
+const rustig = window.matchMedia("(prefers-reduced-motion: reduce)").matches || params.has("pauze");
+zetDraait(!rustig);
+tekenAlles();
+requestAnimationFrame(lus);
+</script>
+</body>
+</html>

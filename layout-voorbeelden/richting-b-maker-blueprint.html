@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Richting B — Maker Blueprint · Automata</title>
+<style>
+  :root{
+    --grid:#DDE6E1; --paper:#F6F8F4; --ink:#13212B; --ink-soft:#41525c;
+    --blue:#1E5FA8; --blue-d:#123f70; --blue-soft:#E4EEF8;
+    --orange:#FF7A1A; --lime:#7FB800; --line:#c7d2cc;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink);
+    font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.55;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/26px 26px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/26px 26px,
+      var(--paper);
+  }
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 22px 80px}
+
+  /* eyebrow */
+  .eyebrow{font-size:12px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; color:var(--blue)}
+
+  /* titleblock topbar */
+  .top{
+    display:flex; justify-content:space-between; align-items:stretch; margin-top:22px;
+    border:2px solid var(--ink); background:#fff;
+  }
+  .top .cell{padding:9px 14px; border-right:2px solid var(--ink)}
+  .top .cell:last-child{border-right:0}
+  .top .k{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); font-weight:700}
+  .top .v{font-weight:800; font-size:14px}
+  .top .grow{flex:1}
+
+  /* hero */
+  .hero{display:grid; grid-template-columns:1fr 1.05fr; gap:26px; align-items:center; margin-top:26px}
+  .hero h1{font-size:clamp(36px,6vw,60px); line-height:1; margin:.2em 0 .3em; letter-spacing:-.01em; font-weight:800}
+  .hero h1 .u{color:var(--orange)}
+  .lead{font-size:17.5px; max-width:44ch; color:#31414a}
+  .tape{
+    display:inline-block; background:var(--orange); color:#fff; font-weight:800; font-size:12.5px;
+    letter-spacing:.08em; text-transform:uppercase; padding:5px 12px; transform:rotate(-2deg);
+    box-shadow:2px 3px 0 rgba(0,0,0,.12);
+  }
+  .specs{display:flex; gap:8px; flex-wrap:wrap; margin-top:20px}
+  .spec{border:2px solid var(--ink); background:#fff; border-radius:8px; padding:8px 12px; font-size:13px}
+  .spec b{color:var(--blue)}
+
+  .sheet{
+    background:#fff; border:2px solid var(--ink); border-radius:6px; padding:14px; position:relative;
+    box-shadow:6px 6px 0 rgba(19,33,43,.10);
+  }
+  .sheet .cap{position:absolute; top:8px; right:12px; font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-soft)}
+  .sheet svg{display:block; width:100%; height:auto}
+
+  /* sections */
+  section{margin-top:56px}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:18px}
+  .sec-head .no{font-family:ui-monospace,Menlo,monospace; font-weight:800; color:var(--orange); font-size:15px}
+  .sec-head h2{font-size:clamp(23px,3.4vw,32px); margin:0; font-weight:800; letter-spacing:-.01em}
+  .sec-head .rule{flex:1; height:2px; background:repeating-linear-gradient(90deg,var(--ink) 0 8px,transparent 8px 14px)}
+
+  /* mech cards */
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .mech{background:#fff; border:2px solid var(--ink); border-radius:8px; overflow:hidden;
+    transition:transform .12s, box-shadow .12s}
+  .mech:hover{transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--blue)}
+  .mech .pic{background:var(--blue-soft); border-bottom:2px solid var(--ink); padding:12px}
+  .mech .pic svg{width:100%; height:96px}
+  .mech .body{padding:12px 14px 15px}
+  .mech h3{margin:0 0 2px; font-size:18px; display:flex; justify-content:space-between; align-items:baseline}
+  .mech h3 .io{font-size:11px; color:#fff; background:var(--blue); padding:3px 7px; border-radius:5px; letter-spacing:.04em}
+  .mech .fits{font-size:13.5px; color:#55646d; margin-top:6px}
+
+  /* denkvraag as logboek note */
+  .think{background:#FFFCEF; border:2px solid var(--ink); border-radius:6px; padding:22px 24px 20px; position:relative;
+    box-shadow:5px 5px 0 rgba(19,33,43,.10)}
+  .think::before{content:""; position:absolute; top:-11px; left:50%; transform:translateX(-50%) rotate(-3deg);
+    width:120px; height:22px; background:rgba(255,122,26,.55); border:1px solid rgba(0,0,0,.08)}
+  .think .lbl{font-family:ui-monospace,Menlo,monospace; font-size:12px; color:var(--orange); font-weight:700; letter-spacing:.08em}
+  .think h3{margin:4px 0 4px; font-size:21px}
+  .think .q{font-size:17.5px; font-weight:700; margin:4px 0 14px}
+  .think textarea{width:100%; min-height:80px; resize:vertical; border:2px solid var(--ink); border-radius:6px;
+    padding:11px 13px; font:inherit; font-size:15px; background:#fff}
+  .think textarea:focus{outline:3px solid rgba(30,95,168,.35)}
+  .btn{border:0; cursor:pointer; font:inherit; font-weight:800; font-size:15px; background:var(--ink); color:#fff;
+    padding:11px 18px; border-radius:8px; margin-top:12px; transition:background .12s}
+  .btn:hover{background:var(--blue)}
+  .answer{display:none; margin-top:14px; border-left:5px solid var(--blue); background:var(--blue-soft);
+    padding:13px 15px; border-radius:0 8px 8px 0; font-size:15px}
+  .answer.open{display:block; animation:pop .22s ease}
+  @keyframes pop{from{opacity:0; transform:translateY(5px)}to{opacity:1; transform:none}}
+
+  /* planning as build checklist */
+  .build{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .step{display:flex; gap:12px; align-items:flex-start; background:#fff; border:2px solid var(--ink);
+    border-radius:8px; padding:11px 14px}
+  .step .box{flex:0 0 auto; width:22px; height:22px; border:2px solid var(--ink); border-radius:5px; margin-top:2px;
+    display:grid; place-items:center; font-weight:800; color:var(--lime)}
+  .step .no{font-family:ui-monospace,Menlo,monospace; font-weight:800; color:var(--orange); font-size:12.5px}
+  .step .t{font-weight:700; font-size:15px}
+  .step .d{font-size:13px; color:#5c6b73}
+  .step.done{background:#F3F8EA}
+
+  footer{margin-top:58px; border-top:2px solid var(--ink); padding-top:16px; display:flex; justify-content:space-between;
+    flex-wrap:wrap; gap:10px; font-size:13px; color:var(--ink-soft)}
+
+  /* blueprint animation */
+  .spin{transform-box:fill-box; transform-origin:center; animation:rot 3s linear infinite}
+  @keyframes rot{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr}
+    .cards{grid-template-columns:1fr}
+    .build{grid-template-columns:1fr}
+    .top{flex-wrap:wrap}
+    .top .cell{border-right:0; border-bottom:2px solid var(--ink); flex:1 1 45%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TITLEBLOCK -->
+  <div class="top">
+    <div class="cell"><div class="k">Project</div><div class="v">Automata · Eindhoven Zoo</div></div>
+    <div class="cell grow"><div class="k">Vak / klas</div><div class="v">Techniek — havo 2</div></div>
+    <div class="cell"><div class="k">Duur</div><div class="v mono">8× 100 min</div></div>
+    <div class="cell"><div class="k">Schaal</div><div class="v mono">1:1</div></div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <span class="tape">Werktekening · geheim project van de Zoo</span>
+      <h1>Bouw een <span class="u">bewegend</span> dier</h1>
+      <p class="lead">Draaien erin, dierbeweging eruit. Een slinger draait de as; jouw mechanismen zetten dat om in <b>twee</b> bewegingen. Jij bent de ingenieur — teken het, maak het, test het, verbeter het.</p>
+      <div class="specs">
+        <span class="spec">As: <b class="mono">Ø6 mm</b></span>
+        <span class="spec">Boor: <b class="mono">6,5–7 mm</b></span>
+        <span class="spec">Wand: <b class="mono">multiplex 6 mm</b></span>
+        <span class="spec">Bewegingen: <b class="mono">≥ 2</b></span>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <span class="cap mono">fig. 1 — zijaanzicht</span>
+      <svg viewBox="0 0 380 260" role="img" aria-label="Technische tekening van een automata met maatlijnen">
+        <!-- box outline -->
+        <rect x="60" y="120" width="230" height="110" fill="none" stroke="#1E5FA8" stroke-width="2.5"/>
+        <!-- centerline (axle) -->
+        <line x1="30" y1="170" x2="360" y2="170" stroke="#1E5FA8" stroke-width="1" stroke-dasharray="10 4 3 4"/>
+        <!-- cam disc (offset) spins -->
+        <g class="spin" style="transform-origin:120px 170px">
+          <circle cx="120" cy="170" r="30" fill="#E4EEF8" stroke="#1E5FA8" stroke-width="2.5"/>
+          <circle cx="120" cy="170" r="4" fill="#1E5FA8"/>
+          <circle cx="120" cy="150" r="3" fill="#FF7A1A"/>
+        </g>
+        <!-- follower rod + bird head -->
+        <rect x="114" y="60" width="12" height="82" fill="#fff" stroke="#1E5FA8" stroke-width="2.5"/>
+        <circle cx="120" cy="50" r="15" fill="none" stroke="#FF7A1A" stroke-width="2.5"/>
+        <polygon points="133,46 148,50 133,55" fill="none" stroke="#FF7A1A" stroke-width="2.5"/>
+        <!-- crank -->
+        <line x1="290" y1="170" x2="325" y2="170" stroke="#1E5FA8" stroke-width="2.5"/>
+        <g class="spin" style="transform-origin:325px 170px">
+          <line x1="325" y1="170" x2="325" y2="145" stroke="#1E5FA8" stroke-width="2.5"/>
+          <circle cx="325" cy="143" r="6" fill="#FF7A1A"/>
+        </g>
+        <!-- dimension: hole -->
+        <g stroke="#7f8f98" stroke-width="1" fill="#41525c" font-size="11" class="mono">
+          <line x1="60" y1="120" x2="60" y2="98"/><line x1="290" y1="120" x2="290" y2="98"/>
+          <line x1="60" y1="104" x2="290" y2="104"/>
+          <polygon points="60,104 68,101 68,107" fill="#7f8f98"/>
+          <polygon points="290,104 282,101 282,107" fill="#7f8f98"/>
+          <text x="150" y="96">breedte kast</text>
+        </g>
+        <!-- dimension: rod travel -->
+        <g stroke="#FF7A1A" stroke-width="1.2" fill="#c85e0f" font-size="11" class="mono">
+          <line x1="150" y1="60" x2="150" y2="90"/>
+          <polygon points="150,60 147,68 153,68" fill="#FF7A1A"/>
+          <polygon points="150,90 147,82 153,82" fill="#FF7A1A"/>
+          <text x="158" y="78">slag</text>
+        </g>
+        <!-- label Ø6 -->
+        <text x="128" y="205" font-size="11" fill="#1E5FA8" class="mono">as Ø6</text>
+      </svg>
+    </div>
+  </header>
+
+  <!-- MECHANISMEN -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Bibliotheek van mechanismen</h2><div class="rule"></div></div>
+    <div class="cards">
+      <article class="mech">
+        <div class="pic">
+          <svg viewBox="0 0 140 96" aria-hidden="true">
+            <line x1="70" y1="10" x2="70" y2="55" stroke="#1E5FA8" stroke-width="2.5"/>
+            <circle cx="70" cy="8" r="7" fill="none" stroke="#FF7A1A" stroke-width="2.5"/>
+            <path d="M40 70 q30 -26 60 0 Z" fill="#E4EEF8" stroke="#1E5FA8" stroke-width="2.5"/>
+            <circle cx="70" cy="70" r="4" fill="#1E5FA8"/>
+            <line x1="30" y1="70" x2="110" y2="70" stroke="#1E5FA8" stroke-width="1" stroke-dasharray="8 4"/>
+          </svg>
+        </div>
+        <div class="body"><h3>Nok <span class="io mono">→ op/neer</span></h3>
+        <div class="fits">Bult duwt de volger omhoog. Voor een pikkende vogel of springende kikker.</div></div>
+      </article>
+
+      <article class="mech">
+        <div class="pic">
+          <svg viewBox="0 0 140 96" aria-hidden="true">
+            <circle cx="70" cy="48" r="28" fill="#E4EEF8" stroke="#1E5FA8" stroke-width="2.5"/>
+            <circle cx="82" cy="48" r="4" fill="#FF7A1A"/>
+            <line x1="20" y1="48" x2="120" y2="48" stroke="#1E5FA8" stroke-width="1" stroke-dasharray="8 4"/>
+            <text x="60" y="90" font-size="11" fill="#1E5FA8" font-family="monospace">midden verschoven</text>
+          </svg>
+        </div>
+        <div class="body"><h3>Excenter <span class="io mono">→ schudden</span></h3>
+        <div class="fits">As-gat zit niet in het midden. Loopt het gladst. Voor een waggelende pinguïn.</div></div>
+      </article>
+
+      <article class="mech">
+        <div class="pic">
+          <svg viewBox="0 0 140 96" aria-hidden="true">
+            <circle cx="46" cy="60" r="20" fill="#E4EEF8" stroke="#1E5FA8" stroke-width="2.5"/>
+            <circle cx="56" cy="48" r="4" fill="#FF7A1A"/>
+            <line x1="56" y1="48" x2="104" y2="24" stroke="#1E5FA8" stroke-width="2.5"/>
+            <circle cx="104" cy="24" r="5" fill="none" stroke="#FF7A1A" stroke-width="2.5"/>
+          </svg>
+        </div>
+        <div class="body"><h3>Kruk <span class="io mono">→ heen/weer</span></h3>
+        <div class="fits">Draaien wordt heen-en-weer. Voor klappende vleugels of een wippende staart.</div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- DENKVRAAG -->
+  <section>
+    <div class="think">
+      <span class="lbl">// logboek — denk eerst zelf</span>
+      <h3>Les 2 · Twee bewegingen op één as</h3>
+      <p class="q">Hoe krijg jij jouw twee bewegingen op één draai-as, zonder twee losse assen?</p>
+      <textarea placeholder="&gt; typ hier je eigen antwoord…"></textarea>
+      <button class="btn" data-reveal>Toon voorbeeldantwoord</button>
+      <div class="answer">Zet twee mechanismen op <b>dezelfde</b> as — twee nokken naast elkaar (nokkenas), of een excenter én een nok. Eén as = <b>één keer uitlijnen</b>, dus minder klemgevaar. Twee losse assen met tandwielen moet je twee keer uitlijnen — die lopen sneller vast.</div>
+    </div>
+  </section>
+
+  <!-- PLANNING -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Bouwvolgorde</h2><div class="rule"></div></div>
+    <div class="build">
+      <div class="step"><div class="box">✓</div><div><span class="no">L1</span> <span class="t">Dier & twee bewegingen kiezen</span><div class="d">+ drie voorbeelden onderzoeken</div></div></div>
+      <div class="step"><div class="box">✓</div><div><span class="no">L2</span> <span class="t">Mechanisme kiezen · kartonnen mock-up</span><div class="d">plan de twee bewegingen op één as</div></div></div>
+      <div class="step"><div class="box"></div><div><span class="no">L3</span> <span class="t">Technische tekening met maten</span><div class="d">laat je maten controleren</div></div></div>
+      <div class="step"><div class="box"></div><div><span class="no">L4</span> <span class="t">Zagen & uitlijnend boren</span><div class="d">twee wanden op elkaar, in één keer door</div></div></div>
+      <div class="step"><div class="box"></div><div><span class="no">L5</span> <span class="t">Mechaniek + eerste draaitest</span><div class="d">beide mechanismen op de as</div></div></div>
+      <div class="step"><div class="box"></div><div><span class="no">L6</span> <span class="t">Wrijving & speling oplossen</span><div class="d">rietje-lager, kraal, schuren</div></div></div>
+      <div class="step"><div class="box"></div><div><span class="no">L7</span> <span class="t">Dier koppelen & decoreren</span><div class="d">licht materiaal, stevig vast</div></div></div>
+      <div class="step done"><div class="box">★</div><div><span class="no">L8</span> <span class="t">Eindtest & presenteren aan de Zoo</span><div class="d">5 min doordraaien — blijft het lopen?</div></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Techniek · havo 2 · Automata voor Eindhoven Zoo</span>
+    <span class="mono">Richting B — Maker Blueprint (voorbeeld-layout)</span>
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('[data-reveal]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var ans = b.nextElementSibling;
+      var open = ans.classList.toggle('open');
+      b.textContent = open ? 'Verberg voorbeeldantwoord' : 'Toon voorbeeldantwoord';
+    });
+  });
+</script>
+</body>
+</html>

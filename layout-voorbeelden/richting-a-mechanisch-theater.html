@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Richting A — Mechanisch Theater · Automata</title>
+<style>
+  :root{
+    --paper:#FCF7EE; --card:#FFFDF7; --ink:#1B2A26;
+    --teal:#0F3D3A; --teal2:#16514C; --teal-soft:#E4EEEA;
+    --marigold:#F6B12B; --coral:#FF6A4D; --line:#DfD6C4;
+    --wood:#C98A4B; --wood-d:#A66C34;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:0 22px 80px}
+
+  /* ---- utility label ---- */
+  .kicker{
+    font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--teal); display:inline-flex; gap:10px; align-items:center;
+  }
+  .kicker::before{content:""; width:26px; height:3px; background:var(--marigold); border-radius:2px}
+
+  /* ---- topbar ---- */
+  .top{display:flex; justify-content:space-between; align-items:center; padding:20px 0 8px}
+  .chip{
+    background:var(--teal); color:#fff; font-weight:700; font-size:12.5px;
+    letter-spacing:.12em; text-transform:uppercase; padding:7px 14px; border-radius:999px;
+  }
+  .chip.ghost{background:transparent; color:var(--teal); border:2px solid var(--teal)}
+
+  /* ---- hero ---- */
+  .hero{display:grid; grid-template-columns:1.05fr .95fr; gap:30px; align-items:center; margin-top:14px}
+  .hero h1{
+    font-size:clamp(38px,6vw,66px); line-height:.98; margin:.15em 0 .28em;
+    color:var(--teal); letter-spacing:-.02em; font-weight:800;
+  }
+  .hero h1 em{font-style:normal; color:var(--coral)}
+  .lead{font-size:18px; max-width:42ch; color:#33433d}
+  .lead b{color:var(--ink)}
+  .cta-row{display:flex; gap:12px; align-items:center; margin-top:22px; flex-wrap:wrap}
+  .btn{
+    border:0; cursor:pointer; font:inherit; font-weight:800; font-size:16px;
+    background:var(--marigold); color:var(--ink); padding:14px 22px; border-radius:14px;
+    box-shadow:0 4px 0 var(--wood-d); transition:transform .08s, box-shadow .08s;
+    display:inline-flex; gap:10px; align-items:center;
+  }
+  .btn:active{transform:translateY(3px); box-shadow:0 1px 0 var(--wood-d)}
+  .btn.stop{background:var(--teal); color:#fff; box-shadow:0 4px 0 #082a27}
+  .hint{font-size:13.5px; color:#6b7a72}
+
+  /* ---- stage ---- */
+  .stage{
+    background:var(--teal); border-radius:26px; padding:18px; position:relative; overflow:hidden;
+    box-shadow:0 18px 40px -22px rgba(15,61,58,.6);
+  }
+  .stage::after{content:"“Dieren in beweging”"; position:absolute; left:18px; bottom:12px;
+    color:#bfe0d8; font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700}
+  .stage svg{display:block; width:100%; height:auto}
+
+  /* ---- section head ---- */
+  section{margin-top:56px}
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:20px}
+  .sec-head h2{font-size:clamp(24px,3.6vw,34px); margin:0; color:var(--teal); font-weight:800; letter-spacing:-.01em}
+  .sec-head .rule{flex:1; height:2px; background:var(--line)}
+
+  /* ---- mechanism cards ---- */
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .mech{
+    background:var(--card); border:2px solid var(--line); border-radius:20px; padding:16px;
+    display:flex; flex-direction:column; gap:8px; position:relative;
+    transition:transform .12s, box-shadow .12s, border-color .12s;
+  }
+  .mech:hover{transform:translateY(-4px); border-color:var(--marigold); box-shadow:0 14px 26px -18px rgba(0,0,0,.35)}
+  .mech .pic{background:var(--teal-soft); border-radius:14px; padding:10px; display:grid; place-items:center}
+  .mech .pic svg{width:100%; height:86px}
+  .mech h3{margin:6px 0 0; font-size:19px; color:var(--ink)}
+  .mech .does{font-weight:700; color:var(--coral); font-size:14px}
+  .mech .fits{font-size:14px; color:#59665f}
+  .mech .num{position:absolute; top:-12px; left:-12px; width:34px; height:34px; border-radius:50%;
+    background:var(--marigold); color:var(--ink); font-weight:800; display:grid; place-items:center; font-size:15px;
+    border:3px solid var(--paper)}
+
+  /* ---- denkvraag ---- */
+  .think{
+    background:linear-gradient(180deg,#fff,#FFFBF1); border:2px dashed var(--marigold);
+    border-radius:22px; padding:26px 26px 22px; position:relative;
+  }
+  .think .tag{position:absolute; top:-14px; left:24px; background:var(--coral); color:#fff;
+    font-weight:800; font-size:13px; letter-spacing:.06em; padding:6px 14px; border-radius:999px}
+  .think h3{margin:6px 0 4px; font-size:22px; color:var(--teal)}
+  .think .q{font-size:18px; font-weight:700; margin:6px 0 14px}
+  .think textarea{
+    width:100%; min-height:82px; resize:vertical; border:2px solid var(--line); border-radius:14px;
+    padding:12px 14px; font:inherit; font-size:15.5px; background:#fff; color:var(--ink);
+  }
+  .think textarea:focus{outline:3px solid rgba(246,177,43,.5); border-color:var(--marigold)}
+  .reveal-btn{margin-top:12px}
+  .answer{
+    margin-top:14px; background:var(--teal-soft); border-left:6px solid var(--teal);
+    border-radius:0 14px 14px 0; padding:14px 16px; font-size:15.5px; display:none;
+  }
+  .answer.open{display:block; animation:pop .25s ease}
+  @keyframes pop{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+
+  /* ---- planning route ---- */
+  .route{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+  .stop-item{
+    background:var(--card); border:2px solid var(--line); border-radius:16px; padding:13px 14px; position:relative;
+  }
+  .stop-item .l{font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--marigold)}
+  .stop-item .t{font-weight:700; font-size:15px; margin-top:2px}
+  .stop-item .d{font-size:13px; color:#67736c; margin-top:4px}
+  .stop-item.finish{background:var(--teal); color:#fff; border-color:var(--teal)}
+  .stop-item.finish .l{color:var(--marigold)}
+  .stop-item.finish .d{color:#cfe4dd}
+
+  footer{margin-top:60px; border-top:2px solid var(--line); padding-top:18px;
+    display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:13.5px; color:#6b7a72}
+
+  /* ---- automata animation ---- */
+  .crank{transform-box:fill-box; transform-origin:center; animation:spin 2.4s linear infinite; animation-play-state:paused}
+  .gear{transform-box:fill-box; transform-origin:center; animation:spin 3.2s linear infinite; animation-play-state:paused}
+  .lift{animation:bob 2.4s ease-in-out infinite; animation-play-state:paused}
+  .stage.draait .crank, .stage.draait .gear, .stage.draait .lift{animation-play-state:running}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bob{0%,100%{transform:translateY(0)} 45%{transform:translateY(-16px)} 55%{transform:translateY(-16px)}}
+
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr; gap:22px}
+    .cards{grid-template-columns:1fr}
+    .route{grid-template-columns:1fr 1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .crank,.gear,.lift{animation:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <span class="chip">Techniek · havo 2</span>
+    <span class="chip ghost">8 lessen</span>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <span class="kicker">Tentoonstelling · Eindhoven Zoo</span>
+      <h1>Automata voor de <em>Zoo</em></h1>
+      <p class="lead">De Zoo maakt een nieuwe show: <b>“Dieren in beweging”</b>. Jij bouwt een houten machientje — draai aan de slinger en jouw dier komt tot leven. Het pikt, klapt met zijn vleugels of opent zijn bek. En het maakt <b>minimaal twee bewegingen op één as</b>.</p>
+      <div class="cta-row">
+        <button class="btn" id="crankBtn">▶ Draai aan de slinger</button>
+        <span class="hint">…en kijk hoe de vogel pikt.</span>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <!-- automata: box + spinning gear + crank + bobbing bird -->
+      <svg viewBox="0 0 360 300" role="img" aria-label="Houten automata met een vogel die op en neer beweegt als je aan de slinger draait">
+        <!-- ground shadow -->
+        <ellipse cx="180" cy="272" rx="120" ry="14" fill="#0a2b28"/>
+        <!-- BIRD on rod (lifts) -->
+        <g class="lift">
+          <rect x="171" y="120" width="12" height="70" rx="4" fill="#e9c98f"/>
+          <g>
+            <ellipse cx="177" cy="104" rx="34" ry="26" fill="#FF6A4D"/>
+            <circle cx="200" cy="86" r="17" fill="#FF6A4D"/>
+            <polygon points="214,84 236,90 214,98" fill="#F6B12B"/>
+            <circle cx="204" cy="82" r="3.4" fill="#1B2A26"/>
+            <path d="M150 104 q-20 4 -30 -8 q22 2 30 -6 Z" fill="#e0553c"/>
+            <path d="M170 116 q6 12 16 4" stroke="#e0553c" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+        </g>
+        <!-- BOX -->
+        <rect x="70" y="150" width="220" height="110" rx="16" fill="#C98A4B"/>
+        <rect x="70" y="150" width="220" height="26" rx="13" fill="#d89a5c"/>
+        <rect x="86" y="188" width="188" height="58" rx="10" fill="#b3773c"/>
+        <!-- porthole with gear -->
+        <circle cx="132" cy="217" r="26" fill="#8f5f2e"/>
+        <g class="gear">
+          <g fill="#F6B12B">
+            <circle cx="132" cy="217" r="16"/>
+            <g stroke="#F6B12B" stroke-width="7" stroke-linecap="round">
+              <line x1="132" y1="196" x2="132" y2="238"/>
+              <line x1="111" y1="217" x2="153" y2="217"/>
+              <line x1="117" y1="202" x2="147" y2="232"/>
+              <line x1="147" y1="202" x2="117" y2="232"/>
+            </g>
+          </g>
+          <circle cx="132" cy="217" r="6" fill="#8f5f2e"/>
+        </g>
+        <!-- hole where rod enters -->
+        <rect x="169" y="150" width="16" height="10" rx="3" fill="#7d5327"/>
+        <!-- CRANK on right -->
+        <g class="crank">
+          <line x1="290" y1="217" x2="290" y2="187" stroke="#5b3c1c" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="290" cy="185" r="9" fill="#0F3D3A"/>
+        </g>
+        <circle cx="290" cy="217" r="7" fill="#5b3c1c"/>
+      </svg>
+    </div>
+  </header>
+
+  <!-- MECHANISMEN -->
+  <section>
+    <div class="sec-head"><h2>Kies je mechanisme</h2><div class="rule"></div></div>
+    <div class="cards">
+      <article class="mech">
+        <span class="num">1</span>
+        <div class="pic">
+          <svg viewBox="0 0 120 90" aria-hidden="true">
+            <line x1="60" y1="18" x2="60" y2="46" stroke="#0F3D3A" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="60" cy="12" r="8" fill="#FF6A4D"/>
+            <path d="M32 62 q28 -22 56 0 q0 12 -28 12 q-28 0 -28 -12Z" fill="#F6B12B"/>
+            <circle cx="60" cy="62" r="5" fill="#0F3D3A"/>
+            <path d="M60 12 v-8 M52 8 l-6 -5 M68 8 l6 -5" stroke="#0F3D3A" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Nok</h3>
+        <span class="does">draaien → op en neer</span>
+        <span class="fits">Past bij: pikkende vogel, springende kikker.</span>
+      </article>
+
+      <article class="mech">
+        <span class="num">2</span>
+        <div class="pic">
+          <svg viewBox="0 0 120 90" aria-hidden="true">
+            <circle cx="60" cy="45" r="26" fill="#F6B12B"/>
+            <circle cx="70" cy="45" r="5" fill="#0F3D3A"/>
+            <path d="M84 45 a24 24 0 0 1 -48 0" fill="none" stroke="#FF6A4D" stroke-width="4" stroke-dasharray="3 5"/>
+            <path d="M60 20 l4 -8 M60 70 l-4 8" stroke="#0F3D3A" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Excenter</h3>
+        <span class="does">draaien → schudden</span>
+        <span class="fits">Past bij: waggelende pinguïn, trillend oor.</span>
+      </article>
+
+      <article class="mech">
+        <span class="num">3</span>
+        <div class="pic">
+          <svg viewBox="0 0 120 90" aria-hidden="true">
+            <circle cx="44" cy="55" r="18" fill="#F6B12B"/>
+            <circle cx="52" cy="45" r="4" fill="#0F3D3A"/>
+            <line x1="52" y1="45" x2="88" y2="26" stroke="#0F3D3A" stroke-width="6" stroke-linecap="round"/>
+            <path d="M84 18 l14 4 l-6 12" fill="none" stroke="#FF6A4D" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Kruk</h3>
+        <span class="does">draaien → heen en weer</span>
+        <span class="fits">Past bij: klappende vleugels, wippende staart.</span>
+      </article>
+    </div>
+  </section>
+
+  <!-- DENKVRAAG -->
+  <section>
+    <div class="think">
+      <span class="tag">💡 Denk eerst zelf</span>
+      <h3>Les 2 · Twee bewegingen, één as</h3>
+      <p class="q">Hoe krijg jij jouw twee bewegingen op één draai-as, zonder twee losse assen te gebruiken?</p>
+      <textarea placeholder="Typ hier eerst je eigen antwoord…"></textarea>
+      <button class="btn reveal-btn" data-reveal>Toon voorbeeldantwoord</button>
+      <div class="answer">
+        Zet twee mechanismen op <b>dezelfde</b> as — bijvoorbeeld twee nokken naast elkaar (een nokkenas), of een excenter én een nok. Eén as betekent <b>één keer uitlijnen</b>, dus veel minder kans dat het klemt. Twee losse assen met tandwielen moet je twee keer uitlijnen — die lopen sneller vast.
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANNING -->
+  <section>
+    <div class="sec-head"><h2>Jouw route door het project</h2><div class="rule"></div></div>
+    <div class="route">
+      <div class="stop-item"><div class="l">Les 1</div><div class="t">Dier & beweging</div><div class="d">Kies je dier en twéé bewegingen.</div></div>
+      <div class="stop-item"><div class="l">Les 2</div><div class="t">Mechanisme + proefmodel</div><div class="d">Bouw een kartonnen mock-up.</div></div>
+      <div class="stop-item"><div class="l">Les 3</div><div class="t">Technische tekening</div><div class="d">Echte maten, laat ze checken.</div></div>
+      <div class="stop-item"><div class="l">Les 4</div><div class="t">Zagen & boren</div><div class="d">Uitlijnend boren in één keer.</div></div>
+      <div class="stop-item"><div class="l">Les 5</div><div class="t">Mechaniek bouwen</div><div class="d">Beide mechanismen op de as.</div></div>
+      <div class="stop-item"><div class="l">Les 6</div><div class="t">Wrijving oplossen</div><div class="d">Lagers, schuren, testen.</div></div>
+      <div class="stop-item"><div class="l">Les 7</div><div class="t">Dier & decoratie</div><div class="d">Koppelen en versieren.</div></div>
+      <div class="stop-item finish"><div class="l">Les 8</div><div class="t">🎉 De Zoo!</div><div class="d">Eindtest & presenteren.</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Techniek · havo 2 · Automata voor Eindhoven Zoo</span>
+    <span>Richting A — Mechanisch Theater (voorbeeld-layout)</span>
+  </footer>
+
+</div>
+
+<script>
+  // Draai-knop: start/stop de automata-animatie
+  var stage = document.getElementById('stage');
+  var btn = document.getElementById('crankBtn');
+  btn.addEventListener('click', function(){
+    var on = stage.classList.toggle('draait');
+    btn.textContent = on ? '⏸ Stop de slinger' : '▶ Draai aan de slinger';
+    btn.classList.toggle('stop', on);
+  });
+  // Klik op de stage draait ook
+  stage.addEventListener('click', function(){ btn.click(); });
+
+  // Think-first reveal
+  document.querySelectorAll('[data-reveal]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var ans = b.nextElementSibling;
+      var open = ans.classList.toggle('open');
+      b.textContent = open ? 'Verberg voorbeeldantwoord' : 'Toon voorbeeldantwoord';
+    });
+  });
+</script>
+</body>
+</html>

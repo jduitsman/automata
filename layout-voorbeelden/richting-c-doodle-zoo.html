@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Richting C — Doodle Zoo · Automata</title>
+<style>
+  :root{
+    --paper:#FFFDF5; --ink:#191712; --green:#2FA866; --sky:#3AA0E3;
+    --sun:#FFC53D; --coral:#FF5C5C; --violet:#9B6BD6; --line:#191712;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink); background:var(--paper);
+    font-family:"Avenir Next","Trebuchet MS",system-ui,-apple-system,sans-serif;
+    line-height:1.55;
+    background-image:radial-gradient(rgba(25,23,18,.05) 1.4px, transparent 1.4px);
+    background-size:18px 18px;
+  }
+  .doodle{font-family:"Chalkboard SE","Comic Sans MS","Trebuchet MS",cursive}
+  .wrap{max-width:980px; margin:0 auto; padding:0 22px 80px}
+
+  .panel{border:3px solid var(--ink); border-radius:20px; background:#fff;
+    box-shadow:6px 7px 0 rgba(25,23,18,.9)}
+
+  /* topbar */
+  .top{display:flex; gap:12px; justify-content:center; margin-top:24px; flex-wrap:wrap}
+  .badge{border:3px solid var(--ink); border-radius:999px; padding:7px 16px; font-weight:800; font-size:13.5px;
+    box-shadow:3px 3px 0 var(--ink); background:#fff}
+  .badge.g{background:var(--green); color:#fff}
+  .badge.s{background:var(--sun)}
+
+  /* hero */
+  .hero{margin-top:22px; padding:26px; display:grid; grid-template-columns:1.05fr .95fr; gap:24px; align-items:center}
+  .hero h1{font-size:clamp(40px,7vw,72px); line-height:.92; margin:6px 0 14px; letter-spacing:-.01em}
+  .hero h1 .a{color:var(--coral); display:inline-block; transform:rotate(-3deg)}
+  .hero h1 .b{color:var(--sky); display:inline-block; transform:rotate(2deg)}
+  .lead{font-size:18px; max-width:40ch}
+  .lead b{background:var(--sun); padding:0 4px; border-radius:4px}
+  .btn{font:inherit; font-weight:800; font-size:17px; cursor:pointer; border:3px solid var(--ink);
+    background:var(--sun); color:var(--ink); padding:13px 22px; border-radius:14px; box-shadow:4px 4px 0 var(--ink);
+    margin-top:20px; transition:transform .07s, box-shadow .07s}
+  .btn:active{transform:translate(4px,4px); box-shadow:0 0 0 var(--ink)}
+
+  .toy{background:#EAF6FF; border:3px solid var(--ink); border-radius:16px; padding:12px; text-align:center}
+  .toy svg{width:100%; height:auto; display:block}
+
+  /* sections */
+  section{margin-top:52px}
+  .sec-title{display:inline-block; font-size:clamp(24px,4vw,36px); margin:0 0 18px; transform:rotate(-1.5deg)}
+  .sec-title .u{background:var(--green); color:#fff; padding:2px 12px; border-radius:10px; border:3px solid var(--ink);
+    box-shadow:3px 3px 0 var(--ink)}
+
+  /* stickers */
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
+  .mech{border:3px solid var(--ink); border-radius:18px; background:#fff; padding:16px; box-shadow:5px 6px 0 var(--ink);
+    position:relative; transition:transform .12s}
+  .mech:nth-child(1){transform:rotate(-2deg)} .mech:nth-child(2){transform:rotate(1.5deg)} .mech:nth-child(3){transform:rotate(-1deg)}
+  .mech:hover{transform:rotate(0) scale(1.03)}
+  .mech .star{position:absolute; top:-16px; right:-12px; background:var(--coral); color:#fff; font-weight:800;
+    font-size:12px; padding:8px 10px; border:3px solid var(--ink); border-radius:50%; transform:rotate(10deg); box-shadow:2px 2px 0 var(--ink)}
+  .mech .pic{background:#F4FBEF; border:3px solid var(--ink); border-radius:12px; padding:8px; margin-bottom:10px}
+  .mech .pic svg{width:100%; height:82px}
+  .mech h3{margin:0; font-size:22px}
+  .mech .does{font-weight:800; color:var(--sky)}
+  .mech .fits{font-size:14px; margin-top:4px}
+
+  /* speech bubble denkvraag */
+  .think{display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:end}
+  .mascot{width:120px; height:auto}
+  .bubble{position:relative; background:#fff; border:3px solid var(--ink); border-radius:22px; padding:22px 24px;
+    box-shadow:6px 7px 0 var(--ink)}
+  .bubble::after{content:""; position:absolute; left:-18px; bottom:26px; width:0; height:0;
+    border:14px solid transparent; border-right-color:var(--ink)}
+  .bubble::before{content:""; position:absolute; left:-12px; bottom:28px; width:0; height:0; z-index:1;
+    border:11px solid transparent; border-right-color:#fff}
+  .think .lbl{display:inline-block; background:var(--violet); color:#fff; font-weight:800; font-size:12.5px;
+    padding:4px 12px; border-radius:999px; border:3px solid var(--ink)}
+  .think h3{margin:10px 0 2px; font-size:22px}
+  .think .q{font-size:18px; font-weight:700; margin:2px 0 12px}
+  .think textarea{width:100%; min-height:76px; resize:vertical; border:3px solid var(--ink); border-radius:12px;
+    padding:11px 13px; font:inherit; font-size:15.5px}
+  .think textarea:focus{outline:3px solid rgba(58,160,227,.4)}
+  .reveal{font:inherit; font-weight:800; font-size:15px; cursor:pointer; border:3px solid var(--ink); background:var(--green);
+    color:#fff; padding:10px 18px; border-radius:12px; box-shadow:3px 3px 0 var(--ink); margin-top:12px}
+  .reveal:active{transform:translate(3px,3px); box-shadow:0 0 0 var(--ink)}
+  .answer{display:none; margin-top:14px; background:#F4FBEF; border:3px dashed var(--green); border-radius:12px; padding:13px 15px; font-size:15.5px}
+  .answer.open{display:block; animation:pop .22s ease}
+  @keyframes pop{from{opacity:0; transform:scale(.97)}to{opacity:1; transform:none}}
+
+  /* quest map */
+  .quest{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+  .q-item{border:3px solid var(--ink); border-radius:16px; background:#fff; padding:12px; box-shadow:4px 5px 0 var(--ink); text-align:center}
+  .q-item .dot{width:34px; height:34px; margin:0 auto 6px; border:3px solid var(--ink); border-radius:50%; display:grid; place-items:center;
+    font-weight:800; background:var(--sun)}
+  .q-item .t{font-weight:700; font-size:14.5px}
+  .q-item .d{font-size:12.5px; color:#5a564c; margin-top:2px}
+  .q-item.win{background:var(--green); color:#fff}
+  .q-item.win .dot{background:var(--sun); color:var(--ink)}
+  .q-item.win .d{color:#e6f5ec}
+  .q-item:nth-child(odd){transform:rotate(-1.2deg)} .q-item:nth-child(even){transform:rotate(1.2deg)}
+
+  footer{margin-top:56px; text-align:center; font-size:14px; color:#6a6558}
+  .wobble{animation:wob 3s ease-in-out infinite}
+  @keyframes wob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+  @media (prefers-reduced-motion:reduce){.wobble{animation:none}}
+
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr}
+    .cards{grid-template-columns:1fr}
+    .quest{grid-template-columns:1fr 1fr}
+    .think{grid-template-columns:1fr}
+    .mascot{width:90px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <span class="badge g">Techniek</span>
+    <span class="badge">havo 2</span>
+    <span class="badge s">8 lessen</span>
+  </div>
+
+  <!-- HERO -->
+  <header class="panel hero">
+    <div>
+      <p class="doodle" style="font-size:18px;margin:0;color:var(--green)">✦ Eindhoven Zoo presenteert ✦</p>
+      <h1 class="doodle"><span class="a">Dieren</span> <span class="b">in beweging!</span></h1>
+      <p class="lead">Bouw een houten machientje. Draai aan de slinger en… je dier <b>komt tot leven</b>! Het pikt, klappert of wiebelt. Jouw dier maakt <b>minstens 2 bewegingen</b> — allebei op één as.</p>
+      <button class="btn" id="draaiBtn">🔄 Draai aan de slinger!</button>
+    </div>
+    <div class="toy">
+      <svg viewBox="0 0 300 250" role="img" aria-label="Grappig automata-kastje met een vogel die omhoog wipt">
+        <g id="critter" class="wobble">
+          <!-- bird body -->
+          <ellipse cx="150" cy="80" rx="42" ry="34" fill="#FF5C5C" stroke="#191712" stroke-width="4"/>
+          <!-- wing -->
+          <path d="M120 78 q-26 -6 -34 10 q24 4 34 -4 Z" fill="#ff8a8a" stroke="#191712" stroke-width="4" stroke-linejoin="round"/>
+          <!-- head -->
+          <circle cx="182" cy="58" r="22" fill="#FF5C5C" stroke="#191712" stroke-width="4"/>
+          <!-- eye -->
+          <circle cx="188" cy="52" r="8" fill="#fff" stroke="#191712" stroke-width="3"/>
+          <circle cx="190" cy="53" r="3.4" fill="#191712"/>
+          <!-- beak -->
+          <polygon points="202,58 224,62 202,70" fill="#FFC53D" stroke="#191712" stroke-width="3.5" stroke-linejoin="round"/>
+          <!-- tuft -->
+          <path d="M182 36 l-3 -12 l9 6 l6 -9 l1 12" fill="#FFC53D" stroke="#191712" stroke-width="3" stroke-linejoin="round"/>
+          <!-- rod -->
+          <rect x="143" y="112" width="14" height="52" rx="4" fill="#FFC53D" stroke="#191712" stroke-width="3.5"/>
+        </g>
+        <!-- BOX -->
+        <rect x="70" y="150" width="160" height="78" rx="12" fill="#3AA0E3" stroke="#191712" stroke-width="4"/>
+        <rect x="70" y="150" width="160" height="20" rx="10" fill="#67b7ef" stroke="#191712" stroke-width="4"/>
+        <!-- googly window -->
+        <circle cx="104" cy="196" r="16" fill="#fff" stroke="#191712" stroke-width="4"/>
+        <g id="gear" style="transform-origin:104px 196px">
+          <circle cx="104" cy="196" r="9" fill="#2FA866" stroke="#191712" stroke-width="3"/>
+          <circle cx="104" cy="196" r="3" fill="#191712"/>
+        </g>
+        <text x="150" y="202" class="doodle" font-size="15" fill="#fff" text-anchor="middle" stroke="#191712" stroke-width=".6">de Zoo</text>
+        <!-- crank -->
+        <line x1="230" y1="196" x2="252" y2="196" stroke="#191712" stroke-width="4"/>
+        <g id="crank" style="transform-origin:252px 196px">
+          <line x1="252" y1="196" x2="252" y2="176" stroke="#191712" stroke-width="4"/>
+          <circle cx="252" cy="174" r="7" fill="#FFC53D" stroke="#191712" stroke-width="3"/>
+        </g>
+        <!-- motion sparkles -->
+        <g id="sparks" opacity="0">
+          <text x="120" y="40" font-size="18">✦</text>
+          <text x="212" y="30" font-size="14">✦</text>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <!-- MECHANISMEN -->
+  <section>
+    <h2 class="sec-title doodle">Kies je <span class="u">super-mechanisme</span></h2>
+    <div class="cards">
+      <article class="mech">
+        <span class="star">POP!</span>
+        <div class="pic"><svg viewBox="0 0 120 82" aria-hidden="true">
+          <line x1="60" y1="14" x2="60" y2="46" stroke="#191712" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="60" cy="10" r="8" fill="#FF5C5C" stroke="#191712" stroke-width="3"/>
+          <path d="M34 60 q26 -22 52 0 q0 10 -26 10 q-26 0 -26 -10Z" fill="#FFC53D" stroke="#191712" stroke-width="4"/>
+          <circle cx="60" cy="58" r="4" fill="#191712"/>
+        </svg></div>
+        <h3 class="doodle">Nok</h3>
+        <div class="does">draaien → op & neer</div>
+        <div class="fits">Voor een pikkende vogel of springende kikker.</div>
+      </article>
+
+      <article class="mech">
+        <span class="star">WIEB!</span>
+        <div class="pic"><svg viewBox="0 0 120 82" aria-hidden="true">
+          <circle cx="60" cy="42" r="26" fill="#3AA0E3" stroke="#191712" stroke-width="4"/>
+          <circle cx="71" cy="42" r="5" fill="#FFC53D" stroke="#191712" stroke-width="2.5"/>
+          <path d="M60 16 l4 -8 M60 68 l-4 8" stroke="#191712" stroke-width="3" stroke-linecap="round"/>
+        </svg></div>
+        <h3 class="doodle">Excenter</h3>
+        <div class="does">draaien → schudden</div>
+        <div class="fits">Loopt het gladst! Voor een waggelende pinguïn.</div>
+      </article>
+
+      <article class="mech">
+        <span class="star">KLAP!</span>
+        <div class="pic"><svg viewBox="0 0 120 82" aria-hidden="true">
+          <circle cx="42" cy="52" r="18" fill="#2FA866" stroke="#191712" stroke-width="4"/>
+          <circle cx="50" cy="43" r="4" fill="#FFC53D" stroke="#191712" stroke-width="2"/>
+          <line x1="50" y1="43" x2="88" y2="24" stroke="#191712" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="90" cy="22" r="7" fill="#FF5C5C" stroke="#191712" stroke-width="3"/>
+        </svg></div>
+        <h3 class="doodle">Kruk</h3>
+        <div class="does">draaien → heen & weer</div>
+        <div class="fits">Voor klappende vleugels of een wippende staart.</div>
+      </article>
+    </div>
+  </section>
+
+  <!-- DENKVRAAG -->
+  <section>
+    <div class="think">
+      <svg class="mascot" viewBox="0 0 120 150" aria-hidden="true">
+        <ellipse cx="60" cy="96" rx="40" ry="44" fill="#2FA866" stroke="#191712" stroke-width="4"/>
+        <circle cx="46" cy="80" r="12" fill="#fff" stroke="#191712" stroke-width="3"/>
+        <circle cx="74" cy="80" r="12" fill="#fff" stroke="#191712" stroke-width="3"/>
+        <circle cx="49" cy="82" r="4.5" fill="#191712"/><circle cx="71" cy="82" r="4.5" fill="#191712"/>
+        <path d="M48 108 q12 10 24 0" fill="none" stroke="#191712" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M30 46 q10 -22 30 -14 M90 46 q-10 -22 -30 -14" fill="none" stroke="#191712" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="34" cy="34" r="6" fill="#FFC53D" stroke="#191712" stroke-width="3"/>
+        <circle cx="86" cy="34" r="6" fill="#FFC53D" stroke="#191712" stroke-width="3"/>
+      </svg>
+      <div class="bubble">
+        <span class="lbl doodle">? denk eerst zelf</span>
+        <h3 class="doodle">Les 2 · Twee bewegingen, één as</h3>
+        <p class="q">Hoe krijg jij jouw twee bewegingen op één draai-as — zonder twee losse assen?</p>
+        <textarea placeholder="Schrijf hier eerst je eigen idee…"></textarea><br>
+        <button class="reveal" data-reveal>Toon voorbeeldantwoord</button>
+        <div class="answer">Zet twee mechanismen op <b>dezelfde</b> as! Bijvoorbeeld twee nokken naast elkaar (een nokkenas), of een excenter én een nok. Eén as = <b>één keer uitlijnen</b>, dus veel minder kans dat het klemt. Twee losse assen met tandwielen moet je twéé keer uitlijnen — die lopen sneller vast.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUEST MAP -->
+  <section>
+    <h2 class="sec-title doodle">Jouw <span class="u">avontuur</span> in 8 lessen</h2>
+    <div class="quest">
+      <div class="q-item"><div class="dot">1</div><div class="t">Dier & beweging</div><div class="d">kies er twee!</div></div>
+      <div class="q-item"><div class="dot">2</div><div class="t">Proefmodel</div><div class="d">karton + prikkers</div></div>
+      <div class="q-item"><div class="dot">3</div><div class="t">Tekening</div><div class="d">echte maten</div></div>
+      <div class="q-item"><div class="dot">4</div><div class="t">Zagen & boren</div><div class="d">recht in lijn</div></div>
+      <div class="q-item"><div class="dot">5</div><div class="t">Mechaniek</div><div class="d">eerste draai!</div></div>
+      <div class="q-item"><div class="dot">6</div><div class="t">Wrijving weg</div><div class="d">soepel maken</div></div>
+      <div class="q-item"><div class="dot">7</div><div class="t">Versieren</div><div class="d">maak 'm mooi</div></div>
+      <div class="q-item win"><div class="dot">🏆</div><div class="t">De Zoo!</div><div class="d">presenteren</div></div>
+    </div>
+  </section>
+
+  <footer class="doodle">Techniek · havo 2 · Automata voor Eindhoven Zoo — Richting C, Doodle Zoo (voorbeeld-layout)</footer>
+
+</div>
+
+<script>
+  // Draai-knop: gear + crank spinnen, sparkles aan
+  var gear = document.getElementById('gear');
+  var crank = document.getElementById('crank');
+  var sparks = document.getElementById('sparks');
+  var btn = document.getElementById('draaiBtn');
+  var on = false, raf, t0;
+  var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function frame(ts){
+    if(!t0) t0 = ts;
+    var a = (ts - t0)/1000;
+    gear.style.transform = 'rotate('+(a*180)+'deg)';
+    crank.style.transform = 'rotate('+(a*180)+'deg)';
+    raf = requestAnimationFrame(frame);
+  }
+  btn.addEventListener('click', function(){
+    on = !on;
+    btn.textContent = on ? '⏸ Stop!' : '🔄 Draai aan de slinger!';
+    sparks.style.opacity = on ? '1' : '0';
+    if(on && !reduce){ t0=0; raf=requestAnimationFrame(frame); }
+    else { cancelAnimationFrame(raf); }
+  });
+
+  document.querySelectorAll('[data-reveal]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var ans = b.nextElementSibling;
+      var open = ans.classList.toggle('open');
+      b.textContent = open ? 'Verberg voorbeeldantwoord' : 'Toon voorbeeldantwoord';
+    });
+  });
+</script>
+</body>
+</html>

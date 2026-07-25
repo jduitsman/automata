@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docentenhandleiding — Automata voor Eindhoven Zoo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --board:#b9b1a1;      /* werkbank */
+    --sheet:#fbfaf7;      /* tekenblad */
+    --ink:#22262b;        /* grafiet */
+    --steel:#767e87;      /* maatlijnen, bijschrift */
+    --blue:#1e5f8c;       /* blauwdruk: de constructie */
+    --red:#c43b2e;        /* machinerood: de waarschuwing */
+    --amber:#b07a12;      /* veiligheid */
+    --line:#d7d3ca;
+    --grid:rgba(30,95,140,.07);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--board);
+    color:var(--ink);
+    font-family:'Source Serif 4',Georgia,serif;
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Het blad ---------- */
+  .sheet{
+    max-width:1040px;
+    margin:22px auto 40px;
+    background:var(--sheet);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),
+                     linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:26px 26px;
+    border:1px solid #8f8778;
+    box-shadow:0 14px 40px rgba(0,0,0,.22);
+    padding:14px;
+  }
+  .frame{border:1px solid var(--steel);padding:0 clamp(16px,4vw,40px) 40px;}
+
+  h1,h2,h3,h4{font-family:'Archivo',system-ui,sans-serif;font-weight:700;line-height:1.15;margin:0;}
+  p{margin:0 0 .8em;}
+  p:last-child{margin-bottom:0;}
+  strong{font-weight:600;}
+  .mono{font-family:'Space Mono',ui-monospace,monospace;}
+  a{color:var(--blue);}
+  :focus-visible{outline:2px solid var(--red);outline-offset:2px;}
+
+  /* ---------- Titelhoek ---------- */
+  .titleblock{margin:0 0 6px;}
+  .tb-top{
+    display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);padding:26px 0 14px;
+  }
+  .tb-eyebrow{
+    font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--blue);
+  }
+  .tb-top h1{font-size:clamp(1.7rem,4.6vw,3rem);letter-spacing:-.02em;text-transform:uppercase;}
+  .tb-top .tagline{font-size:1.02rem;color:var(--steel);font-style:italic;max-width:34ch;text-align:right;}
+  .tb-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    border:1px solid var(--line);border-top:none;
+  }
+  .tb-cell{padding:9px 12px;border-right:1px solid var(--line);}
+  .tb-cell:last-child{border-right:none;}
+  .tb-cell dt{
+    font-family:'Space Mono',monospace;font-size:.63rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--steel);margin-bottom:2px;
+  }
+  .tb-cell dd{margin:0;font-family:'Archivo',sans-serif;font-weight:600;font-size:.95rem;}
+
+  /* ---------- Signatuur: technische doorsnede (hero) ---------- */
+  .figuur{border:1px solid var(--steel);background:var(--sheet);margin:18px 0 4px;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:26px 26px;
+    animation:fadeUp .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:.12s;}
+  .figuur svg{display:block;width:100%;height:auto;}
+  .figuur .fig-txt{font-family:'Space Mono',monospace;fill:var(--steel);letter-spacing:.02em;}
+  .figuur figcaption{border-top:1px solid var(--line);padding:8px 14px;
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--steel);}
+  .figuur figcaption b{color:var(--blue);font-weight:700;}
+  @media (prefers-reduced-motion:reduce){.figuur{animation:none;}}
+
+  /* ---------- Bladindex (nav) ---------- */
+  nav.index{
+    position:sticky;top:0;z-index:30;
+    display:flex;flex-wrap:wrap;gap:0;
+    background:rgba(251,250,247,.94);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--ink);margin-bottom:34px;
+  }
+  nav.index a{
+    flex:1 1 auto;text-align:center;
+    font-family:'Archivo',sans-serif;font-weight:600;font-size:.72rem;letter-spacing:.03em;text-transform:uppercase;
+    color:var(--ink);text-decoration:none;padding:11px 10px;
+    border-right:1px solid var(--line);
+  }
+  nav.index a:last-child{border-right:none;}
+  nav.index a:hover{background:var(--blue);color:#fff;}
+  nav.index a.mark{color:var(--red);}
+  nav.index a.mark:hover{background:var(--red);color:#fff;}
+
+  /* ---------- Secties ---------- */
+  section{margin-bottom:46px;scroll-margin-top:58px;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px;}
+  .sec-head h2{font-size:1.5rem;text-transform:uppercase;letter-spacing:.01em;white-space:nowrap;}
+  .sec-head .rule{flex:1;height:1px;background:var(--line);}
+  .sec-head .code{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--steel);letter-spacing:.1em;white-space:nowrap;}
+  .lead{font-size:1.12rem;}
+  .prose{max-width:none;}
+  .prose h3{font-family:'Archivo',sans-serif;font-size:1.05rem;text-transform:uppercase;letter-spacing:.03em;color:var(--blue);margin:22px 0 6px;}
+
+  /* ---------- Denkstimulerende vraag — het signatuurkader ---------- */
+  .denkvraag{
+    position:relative;margin:22px 0;padding:16px 20px 16px 22px;
+    background:#eef4f8;border:1px solid var(--blue);border-left:6px solid var(--blue);
+  }
+  .denkvraag .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'Space Mono',monospace;font-weight:700;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
+    color:#fff;background:var(--blue);padding:4px 10px;margin-bottom:10px;
+  }
+  .denkvraag .badge .num{font-size:.74rem;}
+  .denkvraag .badge::before{content:"?";font-size:.9rem;line-height:1;}
+  .denkvraag p{font-family:'Archivo',sans-serif;font-weight:600;font-size:1.08rem;line-height:1.4;color:var(--ink);margin:0;}
+
+  /* ---------- Leerdoelen ---------- */
+  ol.doelen{list-style:none;margin:0;padding:0;counter-reset:d;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 30px;}
+  ol.doelen li{
+    counter-increment:d;position:relative;padding:10px 0 10px 40px;border-bottom:1px dotted var(--line);
+  }
+  ol.doelen li::before{
+    content:counter(d,decimal-leading-zero);position:absolute;left:0;top:12px;
+    font-family:'Space Mono',monospace;font-size:.76rem;font-weight:700;color:var(--blue);
+  }
+  ol.doelen li strong{font-family:'Archivo',sans-serif;font-weight:600;}
+
+  /* ---------- Deelvragen ---------- */
+  ol.deelvragen{list-style:none;margin:0;padding:0;counter-reset:v;display:grid;gap:1px;background:var(--line);border:1px solid var(--line);}
+  ol.deelvragen li{counter-increment:v;background:var(--sheet);padding:14px 18px 14px 46px;font-size:1.04rem;position:relative;}
+  ol.deelvragen li::before{content:counter(v);position:absolute;left:16px;top:15px;font-family:'Space Mono',monospace;font-weight:700;font-size:.8rem;color:var(--red);}
+  ol.deelvragen li b{font-family:'Archivo',sans-serif;font-weight:700;color:var(--blue);}
+
+  /* ---------- Tabellen ---------- */
+  .scroll{overflow-x:auto;border:1px solid var(--line);}
+  table{border-collapse:collapse;width:100%;background:var(--sheet);font-size:.9rem;}
+  table.wide{min-width:820px;}
+  th,td{padding:11px 13px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);border-right:1px solid var(--line);}
+  th:last-child,td:last-child{border-right:none;}
+  thead th{
+    background:var(--ink);color:#fff;
+    font-family:'Archivo',sans-serif;font-weight:600;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;
+  }
+  tbody tr:nth-child(even) td{background:rgba(30,95,140,.03);}
+  td .num{font-family:'Space Mono',monospace;font-weight:700;color:var(--blue);}
+  td.mono,.mono td{font-family:'Space Mono',monospace;}
+  .dl-badge{font-family:'Space Mono',monospace;font-weight:700;font-size:.72rem;color:var(--red);white-space:nowrap;}
+
+  /* ---------- Planning: lessen ---------- */
+  .les{border:1px solid var(--line);margin-bottom:14px;background:var(--sheet);}
+  .les-head{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);padding:10px 16px;background:#f4f2ec;}
+  .les-nr{font-family:'Space Mono',monospace;font-weight:700;font-size:.78rem;color:#fff;background:var(--blue);padding:3px 8px;letter-spacing:.06em;white-space:nowrap;}
+  .les-head.key .les-nr{background:var(--red);}
+  .les-head h3{font-size:1.12rem;flex:1;}
+  .les-body{padding:14px 16px 16px;}
+  .les-body p{font-size:.98rem;}
+  .les-dl{
+    display:flex;align-items:center;gap:10px;margin-top:12px;padding:8px 12px;
+    border-left:3px solid var(--red);background:#faf1f0;
+  }
+  .les-dl .lbl{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red);}
+  .les-dl .val{font-family:'Archivo',sans-serif;font-weight:700;font-size:.92rem;}
+  .tussen{
+    display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:8px 16px;
+    border:1px dashed var(--steel);background:#f4f2ec;
+    font-family:'Space Mono',monospace;font-size:.78rem;color:#3c434a;
+  }
+  .tussen b{font-family:'Space Mono',monospace;font-weight:700;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);white-space:nowrap;}
+  .callout{
+    margin:18px 0;padding:14px 18px;border:1px solid var(--red);border-left:5px solid var(--red);background:#faf1f0;
+    font-size:.98rem;
+  }
+  .callout b{font-family:'Archivo',sans-serif;font-weight:700;}
+
+  /* ---------- Twee kolommen (mag wel / mag niet, mat) ---------- */
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .box{border:1px solid var(--line);padding:16px;background:var(--sheet);}
+  .box h3{font-size:1rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;}
+  .box ul{list-style:none;margin:0;padding:0;}
+  .box li{padding:5px 0 5px 18px;position:relative;font-size:.97rem;}
+  .box li::before{content:"";position:absolute;left:0;top:13px;width:8px;height:1px;background:var(--steel);}
+  .box.wel{border-left:5px solid var(--blue);}
+  .box.wel h3{color:var(--blue);}
+  .box.wel li::before{background:var(--blue);width:8px;height:8px;top:9px;border-radius:0;}
+  .box.niet{border-left:5px solid var(--red);}
+  .box.niet h3{color:var(--red);}
+  .box.niet li::before{content:"×";background:none;font-family:'Space Mono',monospace;font-weight:700;color:var(--red);top:4px;width:auto;}
+  .box b{font-family:'Archivo',sans-serif;font-weight:600;}
+  .veiligheid{border:1px solid var(--amber);border-left:5px solid var(--amber);background:#fdf8ec;}
+  .veiligheid h3{color:var(--amber);}
+  .veiligheid li::before{background:var(--amber);}
+  .veiligheid b{font-family:'Archivo',sans-serif;font-weight:700;}
+
+  /* ---------- Genummerde uitleg (redenen, patroon) ---------- */
+  ol.redenen{counter-reset:r;list-style:none;margin:14px 0;padding:0;}
+  ol.redenen li{counter-increment:r;position:relative;padding:8px 0 8px 40px;border-bottom:1px dotted var(--line);font-size:.98rem;}
+  ol.redenen li::before{content:counter(r);position:absolute;left:0;top:9px;font-family:'Space Mono',monospace;font-weight:700;font-size:.82rem;color:var(--blue);}
+  ul.patroon{list-style:none;margin:14px 0;padding:0;}
+  ul.patroon li{position:relative;padding:7px 0 7px 20px;border-bottom:1px dotted var(--line);font-size:.98rem;}
+  ul.patroon li::before{content:"";position:absolute;left:0;top:15px;width:9px;height:9px;border:1.5px solid var(--blue);}
+  ul.patroon b{font-family:'Archivo',sans-serif;font-weight:600;}
+  .werkregel{
+    margin:16px 0;padding:12px 18px;background:var(--ink);color:var(--sheet);
+    font-family:'Space Mono',monospace;font-weight:700;font-size:.92rem;letter-spacing:.02em;
+  }
+  .werkregel span{color:#8fc4e6;}
+
+  /* ---------- Producten deliverables tabel: nummerkolom ---------- */
+  td.pnr{font-family:'Space Mono',monospace;font-weight:700;color:var(--blue);text-align:center;width:34px;}
+
+  /* ---------- Randvoorwaarden ---------- */
+  .rv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+
+  /* ---------- Rubric ---------- */
+  .part{
+    border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);
+    padding:16px 0;margin:56px 0 26px;display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;
+  }
+  .part h2{font-size:1.7rem;text-transform:uppercase;}
+  .part p{margin:0;font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--steel);}
+  table.rubric{min-width:900px;}
+  table.rubric thead th{position:sticky;top:0;}
+  td.crit{min-width:200px;background:#f4f2ec;}
+  td.crit strong{display:block;font-family:'Archivo',sans-serif;font-size:.95rem;margin-bottom:5px;}
+  td.crit .vraag{font-style:italic;font-size:.82rem;color:#3c434a;display:block;margin-bottom:8px;}
+  .chip{display:inline-block;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:1px 6px;border:1px solid;}
+  .chip-prod{color:var(--blue);border-color:var(--blue);}
+  .chip-proc{color:var(--red);border-color:var(--red);}
+  .weging{display:block;margin-top:6px;font-family:'Space Mono',monospace;font-weight:700;font-size:.9rem;}
+  td.n1{background:#faf1f0;} td.n2{background:#fdf8ec;} td.n3{background:#f1f5f2;} td.n4{background:#eaf1f6;}
+  .weegtabel td.lvl-tot{font-family:'Archivo',sans-serif;font-weight:700;}
+  .lbl-proc{color:var(--red);} .lbl-prod{color:var(--blue);}
+  .niveau-legenda{display:flex;gap:0;flex-wrap:wrap;margin:0 0 16px;border:1px solid var(--line);}
+  .niveau-legenda span{flex:1;min-width:120px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;border-right:1px solid var(--line);}
+  .niveau-legenda span:last-child{border-right:none;}
+  .niveau-legenda .l1{background:#faf1f0;color:var(--red);}
+  .niveau-legenda .l2{background:#fdf8ec;color:var(--amber);}
+  .niveau-legenda .l3{background:#f1f5f2;color:#2c7a4b;}
+  .niveau-legenda .l4{background:#eaf1f6;color:var(--blue);}
+  ol.tips{list-style:none;margin:0;padding:0;counter-reset:t;}
+  ol.tips li{counter-increment:t;position:relative;padding:12px 0 12px 44px;border-bottom:1px dotted var(--line);}
+  ol.tips li::before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:14px;font-family:'Space Mono',monospace;font-weight:700;font-size:.76rem;color:var(--red);}
+  ol.tips strong{font-family:'Archivo',sans-serif;}
+
+  /* ---------- Verantwoording eindtermen ---------- */
+  table.eindtermen{min-width:760px;}
+  table.eindtermen td.etnr{font-family:'Space Mono',monospace;font-weight:700;color:var(--blue);text-align:center;width:34px;}
+  table.eindtermen td.ettitel{min-width:150px;}
+  table.eindtermen td.ettitel strong{font-family:'Archivo',sans-serif;font-weight:600;}
+  tr.domein-rij td{background:#f4f2ec;font-family:'Archivo',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);}
+  .dek{display:inline-block;font-family:'Space Mono',monospace;font-weight:700;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;white-space:nowrap;border:1px solid;}
+  .dek-sterk{color:#2c7a4b;border-color:#2c7a4b;background:#f1f5f2;}
+  .dek-deels{color:var(--amber);border-color:var(--amber);background:#fdf8ec;}
+  .dek-niet{color:var(--red);border-color:var(--red);background:#faf1f0;}
+
+  /* ---------- Denkvraag: zelf antwoorden + reveal ---------- */
+  .zelf{margin:16px 0;padding:14px 16px;border:1px dashed var(--steel);background:#fbfaf6;}
+  .zelf label{display:block;font-family:'Archivo',sans-serif;font-weight:600;font-size:.92rem;margin-bottom:8px;color:var(--ink);}
+  .zelf-input{
+    width:100%;box-sizing:border-box;resize:vertical;min-height:78px;
+    font-family:'Source Serif 4',Georgia,serif;font-size:1rem;line-height:1.7;
+    padding:10px 12px;border:1px solid var(--line);background:#fff;color:var(--ink);
+  }
+  .zelf-input:focus{outline:2px solid var(--blue);outline-offset:1px;}
+  .toon-btn{
+    margin-top:10px;
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--blue);color:#fff;border:none;padding:10px 16px;cursor:pointer;
+  }
+  .toon-btn:hover{background:var(--ink);}
+  .antwoord{display:none;margin:12px 0;padding:2px 0 2px 14px;border-left:3px solid var(--blue);}
+  .antwoord::before{
+    content:"Voorbeeldantwoord";display:block;
+    font-family:'Space Mono',monospace;font-weight:700;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin:0 0 8px;
+  }
+  .antwoord.open{display:block;}
+
+  /* ---------- PDF-knop ---------- */
+  .pdf{
+    position:fixed;right:20px;top:20px;z-index:50;
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--ink);color:#fff;border:none;padding:13px 20px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,.3);
+  }
+  .pdf:hover{background:var(--blue);}
+  .pdf::before{content:"↓ ";}
+
+  /* ---------- Voet ---------- */
+  footer{border-top:2px solid var(--ink);margin-top:50px;padding-top:14px;
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--steel);}
+
+  /* ---------- Laadanimatie ---------- */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  .titleblock,section,.part{animation:fadeUp .6s cubic-bezier(.2,.7,.3,1) both;}
+  section:nth-of-type(2){animation-delay:.05s;}
+  section:nth-of-type(3){animation-delay:.1s;}
+  @media (prefers-reduced-motion:reduce){
+    .titleblock,section,.part{animation:none;}
+  }
+
+  /* ---------- Responsief ---------- */
+  @media (max-width:820px){
+    .cols2,.rv-grid{grid-template-columns:1fr;}
+    .tb-top .tagline{text-align:left;}
+  }
+  @media (max-width:560px){
+    body{font-size:16px;}
+    .sheet{margin:0;border:none;padding:8px;}
+    .frame{padding:0 14px 28px;}
+    .sec-head .code{display:none;}
+    .part p{display:none;}
+    .pdf{right:10px;top:10px;padding:10px 14px;font-size:.7rem;}
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    @page{size:A4;margin:20mm 18mm;}
+    body{background:#fff!important;color:#000!important;font-size:11pt;line-height:1.5;}
+    .sheet{max-width:none;margin:0;padding:0;border:none;box-shadow:none;background:#fff;background-image:none;}
+    .frame{border:none;padding:0;}
+    .pdf,nav.index,.no-print,.toon-btn{display:none!important;}
+    .antwoord{display:none!important;}
+    .zelf{break-inside:avoid;}
+    .zelf-input{min-height:96px;}
+    .titleblock,section,.part{animation:none!important;}
+    .tb-top{padding-top:0;}
+    section{margin-bottom:22px;}
+    .les,.box,.scroll,.denkvraag,.callout,.werkregel,.les-dl,.tussen{break-inside:avoid;}
+    tr,td,th{break-inside:avoid;}
+    thead{display:table-header-group;}
+    h1,h2,h3,h4{break-after:avoid;}
+    .part{margin-top:24px;break-before:auto;}
+    thead th{position:static;}
+    a{color:#000;text-decoration:none;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<button class="pdf" onclick="window.print()">Downloaden als PDF</button>
+
+<div class="sheet"><div class="frame">
+
+  <!-- ── Titelhoek ── -->
+  <div class="titleblock">
+    <div class="tb-top">
+      <div>
+        <div class="tb-eyebrow">Techniek · Docentenhandleiding</div>
+        <h1>Automata voor Eindhoven Zoo</h1>
+      </div>
+      <div class="tagline">Alleen voor de docent — voorbereiding, timing en waar leerlingen vastlopen.</div>
+    </div>
+    <dl class="tb-grid">
+      <div class="tb-cell"><dt>Vak</dt><dd>Techniek</dd></div>
+      <div class="tb-cell"><dt>Klas</dt><dd>havo 2</dd></div>
+      <div class="tb-cell"><dt>Duur</dt><dd>8 lessen · 100 min</dd></div>
+      <div class="tb-cell"><dt>Werkvorm</dt><dd>Groepjes van 2</dd></div>
+      <div class="tb-cell"><dt>Type</dt><dd>Docentenhandleiding</dd></div>
+    </dl>
+  </div>
+
+  <!-- ── Bladindex ── -->
+  <nav class="index">
+    <a href="#kort">In het kort</a>
+    <a href="#voorbereiding">Voorbereiding</a>
+    <a href="#perles">Per les</a>
+    <a href="#vastlopers" class="mark">Vastlopers</a>
+    <a href="#timing">Timing</a>
+    <a href="#differentiatie">Differentiatie</a>
+    <a href="#beoordeling">Beoordeling</a>
+    <a href="#misgaat">Als het misgaat</a>
+    <a href="#kerndoelen">Kerndoelen</a>
+  </nav>
+
+  <!-- ══════ 1 — IN HET KORT ══════ -->
+  <section id="kort">
+    <div class="sec-head"><h2>In het kort</h2><div class="rule"></div><div class="code">01</div></div>
+    <div class="callout"><b>Alleen voor de docent.</b> Dit bestand gaat níet het leerlingmateriaal in. De alignment-tabel en de verantwoording kerndoelen (onderaan) staan hier bewust, niet in de leerlingpagina.</div>
+    <ul class="patroon">
+      <li><b>Waar het over gaat:</b> hoe een draaiende beweging (slinger) via nok, excenter, kruk of hefboom wordt omgezet in de beweging van een dier. Techniek + vormgeving samen, in de context van tentoonstelling "Dieren in beweging" van Eindhoven Zoo.</li>
+      <li><b>Wat leerlingen maken:</b> een houten automata (kastje met slinger en één draai-as) waarbij hun dier <strong>minimaal twee</strong> mechanische bewegingen maakt.</li>
+      <li><b>Hoeveel lessen:</b> 8 lessen van 100 minuten.</li>
+      <li><b>Eindproduct:</b> een werkend automata dat beide bewegingen soepel én betrouwbaar laat lopen, plus een dummy (logboek) en een presentatie aan "de Zoo".</li>
+    </ul>
+    <div class="callout"><b>Wat niet mag sneuvelen als de tijd op raakt:</b> dat leerlingen wrijving/speling <strong>zelf opsporen en oplossen</strong> bij <strong>beide</strong> bewegingen (rubriccriterium 4). Dat is het leermoment. Een mooi maar niet-draaiend kastje is het project níet.</div>
+  </section>
+
+  <!-- ══════ 2 — VOORBEREIDING ══════ -->
+  <section id="voorbereiding">
+    <div class="sec-head"><h2>Voorbereiding vóór les 1</h2><div class="rule"></div><div class="code">02</div></div>
+    <div class="prose">
+      <h3>Wat je zelf één keer gemaakt moet hebben</h3>
+      <p><strong>Bouw vóór les 1 zelf één automata met twee bewegingen op één as</strong> (bijvoorbeeld een excenter + een nok). Dat kost je ongeveer een uur en het is niet optioneel: je voelt dan waar het wringt en dat is precies waar je leerlingen op vastlopen.</p>
+      <ul class="patroon">
+        <li>Boor je twee lagerwanden apart in plaats van op elkaar geklemd — dan zie je de as slingeren. Dat moment moet je één keer zelf gezien hebben.</li>
+        <li>Boor je asgat een keer op maat (6 mm bij een Ø6-as) en een keer ruim (6,5–7 mm). Voel het verschil: op maat klemt, ruim loopt.</li>
+        <li>Zet je tweede beweging er als laatste op. Je merkt dat díe het eerst hapert — dat is exact het patroon bij de leerlingen.</li>
+      </ul>
+
+      <h3>Materiaal — hoeveelheden</h3>
+      <p>Aannames: <strong>28 leerlingen = 14 groepen</strong>. Schaal de klas-kolom naar je eigen aantal (klas-kolom = per groep × aantal groepen, met marge).</p>
+    </div>
+    <div class="scroll"><table class="wide">
+      <thead>
+        <tr><th>Materiaal</th><th>Per groep (2 lln)</th><th>Per klas (14 groepen)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Multiplex <strong>6 mm</strong> (kast + 2 lagerwanden)</td><td>kastset ± 30 × 20 cm</td><td>2 platen 120 × 60 cm</td></tr>
+        <tr><td>Houten <strong>rondstok Ø6 mm</strong> (as)</td><td>2 × 30 cm</td><td>± 10 m (of 10 stokken 1 m)</td></tr>
+        <tr><td>Satéprikkers (as proefmodel)</td><td>4–5</td><td>1 doos (100)</td></tr>
+        <tr><td>Karton / foamboard (proefmodel + dierfiguur)</td><td>2 vel karton + 1 vel foamboard A4</td><td>stapel karton + 15 vel foamboard</td></tr>
+        <tr><td><strong>Rietjes</strong> (lagers)</td><td>3–4</td><td>1 pak (100+)</td></tr>
+        <tr><td><strong>Kralen</strong> — gat ± 6,5–7 mm (lager + afstandhouder)</td><td>10</td><td>zakje 200+</td></tr>
+        <tr><td>Multiplex-schijfjes Ø 4–5 cm (nokken/excenters)</td><td>3–4</td><td>± 50 (voorgezaagd = steun)</td></tr>
+        <tr><td>Houtlijm</td><td>gedeeld flesje</td><td>4–5 flesjes</td></tr>
+        <tr><td>Lijmsticks</td><td>2–3</td><td>1 pak</td></tr>
+        <tr><td>Veiligheidsbrillen</td><td>—</td><td>3 per boorstation</td></tr>
+      </tbody>
+    </table></div>
+    <div class="prose">
+      <p><strong>Boren:</strong> houd boren klaar die <strong>0,5–1 mm ruimer</strong> zijn dan de as — bij Ø6-as dus <strong>6,5 mm en 7 mm</strong>. Leg geen 6 mm-boor bij het asgat; die verdwijnt gegarandeerd in een werkstuk en levert een klemmende as op.</p>
+
+      <h3>Voorzagen en bestellen</h3>
+      <ul class="patroon">
+        <li><b>Multiplex 6 mm</b> minstens <strong>een week</strong> van tevoren bestellen. Neem geen 4 mm — dan is het lager te kort en gaat de as slingeren; dat is geen bezuiniging maar een gegarandeerde faalmodus.</li>
+        <li><b>Zaag vóór les 4 een set kastblanks voor</b> (de vier tot vijf kastdelen op maat per groep, of in elk geval de twee lagerwanden). Zonder voorgezaagde blanks wordt les 4 een flessenhals (zie Timingrisico's). Reken op ± 45 minuten voorzagen voor 14 sets.</li>
+        <li>Maak of print <b>1–2 boormallen</b>: een blokje/plaatje met een voorgeboord Ø6,5-gat waar de leerling doorheen boort, zodat het gat loodrecht staat.</li>
+      </ul>
+
+      <h3>Machines — wie bedient wat</h3>
+    </div>
+    <div class="scroll"><table class="wide">
+      <thead>
+        <tr><th>Machine</th><th>Wie</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Figuurzaag</td><td>leerling zelfstandig</td></tr>
+        <tr><td>Decoupeerzaag</td><td>alleen onder toezicht of <strong>door de docent</strong> bediend</td></tr>
+        <tr><td>Boormachine — <strong>begeleid boorstation met mal</strong></td><td>docent of TOA, <strong>één groep tegelijk</strong></td></tr>
+        <tr><td>Lijmpistool (± 180 °C, standaard + bakje koud water)</td><td>leerling, na instructie</td></tr>
+        <tr><td>Lasersnijder (afzuiging aan, nooit pvc)</td><td><strong>alleen docent</strong></td></tr>
+        <tr><td>3D-printer (optioneel/verdieping)</td><td>docent/TOA</td></tr>
+      </tbody>
+    </table></div>
+    <div class="prose">
+      <p>Controleer vóór les 4 dat de boormachine werkt en dat er een scherpe 6,5- én 7 mm-boor in het rek ligt.</p>
+
+      <h3>Groepsindeling</h3>
+      <p>Groepjes van <strong>2</strong>. Deel taken, maar spreek af dat <strong>beiden een keer boren, zagen en monteren</strong> — anders scoort criterium 7 (Samenwerken &amp; feedback) laag en heeft de helft van de klas de kernvaardigheid niet gedaan. Zet leerlingen die snel afhaken niet bij elkaar; verspreid ze zodat je het begeleide boorstation beheersbaar houdt.</p>
+    </div>
+  </section>
+
+  <!-- ══════ 3 — PER LES ══════ -->
+  <section id="perles">
+    <div class="sec-head"><h2>Per les</h2><div class="rule"></div><div class="code">03 · 8 × 100 min</div></div>
+    <p>Elke les duurt 100 minuten. De tijdsverdelingen tellen op tot 100.</p>
+
+    <!-- Les 1 -->
+    <div class="les">
+      <div class="les-head"><span class="les-nr">LES 1</span><h3>Opdracht, dier &amp; beweging kiezen</h3></div>
+      <div class="les-body"><div class="scroll"><table>
+        <tbody>
+          <tr><td class="crit"><strong>Doel</strong></td><td>Elk groepje heeft een dier en twee concrete bewegingen gekozen en drie voorbeelden onderzocht.</td></tr>
+          <tr><td class="crit"><strong>Tijdsverdeling</strong></td><td>Opdracht Zoo + mechanismen-demo's tonen 20 · deelvragen als kompas doorlezen 10 · dier + twee bewegingen kiezen 25 · online drie voorbeelden zoeken en in dummy beschrijven 35 · opruimen/check 10 = <strong>100</strong></td></tr>
+          <tr><td class="crit"><strong>Klaarleggen</strong></td><td>Jouw zelfgebouwde automata als demo; laptops/tablets; dummy (logboek) per groep; de zoektermentabel uit "Achtergrond &amp; vakkennis".</td></tr>
+          <tr><td class="crit"><strong>Veiligheid</strong></td><td>Nog geen machines. Wel: benoem dat je zelfgebouwde automata níet uit elkaar gehaald wordt — alleen kijken en draaien.</td></tr>
+          <tr><td class="crit"><strong>Waar het vastloopt</strong></td><td>Groepen kiezen een dier met één beweging (een zwemmende vis) of twee bewegingen die eigenlijk hetzelfde zijn. Laat ze de twee bewegingen hardop benoemen: zijn het écht twee verschillende bewegingen?</td></tr>
+          <tr><td class="crit"><strong>Klaar als</strong></td><td>Dier + twee onderscheiden bewegingen vaststaan én drie voorbeelden met beweging + vermoedelijk mechanisme in de dummy staan.</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Les 2 -->
+    <div class="les">
+      <div class="les-head"><span class="les-nr">LES 2</span><h3>Mechanisme kiezen &amp; proefmodel</h3></div>
+      <div class="les-body"><div class="scroll"><table>
+        <tbody>
+          <tr><td class="crit"><strong>Doel</strong></td><td>Elk groepje heeft per beweging een mechanisme gekozen, de één-as-oplossing genoteerd en een werkend kartonnen proefmodel.</td></tr>
+          <tr><td class="crit"><strong>Tijdsverdeling</strong></td><td>Terugblik + mechanismen klassikaal (nok, excenter, hefboom, één-as) 20 · per beweging mechanisme kiezen + één-as plannen 20 · kartonnen proefmodel bouwen 45 · draaitest + aanpassingen noteren 10 · opruimen 5 = <strong>100</strong></td></tr>
+          <tr><td class="crit"><strong>Klaarleggen</strong></td><td>Karton, satéprikkers, schaar/handmes, snijmatten, lijm; multiplex-schijfjes ter demonstratie van een nok/excenter.</td></tr>
+          <tr><td class="crit"><strong>Veiligheid</strong></td><td>Vóór het snijden: <strong>handmes op de snijmat, altijd van je af, nooit naar je hand toe.</strong></td></tr>
+          <tr><td class="crit"><strong>Waar het vastloopt</strong></td><td>Groepen tekenen twee losse assen met tandwielen. Stuur nú bij naar één as (twee mechanismen op dezelfde rondstok) — hier gekozen, scheelt je in les 4–6 het meeste gedoe.</td></tr>
+          <tr><td class="crit"><strong>Klaar als</strong></td><td>Het kartonmodel draait en laat beide bewegingen zien; de één-as-keuze staat in de dummy.</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Les 3 -->
+    <div class="les">
+      <div class="les-head"><span class="les-nr">LES 3</span><h3>Technische tekening &amp; maten</h3></div>
+      <div class="les-body"><div class="scroll"><table>
+        <tbody>
+          <tr><td class="crit"><strong>Doel</strong></td><td>Elk groepje heeft een technische tekening met echte maten die jij hebt gecontroleerd, en materiaal klaargelegd.</td></tr>
+          <tr><td class="crit"><strong>Tijdsverdeling</strong></td><td>Uitleg maatvoering (aslengte, plek mechanismen, plek lagers, asgat ruimer dan as) 15 · tekening met maten uitwerken 45 · <strong>maten door docent laten controleren</strong> 20 · materiaal per groep uitzoeken/klaarleggen 15 · opruimen 5 = <strong>100</strong></td></tr>
+          <tr><td class="crit"><strong>Klaarleggen</strong></td><td>Liniaal/schuifmaat, ruitjespapier, de materialentabel; deel hier de <strong>rubric</strong> uit (beoordelingstip 3) zodat leerlingen weten waarop je let.</td></tr>
+          <tr><td class="crit"><strong>Veiligheid</strong></td><td>Nog geen machines.</td></tr>
+          <tr><td class="crit"><strong>Waar het vastloopt</strong></td><td>Beide mechanismen staan getekend maar de tweede beweging ontbreekt in de maten (zie feedbackvoorbeeld: "de nok hebben we nog niet ingetekend"). Eis dat <strong>beide</strong> mechanismen mét maat op de as staan vóór ze mogen zagen.</td></tr>
+          <tr><td class="crit"><strong>Klaar als</strong></td><td>De tekening toont kastmaten, aslengte, de plek van <strong>beide</strong> mechanismen en de lagers, en jij hebt hem afgetekend.</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Les 4 -->
+    <div class="les">
+      <div class="les-head key"><span class="les-nr">LES 4</span><h3>Kast zagen &amp; uitlijnend boren</h3></div>
+      <div class="les-body"><div class="scroll"><table>
+        <tbody>
+          <tr><td class="crit"><strong>Doel</strong></td><td>Elk groepje heeft een gezaagde kast met twee uitgelijnde, ruime asgaten.</td></tr>
+          <tr><td class="crit"><strong>Tijdsverdeling</strong></td><td>Veiligheidsinstructie boormachine + demo uitlijnend boren 15 · kast zagen (of voorgezaagde blanks pakken) 30 · twee lagerwanden op elkaar klemmen + uitlijnend boren aan het boorstation (roulerend) 35 · randen glad schuren 15 · opruimen 5 = <strong>100</strong></td></tr>
+          <tr><td class="crit"><strong>Klaarleggen</strong></td><td>Voorgezaagde kastblanks, boormal, 6,5- en 7 mm-boren, lijmklemmen, onderlegplaatjes, veiligheidsbrillen, schuurpapier, decoupeerzaag klaar (docent bedient).</td></tr>
+          <tr><td class="crit"><strong>Veiligheid</strong></td><td><strong>Vóór het eerste boorgat, aan het boorstation:</strong> werkstuk vastklemmen; bril op; <strong>géén handschoenen, geen sjaal of koordjes, lang haar vast</strong>; onderlegplaatje eronder. Boren <strong>alleen</strong> aan het begeleide station met de mal, <strong>één groep tegelijk</strong>. Decoupeerzaag: alleen door of onder toezicht van de docent.</td></tr>
+          <tr><td class="crit"><strong>Waar het vastloopt</strong></td><td>Het boorstation is de flessenhals — de rij loopt vast. Zaag daarom vooraf blanks voor en laat groepen die wachten alvast randen schuren of hun mechanismeschijfjes zagen. Groepen die apart boren krijgen een scheve as; klem de twee wanden op elkaar en boor in één keer door beide.</td></tr>
+          <tr><td class="crit"><strong>Klaar als</strong></td><td>Elke kast heeft twee asgaten die boven elkaar in lijn staan en 0,5–1 mm ruimer zijn dan de as; de as glijdt er soepel doorheen.</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Les 5 -->
+    <div class="les">
+      <div class="les-head"><span class="les-nr">LES 5</span><h3>Mechaniek bouwen &amp; eerste draaitest</h3></div>
+      <div class="les-body"><div class="scroll"><table>
+        <tbody>
+          <tr><td class="crit"><strong>Doel</strong></td><td>Elk groepje heeft een draaiend basismechaniek met beide mechanismen op de as en is aan het dierfiguur begonnen.</td></tr>
+          <tr><td class="crit"><strong>Tijdsverdeling</strong></td><td>Terugblik + uitleg montage as met beide mechanismen 10 · as + beide mechanismen monteren 40 · slinger aanzetten + eerste draaitest 20 · beginnen aan dierfiguur (restijd) 25 · opruimen 5 = <strong>100</strong></td></tr>
+          <tr><td class="crit"><strong>Klaarleggen</strong></td><td>Rondstokassen, mechanismeschijfjes (nok/excenter), houtlijm, kralen als afstandhouder, foamboard voor de dierfiguur.</td></tr>
+          <tr><td class="crit"><strong>Veiligheid</strong></td><td>Vóór het lijmen: <strong>lijmpistool op de standaard terugleggen, mondstuk ± 180 °C, bakje koud water binnen handbereik.</strong></td></tr>
+          <tr><td class="crit"><strong>Waar het vastloopt</strong></td><td>Groepen zetten alle energie in de eerste beweging en beginnen niet aan de dierfiguur. Laat hen in de restijd (of thuis) starten met het dier — dat beschermt les 6 en 7 (zie Timingrisico's).</td></tr>
+          <tr><td class="crit"><strong>Klaar als</strong></td><td>De as draait rond met <strong>beide</strong> mechanismen erop en de slinger; de eerste draaitest is gedaan en genoteerd, ook als het nog hapert.</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Les 6 -->
+    <div class="les">
+      <div class="les-head key"><span class="les-nr">LES 6</span><h3>Wrijving &amp; speling oplossen</h3></div>
+      <div class="les-body"><div class="scroll"><table>
+        <tbody>
+          <tr><td class="crit"><strong>Doel</strong></td><td>Elk groepje heeft wrijving en speling opgespoord en opgelost zodat <strong>beide</strong> bewegingen soepel draaien.</td></tr>
+          <tr><td class="crit"><strong>Tijdsverdeling</strong></td><td>Klassikaal wrijving/speling + demo rietje-lager, kraal, afstandhouder 15 · wrijving/speling opsporen (beide bewegingen) 20 · oplossen: lagers, afstandhouders, nokrand schuren 40 · <strong>ruil-feedback met een ander groepje 10</strong> · test beide bewegingen + noteren 10 · opruimen 5 = <strong>100</strong></td></tr>
+          <tr><td class="crit"><strong>Klaarleggen</strong></td><td>Rietjes, kralen, schuurpapier, extra kralen als afstandhouder; laat de dierfiguur uit les 5 al klaarliggen.</td></tr>
+          <tr><td class="crit"><strong>Veiligheid</strong></td><td>Schuurstof van MDF/multiplex irriteert: <strong>raam of afzuiging open</strong> vóór het schuren; niet in het stof blazen.</td></tr>
+          <tr><td class="crit"><strong>Waar het vastloopt</strong></td><td>Dé valkuil: de eerste beweging loopt soepel, de tweede blijft haperen — en de groep denkt dat het "af" is. Stuur gericht op de tweede beweging (zie Waar leerlingen vastlopen, punt 2).</td></tr>
+          <tr><td class="crit"><strong>Klaar als</strong></td><td><strong>Beide</strong> bewegingen draaien soepel bij het rondslingeren, ook een paar omwentelingen achter elkaar; de ingrepen én de ontvangen peer-tip staan in de dummy.</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Les 7 -->
+    <div class="les">
+      <div class="les-head"><span class="les-nr">LES 7</span><h3>Afmonteren, koppelen &amp; decoreren</h3></div>
+      <div class="les-body"><div class="scroll"><table>
+        <tbody>
+          <tr><td class="crit"><strong>Doel</strong></td><td>Elk groepje heeft de dierfiguur aan beide bewegingen gekoppeld, gecontroleerd en gedecoreerd, alles stevig vast.</td></tr>
+          <tr><td class="crit"><strong>Tijdsverdeling</strong></td><td>Uitleg koppelen + lijmpistool 10 · dierfiguur aan beide bewegingen koppelen + controleren 35 · decoreren passend bij de Zoo 35 · alles stevig vastzetten + tussentest 15 · opruimen 5 = <strong>100</strong></td></tr>
+          <tr><td class="crit"><strong>Klaarleggen</strong></td><td>Lijmpistolen op standaard, bakjes koud water, verf/foamboard/decoratiemateriaal, houtlijm.</td></tr>
+          <tr><td class="crit"><strong>Veiligheid</strong></td><td>Vóór het koppelen met het lijmpistool herhalen: <strong>standaard, water bij de hand, mondstuk 180 °C.</strong></td></tr>
+          <tr><td class="crit"><strong>Waar het vastloopt</strong></td><td>De dierfiguur is te zwaar en het mechanisme tilt hem niet meer op (zie vastlopers, punt 5); of het dier zit los ("een klodder lijm"). Laat ze na het koppelen meteen testen, niet pas in les 8.</td></tr>
+          <tr><td class="crit"><strong>Klaar als</strong></td><td>Het dier beweegt mee met <strong>beide</strong> mechanismen, zit stevig vast en het geheel is gedecoreerd.</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Les 8 -->
+    <div class="les">
+      <div class="les-head"><span class="les-nr">LES 8</span><h3>Eindtest, finetunen &amp; presenteren</h3></div>
+      <div class="les-body"><div class="scroll"><table>
+        <tbody>
+          <tr><td class="crit"><strong>Doel</strong></td><td>Elk groepje heeft de eindtest gehaald, de deelvragen samengevat en gepresenteerd aan "de Zoo".</td></tr>
+          <tr><td class="crit"><strong>Tijdsverdeling</strong></td><td>Eindtest (± 5 min doordraaien) + finetunen 25 · deelvragen samenvatten + <strong>zelfevaluatie</strong> invullen 15 · presentaties aan "de Zoo" 45 · <strong>peer-tip verwerken</strong> + afsluiting 15 = <strong>100</strong></td></tr>
+          <tr><td class="crit"><strong>Klaarleggen</strong></td><td>Presentatietafel ("de Zoo"), rubric voor zelfscore, reserve rietjes/kralen voor last-minute finetunen.</td></tr>
+          <tr><td class="crit"><strong>Veiligheid</strong></td><td>Geen nieuwe machinehandelingen; automata draaien tijdens presentatie met de hand.</td></tr>
+          <tr><td class="crit"><strong>Waar het vastloopt</strong></td><td>Na langer draaien tilt een losgetrilde lijmverbinding of verschoven afstandhouder de tweede beweging eruit. Laat ze de eindtest (5 min doordraaien) vóór de presentatie doen, niet erin ontdekken.</td></tr>
+          <tr><td class="crit"><strong>Klaar als</strong></td><td>Beide bewegingen draaien na 5 minuten nog soepel; de deelvragen zijn met bewijs samengevat; elke groep heeft gepresenteerd.</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </section>
+
+  <!-- ══════ 4 — WAAR LEERLINGEN VASTLOPEN ══════ -->
+  <section id="vastlopers">
+    <div class="sec-head"><h2>Waar leerlingen vastlopen</h2><div class="rule"></div><div class="code">04</div></div>
+    <p>Dit is het hart van de handleiding. Bij elke vastloper: het signaal (vaak zie je het vóór de melding), de werkelijke oorzaak, en een vraag die de leerling zelf verder helpt — geen voorgezegde oplossing.</p>
+
+    <div class="box">
+      <h3>1. Scheve, klemmende of slingerende as</h3>
+      <p><b>Signaal:</b> de groep moet hard aan de slinger duwen; de as slingert zichtbaar of piept; de beweging schokt bij elke omwenteling. Je hoort het vaak vóór je het ziet.</p>
+      <p><b>Oorzaak:</b> de twee lagerwanden zijn <strong>apart</strong> geboord, waardoor de gaten niet in lijn staan; óf het asgat is op maat geboord (6 mm bij Ø6) in plaats van 0,5–1 mm ruimer; óf er is 4 mm-multiplex gebruikt, waardoor het lager te kort is.</p>
+      <p><b>Wat je doet:</b> "Draai de as eens rond <strong>zónder</strong> de mechanismen erop. Loopt hij dan al stroef — en zit dat aan één kant of aan beide?" Zo leidt de leerling zelf naar de bron: uitlijning, gatmaat of lagerdikte.</p>
+    </div>
+
+    <div class="box">
+      <h3>2. De tweede beweging blijft haperen</h3>
+      <p><b>Signaal:</b> de eerste beweging (meestal de excenter) loopt soepel, maar de tweede (vaak de nok) blijft af en toe staan. De groep zegt "de kop werkt wel" en beschouwt het als af. Dit is hét terugkerende patroon uit het feedbackvoorbeeld.</p>
+      <p><b>Oorzaak:</b> alle aandacht ging naar de eerste beweging. De tweede kant heeft nog speling, een ongeschuurde nokrand of een losse montage — de wrijving zit daar verstopt.</p>
+      <p><b>Wat je doet:</b> "Je loste de eerste beweging op met een rietje-lager én door de rand te schuren. Wat is er aan de <strong>tweede</strong> kant nog anders — wat heb je daar nog níet gedaan?" De leerling ontdekt dat hij zijn eigen aanpak nog niet op de tweede beweging heeft toegepast.</p>
+    </div>
+
+    <div class="box">
+      <h3>3. Twee losse assen of tandwielen als hoofdaandrijving</h3>
+      <p><b>Signaal:</b> het ontwerp heeft twee assen naast elkaar met tandwielen die niet lekker grijpen; de groep is in les 5 nog steeds aan het uitlijnen.</p>
+      <p><b>Oorzaak:</b> ze kozen niet voor de één-as-route. Twee assen betekent twee keer uitlijnen, dus dubbel klemgevaar — en tandwielen als hoofdaandrijving lopen snel vast.</p>
+      <p><b>Wat je doet:</b> "Kun je beide bewegingen op <strong>dezelfde</strong> as krijgen? Welk mechanisme kun je naast je eerste zetten zonder een tweede as erbij te maken?" Grijp hier vroeg in — in les 2, niet in les 5.</p>
+    </div>
+
+    <div class="box">
+      <h3>4. Proefmodel overgeslagen, meteen in hout</h3>
+      <p><b>Signaal:</b> de groep wil in les 2 of 4 direct in hout beginnen; er is geen kartonmodel, of een slordig model waar niet aan gedraaid is.</p>
+      <p><b>Oorzaak:</b> karton voelt als tijdverlies. Het gevolg: ze ontdekken een fout pas in hout, en dat kost een hele les in plaats van vijf minuten.</p>
+      <p><b>Wat je doet:</b> "Draai eens aan je kartonmodel — klopt de beweging al, en wat zou je willen veranderen vóór je het onomkeerbaar in hout zaagt?" Het model is bewust goedkoop zodat fouten goedkoop blijven.</p>
+    </div>
+
+    <div class="box">
+      <h3>5. Bewegend deel te zwaar</h3>
+      <p><b>Signaal:</b> het mechaniek draaide zonder dier soepel, maar mét de dierfiguur eraan hapert of stopt het. Het mechanisme krijgt het deel niet omhoog.</p>
+      <p><b>Oorzaak:</b> de dierfiguur is van te dik of te zwaar materiaal; de nok of hefboom kan het gewicht niet tillen.</p>
+      <p><b>Wat je doet:</b> "Wat kun je aan het <strong>bewegende</strong> deel veranderen zodat je mechanisme het makkelijker optilt?" De leerling komt zelf op lichter materiaal (foamboard) of een kleiner bewegend deel.</p>
+    </div>
+
+    <div class="box">
+      <h3>6. Peer-feedback niet verwerkt</h3>
+      <p><b>Signaal:</b> de groep krijgt feedback ("de staart zit te los") maar past niets aan — "want het was bijna tijd". Het logboek noemt de feedback wél, maar geen actie erop. Ook dit is een patroon uit het feedbackvoorbeeld.</p>
+      <p><b>Oorzaak:</b> de feedback komt te laat (in les 8 is er geen tijd meer), of ze zien feedback als kritiek in plaats van gereedschap. Dit drukt criterium 7 (Samenwerken &amp; feedback) én criterium 4.</p>
+      <p><b>Wat je doet:</b> plan de peer-feedback al in <strong>les 6</strong>, niet in les 8. Vraag: "Welk <strong>één</strong> ding uit die feedback kun je nog vóór de eindtest aanpakken — en wat levert dat je op bij de test?" Zo wordt feedback een zet vooruit in plaats van een oordeel achteraf.</p>
+    </div>
+
+    <div class="box">
+      <h3>7. Nokrand schokt in plaats van soepel te lopen</h3>
+      <p><b>Signaal:</b> de beweging "springt" of tikt hoorbaar bij elke omwenteling; ze is niet vloeiend, ook al klemt niets.</p>
+      <p><b>Oorzaak:</b> de nokrand is scherp of hoekig; de overgang van laag naar hoog is te abrupt.</p>
+      <p><b>Wat je doet:</b> "Voel eens met je vinger langs de rand van je nok — waar voelt hij hoekig? Wat gebeurt er als je die overgang gladder maakt?" De leerling ontdekt dat de vorm van de rand de vloeiendheid bepaalt.</p>
+    </div>
+
+    <div class="box">
+      <h3>8. Onderbouwing klopt niet met het logboek</h3>
+      <p><b>Signaal:</b> de dummy zegt "de as loopt soepel", terwijl er in eerdere lessen "bleef hangen" staat. De onderbouwing is te rooskleurig. Dit is de tegenstrijdigheid uit het feedbackvoorbeeld.</p>
+      <p><b>Oorzaak:</b> leerlingen denken dat een probleem opschrijven een zwakte is, en verbergen zo juist hun beste leermoment — het oplossen van wrijving, waar criterium 4 punten voor geeft.</p>
+      <p><b>Wat je doet:</b> "Je logboek zegt dat het eerst haperde en dat je het hebt opgelost — is dat iets om te verbergen, of juist het stuk waar je bij Testen &amp; verbeteren punten mee verdient?" Zo leren ze dat eerlijk documenteren loont.</p>
+    </div>
+  </section>
+
+  <!-- ══════ 5 — TIMINGRISICO'S ══════ -->
+  <section id="timing">
+    <div class="sec-head"><h2>Timingrisico's</h2><div class="rule"></div><div class="code">05</div></div>
+    <p>Drie lessen zijn in de praktijk te krap. Concreet wat er gebeurt en wat je schrapt als je achterloopt.</p>
+    <ul class="patroon">
+      <li><b>Les 4 (zagen + uitlijnend boren)</b> loopt uit doordat er <strong>één begeleid boorstation</strong> is en iedereen daar tegelijk wil boren. <em>Wat je doet:</em> zaag de kastblanks <strong>vooraf</strong> voor (scheelt de hele zaagronde) en zet als het kan een tweede boorstation of tweede begeleider bij. Loop je alsnog achter: laat wachtende groepen randen schuren en mechanismeschijfjes zagen, zodat de wachtrij productief is. Groepen die aan het eind van de les nog niet geboord hebben, boren aan het begin van les 5 — dan schuift de dierfiguur naar de restijd.</li>
+      <li><b>Les 6 (wrijving oplossen)</b> is de kern van het project en juist daarom vaak te kort, omdat de tweede beweging pas hier echt getest wordt. <em>Wat je doet:</em> bescherm deze les door de <strong>dierfiguur al in les 5 of thuis</strong> te laten starten, zodat les 6 volledig aan wrijving/speling gaat. Loop je achter: laat de decoratie los en concentreer alles op "beide bewegingen soepel" — dat is criterium 4, decoratie is criterium 2 en weegt lichter.</li>
+      <li><b>Les 7 (koppelen + decoreren)</b> loopt door in les 8. <em>Wat je doet:</em> accepteer dat en plan les 8 zo dat finetunen en presenteren pas na een korte afmonteerronde komen. Loop je achter: kort de decoratie in tot "herkenbaar dier" — een werkend, sober dier scoort hoger dan een mooi maar haperend dier, want de betrouwbaarheid van beide bewegingen (criterium 4) weegt zwaarder dan de afwerking.</li>
+    </ul>
+    <div class="callout"><b>Vuistregel bij tijdgebrek:</b> schrap aan de kant van vormgeving/decoratie, nooit aan de kant van "beide bewegingen soepel én betrouwbaar". Dat laatste is het leerdoel.</div>
+  </section>
+
+  <!-- ══════ 6 — DIFFERENTIATIE ══════ -->
+  <section id="differentiatie">
+    <div class="sec-head"><h2>Differentiatie</h2><div class="rule"></div><div class="code">06</div></div>
+    <div class="cols2">
+      <div class="box wel">
+        <h3>Leerlingen die vastlopen (steun)</h3>
+        <ul>
+          <li>Geef de <b>voorgezaagde kastblanks</b> en de <b>boormal</b>, zodat ze meteen bij het bouwen zijn in plaats van bij het zagen te blijven hangen.</li>
+          <li>Laat ze de <b>excenter</b> kiezen — het makkelijkste en gladst lopende mechanisme.</li>
+          <li>Laat ze <b>eerst één beweging</b> helemaal werkend en vast maken, en pas dán de tweede toevoegen. Één werkende beweging is een basis, geen halve opdracht.</li>
+          <li>Geef voorgezaagde multiplex-schijfjes zodat het nok/excenter-zagen geen struikelblok wordt.</li>
+        </ul>
+      </div>
+      <div class="box wel">
+        <h3>Leerlingen die snel klaar zijn (verdieping)</h3>
+        <ul>
+          <li>Voeg een <b>derde beweging</b> toe op dezelfde as.</li>
+          <li>Gebruik een <b>tandwiel of kroonwiel</b> voor een 90°-draaiing (bijvoorbeeld een kop die opzij draait) — als extra, <b>nooit</b> als hoofdaandrijving.</li>
+          <li>Maak de nokken digitaal: <b>3D-print</b> een nok of <b>lasersnijd</b> onderdelen (raakt kerndoel 21, Digitale geletterdheid).</li>
+          <li>Grote uitdaging: vervang de slinger door een <b>elektromotor met schakeling</b> als aandrijving (raakt kerndoel 30C, dat anders niet gedekt is).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="box veiligheid">
+      <h3>Wat je nooit weghaalt, ook niet bij tijdgebrek</h3>
+      <ul>
+        <li><b>Twee</b> mechanische bewegingen op één as — één beweging is de opdracht niet.</li>
+        <li>De <b>wrijving/speling zelf opsporen en oplossen</b> (criterium 4). Dit is het leermoment; los het niet voor de leerling op.</li>
+        <li>De <b>eigen draaitest</b> — leerlingen moeten zelf ontdekken waar het hapert, niet horen waar het hapert.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════ 7 — BEOORDELINGSMOMENTEN ══════ -->
+  <section id="beoordeling">
+    <div class="sec-head"><h2>Beoordelingsmomenten</h2><div class="rule"></div><div class="code">07</div></div>
+    <p>Beoordeel <strong>proces tijdens de lessen</strong> — achteraf kun je het niet meer terugzien. Loop rond met een korte notitielijst en zet per groep een aantekening op deze momenten. Verwijs naar de criteria zoals ze in de rubric heten.</p>
+    <div class="scroll"><table class="wide">
+      <thead>
+        <tr><th>Wanneer</th><th>Waar je op let</th><th>Rubriccriterium</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Les 2–3</td><td>Mechanismekeuze en één-as-plan; kun je in eigen woorden uitleggen waarom dit mechanisme past? Proefmodel + tekening.</td><td><strong>1. Mechanismen begrijpen &amp; de juiste keuze maken</strong>; <strong>2. Ontwerp: techniek en vormgeving werken samen</strong></td></tr>
+        <tr><td>Les 4</td><td>Veilig boren: bril, vastgeklemd, geen loshangende kleding/haar; nauwkeurig aftekenen, zagen, uitlijnend boren.</td><td><strong>5. Veilig werken</strong> (observeren); <strong>3. Nauwkeurig maken en monteren</strong></td></tr>
+        <tr><td>Les 5–6</td><td>De draaitest en het gericht oplossen van wrijving/speling — test bewust <strong>beide</strong> bewegingen na langer draaien; taakverdeling en of ze elkaar helpen.</td><td><strong>4. Testen, wrijving/speling oplossen &amp; verbeteren</strong> (observeren); <strong>7. Samenwerken &amp; feedback</strong> (observeren)</td></tr>
+        <tr><td>Les 6 (peer-feedback)</td><td>Geven en ontvangen ze bruikbare feedback, en verwerken ze die zichtbaar?</td><td><strong>7. Samenwerken &amp; feedback</strong></td></tr>
+        <tr><td>Les 7</td><td>Stevige, verzorgde montage; versterkt de vormgeving de beweging?</td><td><strong>3. Nauwkeurig maken en monteren</strong>; <strong>2. Ontwerp: techniek en vormgeving werken samen</strong></td></tr>
+        <tr><td>Les 8</td><td>Eindtest (5 min doordraaien): lopen beide bewegingen betrouwbaar? Presentatie mét werkend automata en deelvragen mét bewijs uit de dummy.</td><td><strong>4. Testen, wrijving/speling oplossen &amp; verbeteren</strong>; <strong>6. Presenteren aan "de Zoo"</strong></td></tr>
+      </tbody>
+    </table></div>
+    <div class="prose">
+      <h3>Aandachtspunten uit de rubric-beoordelingstips</h3>
+      <ul class="patroon">
+        <li>Test bij <b>criterium 4</b> beide bewegingen ná langer draaien — één ronddraai zegt niets over betrouwbaarheid. Draait maar één beweging soepel, dan is criterium 4 hooguit "Voldoende", ook al ziet het kastje er af uit.</li>
+        <li>Deel de rubric al in <b>les 3</b> uit en laat groepen zich in les 8 vóór jouw beoordeling zelf scoren op criterium 4 en 7. Laat ze bij <b>criterium 6</b> de dummy erbij pakken: staat bij elke deelvraag echt bewijs (schets, foto, maat, testresultaat)?</li>
+        <li>Bij twijfel tussen twee niveaus: kies het niveau dat de leerling <b>volledig</b> waarmaakt, niet gedeeltelijk.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════ 8 — ALS HET MISGAAT ══════ -->
+  <section id="misgaat">
+    <div class="sec-head"><h2>Als het misgaat</h2><div class="rule"></div><div class="code">08</div></div>
+    <ul class="patroon">
+      <li><b>Boormachine kapot (les 4):</b> boor de asgaten voor de groepen die aan de beurt waren zelf voor, of verplaats het boren naar les 5. Laat les 4 dan draaien om zagen, schuren en mechanismeschijfjes voorbereiden. Zorg dat je altijd een reserveboor 6,5 én 7 mm hebt — een botte boor levert een scheve as.</li>
+      <li><b>Materiaal op (multiplex/rondstok):</b> laat groepen die nog niet zagen op karton/foamboard doorwerken aan de dierfiguur en de tekening; bestel bij. Rondstok is te vervangen door een gladde satéprikker-dikke stok bij lichte modellen, maar niet voor de definitieve as. Houd altijd een noodvoorraad multiplex-schijfjes achter de hand.</li>
+      <li><b>Groep uit elkaar gevallen:</b> laat de twee als solo verder werken aan hetzelfde automata mag niet dubbel — splits de opdracht: de één maakt het mechaniek af, de ander de dierfiguur en decoratie, en ze koppelen in les 7. Beoordeel samenwerken (criterium 7) dan naar wat ze daarna nog samen doen, en noteer de situatie.</li>
+      <li><b>Groep ver achter:</b> schakel over op de steun-route — voorgezaagde blanks, boormal, excenter, en <strong>eerst één beweging</strong> werkend. Eén soepel werkende beweging plus een eerlijk logboek scoort hoger dan twee haperende bewegingen. De tweede beweging voegen ze toe als er tijd is; forceer hem niet in het laatste half uur, want dan hapert hij gegarandeerd tijdens de presentatie.</li>
+    </ul>
+  </section>
+
+  <!-- ══════ DEEL 2 — VERANTWOORDING KERNDOELEN & ALIGNMENT ══════ -->
+  <div class="part"><h2>Verantwoording kerndoelen &amp; alignment</h2><p>Docentmateriaal · niet in de leerlingpagina</p></div>
+  <section id="kerndoelen">
+    <p>Deze sectie hoort in de docentenhandleiding — <strong>niet</strong> in het leerlingmateriaal.</p>
+
+    <div class="prose">
+      <h3>Alignment-tabel: leerdoel ↔ rubriccriterium ↔ kerndoel</h3>
+    </div>
+    <div class="scroll"><table class="wide">
+      <thead>
+        <tr><th>Leerdoel</th><th>Rubriccriterium</th><th>Kerndoel(en)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1. Uitleggen hoe nok, krukas, excenter, hefboom, tandwiel een draaiende beweging overbrengen/omzetten</td><td>1. Mechanismen begrijpen &amp; de juiste keuze maken</td><td class="mono">KD30A, KD29B</td></tr>
+        <tr><td>2. Bepalen welke mechanismen bij de twee bewegingen passen</td><td>1. Mechanismen begrijpen &amp; de juiste keuze maken</td><td class="mono">KD30A, KD29B</td></tr>
+        <tr><td>3. Ontwerpen hoe je twee bewegingen op één as combineert (techniek + vormgeving één geheel)</td><td>2. Ontwerp: techniek en vormgeving werken samen</td><td class="mono">KD30A, KD40A, KD41A</td></tr>
+        <tr><td>4. Aftekenen, zagen, boren, monteren tot een nauwkeurig mechaniek</td><td>3. Nauwkeurig maken en monteren</td><td class="mono">KD30A, KD29C</td></tr>
+        <tr><td>5. Testen waar wrijving/speling zit, dat oplossen en verbeteren</td><td>4. Testen, wrijving/speling oplossen &amp; verbeteren</td><td class="mono">KD30B, KD29C, KD29B</td></tr>
+        <tr><td>6. Veilig en zorgvuldig werken met gereedschap en machines</td><td>5. Veilig werken</td><td class="mono">KD29C</td></tr>
+        <tr><td>7. Presenteren hoe het automata werkt en waarom die mechanismen</td><td>6. Presenteren aan "de Zoo"</td><td class="mono">KD29C, KD29D</td></tr>
+        <tr><td>8. Samenwerken, taken verdelen, feedback geven/ontvangen/verwerken</td><td>7. Samenwerken &amp; feedback</td><td class="mono">KD29D, KD40A (iteratief proces + reflectie)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="prose">
+      <p>De rode draad: elk leerdoel heeft een eigen rubriccriterium dat het beoordeelt, en elk criterium is te herleiden tot één of meer kerndoelen. Zo sluiten leerdoelen, beoordeling en kerndoelen op elkaar aan.</p>
+
+      <h3>Verantwoording kerndoelen</h3>
+      <p><span class="mono">Overgenomen uit kerndoelen-automata-koppeling.csv</span></p>
+    </div>
+    <div class="callout"><b>Voorbehoud.</b> Kerndoelen worden over de <strong>héle onderbouw</strong> opgebouwd en afgesloten, niet binnen één project. Dit is een <strong>oriënterend/opbouwend</strong> onderbouwproject (havo 2); de dekking hieronder betekent "hieraan gewerkt/bijgedragen", niet "hiermee afgerond".</div>
+    <div class="scroll"><table class="eindtermen wide">
+      <thead>
+        <tr><th>Kerndoel</th><th>Sub</th><th>Dekking</th><th>Waar in het project (bewijs)</th></tr>
+      </thead>
+      <tbody>
+        <tr class="domein-rij"><td colspan="4">Mens en natuur</td></tr>
+        <tr><td class="ettitel"><strong>KD30 – Natuurkundige verschijnselen en technische systemen</strong></td><td class="etnr">30A</td><td><span class="dek dek-sterk">Sterk</span></td><td>Mechanismentabel + keuze (les 1–2); kartonnen proefmodel (les 2); technische tekening met maten (les 3); asmontage + draaitest (les 5); eindeis ≥2 bewegingen; presentatie (les 8); rubriccriteria 1, 2, 3.</td></tr>
+        <tr><td class="ettitel"><strong>KD30 – Natuurkundige verschijnselen en technische systemen</strong></td><td class="etnr">30B</td><td><span class="dek dek-sterk">Sterk</span></td><td>Les 6: wrijving en speling opsporen en oplossen (schuren, lager toevoegen, ruimte maken); stevige constructie; rubriccriteria 3 en 4.</td></tr>
+        <tr><td class="ettitel"><strong>KD29 – Natuurwetenschappen en technologie</strong></td><td class="etnr">29A</td><td><span class="dek dek-deels">Deels</span></td><td>Les 1: onderzoek naar drie bestaande automata; herkennen welk mechanisme welke beweging maakt; mechanismekeuze afwegen. Oriënterend, geen volledige onderzoeksopzet.</td></tr>
+        <tr><td class="ettitel"><strong>KD29 – Natuurwetenschappen en technologie</strong></td><td class="etnr">29B</td><td><span class="dek dek-sterk">Sterk</span></td><td>Deelvraag 2 (draaien → andere beweging) en deelvraag 5 (waarom dit mechanisme); vorm-functie-relatie; oorzaak-gevolg bij wrijving (les 6); rubriccriteria 1 en 4.</td></tr>
+        <tr><td class="ettitel"><strong>KD29 – Natuurwetenschappen en technologie</strong></td><td class="etnr">29C</td><td><span class="dek dek-sterk">Sterk</span></td><td>Iteratieve cyclus: mock-up (les 2) → tekening (les 3) → bouw (les 4–5) → testen/verbeteren (les 6 en 8); veilig gereedschapsgebruik; vaktaal bij de presentatie; rubriccriteria 3, 4, 5, 6.</td></tr>
+        <tr><td class="ettitel"><strong>KD29 – Natuurwetenschappen en technologie</strong></td><td class="etnr">29D</td><td><span class="dek dek-deels">Deels</span></td><td>Iteratief werken (les 2–8); mechanismekeuze tegen een alternatief afwegen; verbeterpunt in de presentatie (les 8). Expliciete reflectie op maakbaarheid/ethiek ontbreekt.</td></tr>
+        <tr><td class="ettitel"><strong>KD30 – Natuurkundige verschijnselen en technische systemen</strong></td><td class="etnr">30C</td><td><span class="dek dek-niet">Niet</span></td><td>Slinger-aangedreven. Toevoegen: laat (een groep) een elektromotor met schakeling als aandrijving maken om 30C te raken.</td></tr>
+        <tr class="domein-rij"><td colspan="4">Kunst en cultuur</td></tr>
+        <tr><td class="ettitel"><strong>KD40 – Artistiek creatief vermogen</strong></td><td class="etnr">40A</td><td><span class="dek dek-deels">Deels</span></td><td>Bewegend dier bedenken; dier/beweging/mechanisme kiezen (divergeren → convergeren, les 1–2); ontwerp bijstellen na draaitest (les 6); rubriccriterium 2. Kunstzinnige reflectie is licht.</td></tr>
+        <tr><td class="ettitel"><strong>KD41 – Maakt kunstzinnige uitingen</strong></td><td class="etnr">41A</td><td><span class="dek dek-deels">Deels</span></td><td>Dierfiguur en decoratie die de beweging versterken (les 6–7); vormgeving past bij de Zoo-tentoonstelling; rubriccriterium 2. Toegepaste vormgeving, geen vrij kunstwerk.</td></tr>
+        <tr><td class="ettitel"><strong>KD41 – Maakt kunstzinnige uitingen</strong></td><td class="etnr">41B</td><td><span class="dek dek-deels">Deels</span></td><td>Dierfiguur van karton/foamboard maken en decoreren (les 6–7); beeldend materiaal- en gereedschapsgebruik.</td></tr>
+        <tr class="domein-rij"><td colspan="4">Digitale geletterdheid</td></tr>
+        <tr><td class="ettitel"><strong>KD21 – Ontwerpen en maken met digitale technologie</strong></td><td class="etnr">21</td><td><span class="dek dek-niet">Niet</span></td><td>Optioneel: lasersnijder of 3D-printer voor nokken/onderdelen. Verplicht maken van digitaal fabriceren raakt KD21 "Deels".</td></tr>
+      </tbody>
+    </table></div>
+    <div class="prose">
+      <p>Samengevat: het project dekt <strong>sterk</strong> de mechanica- en ontwerpkern (KD30A, KD30B, KD29B, KD29C), <strong>deels</strong> het onderzoek, de systematiek en de creatief-kunstzinnige kant (KD29A, KD29D, KD40A, KD41A/B), en <strong>nog niet</strong> elektrische systemen (KD30C) en digitaal fabriceren (KD21) — die twee zijn via de verdiepingsroutes (elektromotor, 3D-print/laser) binnen bereik te brengen.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Techniek · havo 2</span>
+    <span>8 lessen van 100 min</span>
+    <span>Docentenhandleiding · Automata voor Eindhoven Zoo</span>
+  </footer>
+
+</div></div>
+
+</body>
+</html>
