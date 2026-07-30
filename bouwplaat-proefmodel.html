@@ -95,7 +95,7 @@
       <tr><td class="nr">7</td><td>Keerschijf</td><td class="aantal">2×</td><td class="maat">Ø 56</td><td>Groter dan de schijf. Sluit de band op, zodat die er niet af kan glijden.</td></tr>
       <tr><td class="nr">8</td><td>Excenterband</td><td class="aantal">2×</td><td class="maat">gat Ø 48</td><td>Glijdt om de schijf en volgt het verschoven middelpunt. De arm gaat naar de duwstang.</td></tr>
       <tr><td class="nr">9</td><td>Duwstang</td><td class="aantal">1×</td><td class="maat">15 × 115</td><td>Gaat recht op en neer door de sleuven. Een strip in een sleuf kan niet draaien.</td></tr>
-      <tr><td class="nr">10</td><td>Dierplaatje</td><td class="aantal">2×</td><td class="maat">50 × 35</td><td>Schuif je over de duwstang. Hierop komt straks jouw dier.</td></tr>
+      <tr><td class="nr">10</td><td>Figuurplaatje</td><td class="aantal">2×</td><td class="maat">50 × 35</td><td>Schuif je over de duwstang. Hierop komt straks jouw figuur.</td></tr>
       <tr><td class="nr">11</td><td>Slingerarm</td><td class="aantal">2×</td><td class="maat">60 × 16</td><td>Twee lagen op elkaar. Hiermee draai je aan de as.</td></tr>
     </tbody>
   </table>
@@ -120,7 +120,7 @@
       <p style="font-family:'Space Mono',monospace;font-size:10pt;color:var(--blue);font-weight:700">
         slag = 2 × excentriciteit = 16 mm</p>
       <p style="font-size:9.5pt">Draai aan de slinger en meet met een liniaal hoe ver je duwstang op en neer gaat. Er hoort 16 mm uit te komen. Komt dat niet uit, dan zit je asgat niet goed.</p>
-      <p style="font-size:9.5pt">Wil je een grotere slag voor jouw dier? Prik het asgat verder uit het midden. Een kleinere slag? Dichter bij het midden.</p>
+      <p style="font-size:9.5pt">Wil je een grotere slag voor jouw figuur? Prik het asgat verder uit het midden. Een kleinere slag? Dichter bij het midden.</p>
     </div>
   </div>
 
@@ -135,7 +135,7 @@
     <li>Verbind de arm van de band met de <b>duwstang</b> (9) met de splitpen. Buig de splitpen niet te strak: het moet een scharnier blijven.</li>
     <li>Lijm het <b>tussenschot</b> (5) tussen de zijwanden, met de duwstang al door de sleuf. Zet daarna het <b>deksel</b> (4) erop, ook met de duwstang door de sleuf.</li>
     <li>Lijm de twee <b>slingerarmen</b> (11) op elkaar en zet ze op het uiteinde van de as. Steek het korte stokje in het buitenste gat: dat is je handvat.</li>
-    <li>Draai langzaam een hele slag rond. Hapert hij? Zoek de plek waar het schuurt en maak die ruimer. <b>Schuif de dierplaatjes</b> (10) pas over de duwstang als alles soepel rondloopt.</li>
+    <li>Draai langzaam een hele slag rond. Hapert hij? Zoek de plek waar het schuurt en maak die ruimer. <b>Schuif de figuurplaatjes</b> (10) pas over de duwstang als alles soepel rondloopt.</li>
   </ol>
 
   <div class="voet">
@@ -302,7 +302,7 @@
     naam(b, 3, 8, '3', 'BODEM  1×', '106 × 92 mm · hierop staan de wanden');
   }
 
-  /* ---- blad 4: deksel, tussenschot, duwstang, dierplaatjes, slingerarmen ---- */
+  /* ---- blad 4: deksel, tussenschot, duwstang, figuurplaatjes, slingerarmen ---- */
   {
     const svg = maakBlad('Blad 4 — Deksel, geleiding en duwstang', 4);
 
@@ -325,12 +325,12 @@
     snijRechthoek(p, STANG_L, STANG_B);
     gat(p, 8, STANG_B / 2, GAT_PEN, '');
 
-    // dierplaatjes: schuif je over de duwstang
+    // figuurplaatjes: schuif je over de duwstang
     for (let i = 0; i < 2; i++) {
       const q = groep(svg, 118, 14 + i * 44);
       snijRechthoek(q, 50, 35);
       sleuf(q, 25, 22, K + .5, STANG_B + .5, '');
-      naam(q, 3, 8, '10', 'DIERPLAATJE  2×', '50 × 35 mm · sleuf voor de duwstang');
+      naam(q, 3, 8, '10', 'FIGUURPLAATJE  2×', '50 × 35 mm · sleuf voor de duwstang');
     }
 
     // slingerarmen: twee lagen op elkaar gelijmd

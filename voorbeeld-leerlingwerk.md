@@ -4,17 +4,17 @@
 > de feedbackcoach beoordeelt dit stuk met de rubric, zodat je een worked
 > example hebt van hoe de rubric in de praktijk valt. Geen echt leerlingwerk.
 
-**Groep:** Noor & Sam · **Klas:** havo 2c · **Dier:** kip die pikt én met de staart wipt
+**Groep:** Noor & Sam · **Klas:** havo 2c · **Figuur:** specht die pikt én met de staart wipt
 
 ---
 
 ## Logboek
 
-**Les 1 — dier en beweging gekozen.**
-We wilden eerst een olifant maar dat leek te moeilijk met de slurf. Toen een kip:
+**Les 1 — figuur en beweging gekozen.**
+We wilden eerst een edelhert maar dat leek te moeilijk met het gewei. Toen een specht:
 die pikt naar beneden (op en neer) en de staart wipt omhoog. Dat zijn twee
 bewegingen. We hebben online drie voorbeelden gezocht: "automata pecking bird",
-"automata chicken" en nog een van een specht. Uitgeprint en in de dummy geplakt.
+"automata woodpecker" en nog een van een vos. Uitgeprint en in de dummy geplakt.
 Bij de pikkende vogel zagen we een schijf met een bult die de kop omhoog duwt.
 
 **Les 2 — proefmodel.**
@@ -67,6 +67,6 @@ Wat beter kan: de staart blijft soms hangen.
 
 ## Samenwerken
 
-Noor deed vooral het zagen en boren, Sam deed de kip en de decoratie. We hebben samen
+Noor deed vooral het zagen en boren, Sam deed de specht en de decoratie. We hebben samen
 getest. Bij feedback van een ander groepje zeiden ze dat onze staart te los zat, maar
 dat hebben we niet meer aangepast omdat het bijna tijd was.

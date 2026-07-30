@@ -1,18 +1,18 @@
 > **IJK-/VOORBEELDMATERIAAL (fictief).** Dit is modelfeedback op de fictieve inzending van Noor & Sam, bedoeld als *worked example*: het laat zien hoe de rubric van Automata in de praktijk valt. Geen echt leerlingwerk, geen echt cijfer.
 
-# Feedback — Noor & Sam | Automata voor Eindhoven Zoo
+# Feedback — Noor & Sam | Automata voor Staatsbosbeheer
 Versie/poging: eerste inlevering (versie 1)
 
 ---
 
 ## Criterium 1: Mechanismen begrijpen & de juiste keuze maken
 
-**Bewijs:** Technische onderbouwing: "de kop pikt (excenter) en de staart wipt (nok). De slinger draait de as rond. De excenter zit niet in het midden, daardoor gaat de stang op en neer." In les 1 kozen jullie de kip boven de olifant ("te moeilijk met de slurf") omdat de kip twee bewegingen heeft. In les 8 en in de onderbouwing leggen jullie de keuze uit: "de excenter geeft een vloeiende beweging voor de kop" / "gladder dan een nok".
+**Bewijs:** Technische onderbouwing: "de kop pikt (excenter) en de staart wipt (nok). De slinger draait de as rond. De excenter zit niet in het midden, daardoor gaat de stang op en neer." In les 1 kozen jullie de specht boven het edelhert ("te moeilijk met het gewei") omdat de specht twee bewegingen heeft. In les 8 en in de onderbouwing leggen jullie de keuze uit: "de excenter geeft een vloeiende beweging voor de kop" / "gladder dan een nok".
 
 **Niveau:** Goed
 
 **Waarom dit niveau:**
-Jullie gebruiken de vaktermen excenter en nok en leggen duidelijk uit hóé de excenter de draaiing omzet in een op-en-neerbeweging, en jullie koppelen dat aan wat de kip doet (pikken). Dat is precies wat "Goed" vraagt. Voor "Uitstekend" mist er nog iets: je vergelijkt de excenter wel met de nok ("gladder"), maar die vergelijking klopt niet helemaal, want je gebruikt de nok zelf ook (voor de staart). En hóé de nok de staart laat wippen, leg je nergens uit.
+Jullie gebruiken de vaktermen excenter en nok en leggen duidelijk uit hóé de excenter de draaiing omzet in een op-en-neerbeweging, en jullie koppelen dat aan wat de specht doet (pikken). Dat is precies wat "Goed" vraagt. Voor "Uitstekend" mist er nog iets: je vergelijkt de excenter wel met de nok ("gladder"), maar die vergelijking klopt niet helemaal, want je gebruikt de nok zelf ook (voor de staart). En hóé de nok de staart laat wippen, leg je nergens uit.
 
 **Verbetering:**
 Schrijf in de technische onderbouwing één alinea over de nok, net zo duidelijk als je die over de excenter schreef: wat doet de bult van de nok als de as ronddraait, en waarom laat dat de staart omhoog wippen?
@@ -21,12 +21,12 @@ Schrijf in de technische onderbouwing één alinea over de nok, net zo duidelijk
 
 ## Criterium 2: Ontwerp: techniek en vormgeving werken samen
 
-**Bewijs:** Les 2: kartonnen proefmodel met satéprikker als as en een excenter (kartonnetje niet in het midden). Les 3: technische tekening met maten — kast 12 × 8 × 10 cm, as 6 mm rondstok, boren met 6 mm boor — maar: "De nok voor de staart hebben we nog niet ingetekend." Les 7: kip van foamboard met geverfde veren.
+**Bewijs:** Les 2: kartonnen proefmodel met satéprikker als as en een excenter (kartonnetje niet in het midden). Les 3: technische tekening met maten — kast 12 × 8 × 10 cm, as 6 mm rondstok, boren met 6 mm boor — maar: "De nok voor de staart hebben we nog niet ingetekend." Les 7: specht van foamboard met geverfde veren.
 
 **Niveau:** Voldoende
 
 **Waarom dit niveau:**
-Er is een kartonnen proefmodel én een technische tekening met echte maten, en de kip past bij de pikbeweging. Dat maakt het minstens "Voldoende". Het is nog geen "Goed", want de tekening is niet af: het staart-mechanisme (de nok) staat er niet in, terwijl dat wél de tweede beweging is die jullie beloven. Zo laat het ontwerp maar één van de twee bewegingen zien.
+Er is een kartonnen proefmodel én een technische tekening met echte maten, en de specht past bij de pikbeweging. Dat maakt het minstens "Voldoende". Het is nog geen "Goed", want de tekening is niet af: het staart-mechanisme (de nok) staat er niet in, terwijl dat wél de tweede beweging is die jullie beloven. Zo laat het ontwerp maar één van de twee bewegingen zien.
 
 **Verbetering:**
 Teken de nok en de staart-as alsnog in je technische tekening van les 3, mét maten (waar op de as zit de nok, hoe hoog is de bult). Dan staan beide bewegingen in het ontwerp.
@@ -35,7 +35,7 @@ Teken de nok en de staart-as alsnog in je technische tekening van les 3, mét ma
 
 ## Criterium 3: Nauwkeurig maken en monteren
 
-**Bewijs:** Les 4: multiplex 4 mm met de figuurzaag gezaagd, de twee asgaten apart geboord (voor en achter), "Achteraf zat de as een beetje scheef." Les 6: rietje als lager, kast staat stevig. Les 7: kip met het lijmpistool vastgemaakt, "De staart zit er wat los op."
+**Bewijs:** Les 4: multiplex 4 mm met de figuurzaag gezaagd, de twee asgaten apart geboord (voor en achter), "Achteraf zat de as een beetje scheef." Les 6: rietje als lager, kast staat stevig. Les 7: specht met het lijmpistool vastgemaakt, "De staart zit er wat los op."
 
 **Niveau:** Voldoende
 
@@ -75,7 +75,7 @@ Noteer voortaan per les één regel over veiligheid in je logboek (bril op, hout
 
 ---
 
-## Criterium 6: Presenteren aan "de Zoo"
+## Criterium 6: Presenteren aan Staatsbosbeheer
 
 **Bewijs:** Les 8: "Getest voor de klas. De kop pikt netjes. De staart deed het bij het oefenen wel maar tijdens de presentatie bleef hij een keer hangen. We hebben verteld dat we een excenter en een nok hebben gebruikt en waarom: de excenter geeft een vloeiende beweging voor de kop."
 
@@ -85,13 +85,13 @@ Noteer voortaan per les één regel over veiligheid in je logboek (bril op, hout
 Jullie laten het automata zien en leggen uit welke mechanismen erin zitten én waarom je die koos — dat is sterke inhoud, bijna "Goed"-niveau. Wat het op "Voldoende" houdt: het automata werkte niet helemaal tijdens de presentatie (de staart hing). "Goed" vraagt dat je de werking uitlegt mét een werkend automata erbij.
 
 **Verbetering:**
-Bouw één zin in je presentatie in over een verbeterpunt, bijvoorbeeld: "De staart moet steviger, dat lossen we op met een lager." Dan laat je "de Zoo" zien dat je je eigen zwakke plek kent — precies wat de hoogste rubrickolom vraagt.
+Bouw één zin in je presentatie in over een verbeterpunt, bijvoorbeeld: "De staart moet steviger, dat lossen we op met een lager." Dan laat je Staatsbosbeheer zien dat je je eigen zwakke plek kent — precies wat de hoogste rubrickolom vraagt.
 
 ---
 
 ## Criterium 7: Samenwerken & feedback
 
-**Bewijs:** Samenwerken-sectie: "Noor deed vooral het zagen en boren, Sam deed de kip en de decoratie. We hebben samen getest." En: "Bij feedback van een ander groepje zeiden ze dat onze staart te los zat, maar dat hebben we niet meer aangepast omdat het bijna tijd was."
+**Bewijs:** Samenwerken-sectie: "Noor deed vooral het zagen en boren, Sam deed de specht en de decoratie. We hebben samen getest." En: "Bij feedback van een ander groepje zeiden ze dat onze staart te los zat, maar dat hebben we niet meer aangepast omdat het bijna tijd was."
 
 **Niveau:** Voldoende
 
