@@ -9,9 +9,13 @@
 
 ## Context & aanleiding
 
-Staatsbosbeheer maakt een nieuwe tentoonstelling: **"Natuur in beweging"**. Geen foto's, maar mechaniek. Bezoekers draaien aan een slinger en zien een stukje natuur tot leven komen: een specht die pikt én zijn vleugels klapt, een vos die zijn kop draait én zijn staart laat wiebelen, een boswachter die hout hakt, een bij die op een bloem landt. Achter elke figuur zit techniek: nokken, krukken en excenters die een draaiende beweging omzetten in de beweging van de figuur.
+Staatsbosbeheer werkt aan een bijzondere tentoonstelling: **Natuur in Beweging**. Geen foto's of video's, maar houten figuren die door slimme mechaniek tot leven komen. Bezoekers draaien aan een slinger en zien een stukje natuur bewegen. Denk aan een specht die op een boomstam tikt terwijl zijn vleugels klapperen, een vos die nieuwsgierig zijn kop draait en met zijn staart kwispelt, een boswachter die hout hakt of een bij die op een bloem landt.
 
-Staatsbosbeheer heeft jouw klas gevraagd om deze machientjes te maken. Zo'n machientje heet een **automata**: een houten kastje met een slinger, waarbij één draai-as jouw figuur laat bewegen. Aan het eind zet de klas alle automata bij elkaar en presenteer je jouw figuur aan Staatsbosbeheer.
+Achter elke beweging schuilt een slim mechanisme. Met behulp van nokken, krukken, excenters en andere eenvoudige technieken wordt een draaiende beweging omgezet in een levensechte beweging van de figuren.
+
+Staatsbosbeheer heeft jouw klas gevraagd om deze bewegende kunstwerken te ontwerpen en te bouwen. Zo'n mechanisch model heet een **automata**: een houten kastje met een slinger, waarin één draai-as verschillende bewegingen aandrijft.
+
+Jullie uitdaging is om een eigen automata te bedenken, te ontwerpen en te maken. Tijdens de eindpresentatie worden alle automata samengebracht tot één grote tentoonstelling, die je presenteert aan Staatsbosbeheer.
 
 ## De opdracht
 
