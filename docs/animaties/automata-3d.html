@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Het proefmodel — kruk, drijfstang en duwstang</title>
+<title>In de kast kijken — automata in 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -35,11 +35,12 @@
   header{border-bottom:2px solid var(--ink);padding:26px 0 14px;margin-bottom:20px;}
   .eyebrow{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);}
   header h1{font-size:clamp(1.7rem,4.4vw,2.7rem);text-transform:uppercase;letter-spacing:-.01em;margin-top:2px;}
-  header p{margin:8px 0 0;color:var(--steel);font-style:italic;max-width:58ch;}
+  header p{margin:8px 0 0;color:var(--steel);font-style:italic;max-width:56ch;}
   .terug{display:inline-block;margin-bottom:14px;font-family:'Archivo',sans-serif;font-weight:600;
     font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--red);text-decoration:none;}
   .terug:hover{text-decoration:underline;}
 
+  /* ---- 3D-venster: twee lagen op elkaar (het model, en de namen erbovenop) ---- */
   .viewer{border:1px solid var(--ink);background:#fff;position:relative;}
   .viewer canvas{display:block;width:100%;touch-action:none;}
   #doek{cursor:grab;}
@@ -50,18 +51,9 @@
     font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.08em;
     text-transform:uppercase;color:var(--steel);pointer-events:none;
   }
-  .meter{
-    position:absolute;right:12px;top:10px;min-width:190px;
-    font-family:'Space Mono',monospace;font-size:.72rem;
-    color:var(--ink);background:rgba(255,255,255,.92);border:1px solid var(--line);
-    padding:8px 11px;pointer-events:none;
-  }
-  .meter div{display:flex;justify-content:space-between;gap:14px;}
-  .meter div + div{margin-top:3px;}
-  .meter b{color:var(--red);}
-  .meter .vast{color:var(--blue);}
   .geen-webgl{padding:40px 24px;text-align:center;color:var(--steel);font-style:italic;}
 
+  /* ---- bediening ---- */
   .drive{
     display:flex;align-items:center;gap:16px;flex-wrap:wrap;
     border:1px solid var(--ink);border-top:none;border-left:5px solid var(--red);
@@ -79,7 +71,8 @@
   .drive input[type=range]{flex:1;accent-color:var(--red);min-width:110px;}
   .hoek{font-family:'Space Mono',monospace;font-weight:700;color:var(--ink);font-size:.82rem;min-width:50px;text-align:right;}
 
-  .legenda{display:flex;gap:20px;flex-wrap:wrap;margin:16px 0 26px;
+  /* ---- uitleg ---- */
+  .legenda{display:flex;gap:22px;flex-wrap:wrap;margin:16px 0 26px;
     font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--steel);}
   .legenda span{display:flex;align-items:center;gap:7px;}
   .legenda i{width:22px;height:3px;display:inline-block;}
@@ -88,21 +81,12 @@
   .sec-head h2{font-size:1.3rem;text-transform:uppercase;white-space:nowrap;}
   .sec-head .rule{flex:1;height:1px;background:var(--line);}
 
-  .kern{border:1px solid var(--ink);border-left:5px solid var(--blue);padding:16px 18px;margin-bottom:20px;}
-  .kern .reken{font-family:'Space Mono',monospace;font-size:1.05rem;color:var(--blue);font-weight:700;}
-  .kern .reken b{color:var(--red);}
-  .kern p{margin:8px 0 0;}
-
-  .meet{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;}
-  .meet div{border:1px solid var(--line);border-top:3px solid var(--blue);padding:14px 16px;}
-  .meet h3{font-size:1rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:5px;}
-  .meet p{font-size:.96rem;margin:0;}
-  .maat{font-family:'Space Mono',monospace;font-size:.74rem;color:var(--blue);display:block;margin-top:7px;}
-
   .let-op{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
-  .let-op div{border:1px solid var(--line);border-top:3px solid var(--red);padding:14px 16px;}
+  .let-op div{border:1px solid var(--line);border-top:3px solid var(--blue);padding:14px 16px;}
+  .let-op div.rood{border-top-color:var(--red);}
   .let-op h3{font-size:1rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:5px;}
   .let-op p{font-size:.96rem;margin:0;}
+  .maat{font-family:'Space Mono',monospace;font-size:.74rem;color:var(--blue);display:block;margin-top:7px;}
 
   .denk{border-left:2px solid var(--red);padding:4px 0 4px 14px;margin-top:26px;max-width:62ch;}
   .denk-label{font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red);}
@@ -116,7 +100,6 @@
     body{font-size:16px;}
     .sheet{margin:0;border:none;padding:8px;}
     .frame{padding:0 14px 24px;}
-    .meter{display:none;}
   }
   @media print{
     @page{size:A4;margin:16mm;}
@@ -134,22 +117,17 @@
 <div class="sheet">
 <div class="frame">
 
-  <a class="terug" href="../automata.html">← Terug naar het projectdocument</a>
+  <a class="terug" href="../index.html">← Terug naar het projectdocument</a>
 
   <header>
-    <div class="eyebrow">Automata · proefmodel · excenter · les 2</div>
-    <h1>Het proefmodel: de excenter</h1>
-    <p>Een kartonnen kist met een schijf die schéef op de as zit. Geen figuur erop — nog niet. Dit is het model waarmee je je beweging test vóórdat je hout gaat zagen.</p>
+    <div class="eyebrow">Automata · doorkijk · les 3 t/m 5</div>
+    <h1>In de kast kijken</h1>
+    <p>De tekening laat zien hóé het mechanisme beweegt. Deze doorkijk laat zien waar alles zit: de as door de wanden, de lagers, de nok op de as, en de stang die door het gat in de bovenplaat omhoog komt.</p>
   </header>
 
   <div class="viewer">
-    <canvas id="doek" aria-label="Draaibare 3D-doorkijk van een kartonnen proefmodel: een kruk met drijfstang duwt een duwstang recht omhoog door een geleidegat in het deksel."></canvas>
+    <canvas id="doek" aria-label="Draaibare 3D-doorkijk van een automata: kast, as, nok, volgerstang en vogel."></canvas>
     <canvas id="namen" aria-hidden="true"></canvas>
-    <div class="meter" id="meter">
-      <div><span>hoogte stang</span><b id="m-hoogte">0 mm</b></div>
-      <div><span>slag (op en neer)</span><b id="m-slag">0 mm</b></div>
-      <div><span class="vast">middelpunt uit het hart</span><span class="vast" id="m-kruk">0 mm</span></div>
-    </div>
     <div class="hint">Sleep om te draaien</div>
   </div>
 
@@ -159,76 +137,49 @@
       <input id="slinger" type="range" min="0" max="360" step="1" value="0" aria-label="Slinger: draai de as met de hand">
       <span class="hoek" id="hoek">0°</span>
     </label>
-    <label for="krukarm">Excentriciteit
-      <input id="krukarm" type="range" min="3" max="9" step="1" value="7" aria-label="Hoe ver het middelpunt van de schijf uit het hart van de as zit">
-    </label>
-    <button id="kast" class="uit" type="button" aria-pressed="true">Kist weghalen</button>
+    <button id="kast" class="uit" type="button" aria-pressed="true">Kast weghalen</button>
+    <button id="namenknop" class="uit" type="button" aria-pressed="true">Namen uit</button>
   </div>
 
   <div class="legenda">
     <span><i style="background:var(--blue)"></i>blauw = de constructie</span>
-    <span><i style="background:var(--red)"></i>rood = wat beweegt</span>
+    <span><i style="background:var(--red)"></i>rood = de beweging van je figuur</span>
     <span><i style="background:var(--amber)"></i>geel = het lager</span>
-  </div>
-
-  <div class="sec-head"><h2>Wat een excenter doet</h2><span class="rule"></span></div>
-  <div class="kern">
-    <div class="reken">slag = 2 × de excentriciteit = <b>zo ver gaat jouw figuur omhoog</b></div>
-    <p>De as draait keurig in het hart. Maar de <strong>schijf zit er verschoven op</strong>, en daardoor maakt het middelpunt van die schijf een rondje om de as. De blauwe maatlijn in de tekening laat precies zien hoe ver dat middelpunt uit het hart zit: dat heet de <strong>excentriciteit</strong>.</p>
-    <p>Schuif hem groter en kleiner en kijk naar de meter. De slag verandert precies mee: <strong>twee keer de excentriciteit</strong>. Zet je de schijf recht op de as, dan is de excentriciteit nul en beweegt er niets meer — de schijf draait dan alleen nog rond.</p>
-    <p>Een pikkende vogel heeft een kleine slag nodig, een springende kikker een grote. Bepaal die slag hier, in karton, waar aanpassen nog niets kost.</p>
-  </div>
-
-  <div class="sec-head"><h2>Dezelfde excenter, andere richting</h2><span class="rule"></span></div>
-  <div class="kern" style="border-left-color:var(--red)">
-    <p>Bij de zes mechanismen zie je de excenter een blok <strong>heen en weer schudden</strong>. Hier duwt dezelfde excenter een stang <strong>op en neer</strong>. Dat is geen ander mechanisme: het verschoven middelpunt is in beide gevallen de motor. Alleen wát je eraan hangt bepaalt de richting.</p>
-    <p>Dat is precies waarom je een proefmodel bouwt: je ontdekt hier of jouw figuur de beweging krijgt die je in je hoofd had.</p>
-  </div>
-
-  <div class="sec-head"><h2>Drie dingen die je test</h2><span class="rule"></span></div>
-  <div class="meet">
-    <div>
-      <h3>Klopt de slag?</h3>
-      <p>Draai rond en kijk hoe ver de stang op en neer gaat. Te weinig? Boor het asgat verder uit het midden van de schijf. Te veel? Juist dichter bij het midden.</p>
-      <span class="maat">meet met een liniaal langs de stang</span>
-    </div>
-    <div>
-      <h3>Loopt hij soepel rond?</h3>
-      <p>Draai langzaam een hele slag. Hapert hij ergens, dan klemt de as of schuurt de stang in het gat. Zoek die plek nú op.</p>
-      <span class="maat">één hele slag, met de hand</span>
-    </div>
-    <div>
-      <h3>Blijft de stang recht?</h3>
-      <p>Het gat in het deksel is de geleiding. Wiebelt de stang, dan is het gat te ruim — en dan gaat je figuur straks scheef staan.</p>
-      <span class="maat">stang Ø6 mm → gat Ø7 mm</span>
-    </div>
   </div>
 
   <div class="sec-head"><h2>Waar het misgaat</h2><span class="rule"></span></div>
   <div class="let-op">
     <div>
-      <h3>Te snel in hout beginnen</h3>
-      <p>In karton kost een fout je vijf minuten. In hout kost dezelfde fout je een hele les. Bouw eerst dit, en pas daarna je echte kast.</p>
+      <h3>Het boorgat</h3>
+      <p>Het gat in de kastwand moet iets ruimer zijn dan je as. Precies even groot? Dan klemt hij. Veel te groot? Dan slingert hij.</p>
+      <span class="maat">as Ø6 mm → boor Ø6,5 mm</span>
     </div>
     <div>
-      <h3>De band zit te strak</h3>
-      <p>De excenterband moet vrij om de schijf kunnen glijden. Zit hij klem, dan draait je as niet meer rond. Zit hij te ruim, dan klappert je figuur.</p>
+      <h3>Het lager</h3>
+      <p>Een kraaltje of een stukje rietje in het gat laat de as soepel draaien en houdt hem toch op zijn plek.</p>
+      <span class="maat">kraaltje of rietje, 2× (links en rechts)</span>
     </div>
     <div>
-      <h3>Het asgat in de schijf</h3>
-      <p>Dít gat bepaalt alles. Hoe verder uit het midden, hoe groter de slag. Teken het middelpunt van je schijf af, meet je excentriciteit uit, en boor pas daarna.</p>
+      <h3>De geleiding</h3>
+      <p>De stang moet recht op en neer kunnen. Het gat in de bovenplaat houdt hem recht — te ruim, en je figuur gaat wiebelen.</p>
+      <span class="maat">stang Ø6 mm → gat Ø7 mm</span>
+    </div>
+    <div class="rood">
+      <h3>De nok raakt de stang</h3>
+      <p>De stang moet mét zijn eigen gewicht op de nok blijven rusten. Zit hij klem in de geleiding, dan komt hij niet terug naar beneden.</p>
+      <span class="maat">controleer: valt hij zelf terug?</span>
     </div>
   </div>
 
   <div class="denk">
     <span class="denk-label">Denkvraag</span>
-    <p>Zet de excentriciteit op de kleinste stand en dan op de grootste. Wat gebeurt er met de slag? En wat zou er gebeuren als je het asgat precies in het midden van de schijf boort? Welke excentriciteit past bij de figuur die jij hebt gekozen?</p>
+    <p>Draai de kast rond en zet hem stil op 90°. Hoe hoog staat de stang dan? En wat gebeurt er met die hoogte als je de nok twee keer zo groot maakt?</p>
   </div>
 
   <footer>
     <span>Automata — Natuur in beweging</span>
-    <span>Techniek · havo 2 · les 2</span>
-    <span>Proefmodel</span>
+    <span>Techniek · havo 2</span>
+    <span>Doorkijk 3D</span>
   </footer>
 
 </div>
@@ -248,59 +199,50 @@
   }
   const ctx2d = naamDoek.getContext('2d');
 
-  /* ══════════ 1. De maten ══════════
-     x = links-rechts (langs de as), y = omhoog, z = voor-achter.
-     Oorsprong: midden van de bodemplaat. Maten in mm.                */
+  /* ══════════ 1. De maten van de automata ══════════
+     Assenstelsel: x = links-rechts (langs de as), y = omhoog, z = voor-achter.
+     Oorsprong: midden van de bodemplaat.                                     */
 
-  const T = 4;                       // dikte karton
-  const BX = 40, BZ = 34, BY = 80;   // halve breedte, halve diepte, hoogte kist
+  const T = 5;                        // dikte multiplex
+  const BX = 50, BZ = 35, BY = 110;   // halve breedte, halve diepte, hoogte kast
 
-  /* ── DE HARTLIJN VAN DE AS ──
-     De as, de lagers, de boorgaten en de slinger hangen aan deze ene lijn.
-     De excenterschijf niet: díé zit er juist verschoven op. Dat is het hele idee. */
-  const AS_Y = 34, AS_Z = 0;
+  /* ── DE HARTLIJN VAN DE AS ──────────────────────────────────────────────
+     As, nok, lagers, boorgaten en het draaipunt van de slinger zitten
+     állemaal op deze ene lijn. Ze mogen nooit los van elkaar een eigen
+     hoogte krijgen: dan lopen de lagers uit het hart en klopt de
+     tekening niet meer.                                                    */
+  const AS_Y = 40, AS_Z = 0;
 
-  const AS_R = 3;
-  const LAGER_IN = 3.6, LAGER_UIT = 5.5;
-  const GAT_AS = LAGER_UIT + 0.25;
-
-  const SCHIJF_R = 15;               // straal van de excenterschijf
-  const BAND_IN = 15.6, BAND_UIT = 19; // de excenterband glijdt om de schijf heen
-  const DRIJF_L = 26;                // lengte van de excenterstang
-  const STANG_X = 0, STANG_R = 3;    // de duwstang loopt door het midden omhoog
-  const GAT_STANG = 3.9;             // geleidegat: iets ruimer dan de stang
-  const STANG_L = 40;                // lengte van de duwstang
-
-  // hoe ver het middelpunt van de schijf uit het hart van de as zit.
-  // Dít is de excentriciteit — de leerling stelt hem hier in.
-  let EXC = 7;
+  const AS_R = 3.2;                    // straal van de as
+  const LAGER_IN = 3.9, LAGER_UIT = 6; // lager: ring om de as, met speling
+  const GAT_AS = LAGER_UIT + 0.25;     // boorgat in de wand: net iets ruimer dan het lager
+  const NOK_R0 = 22, NOK_BULT = 15;    // grondstraal en bult van de nok
+  const STANG_R = 3.2, STANG_L = 58;   // volgerstang
+  const GAT_STANG = 4.2;               // geleidegat in de bovenplaat: iets ruimer dan de stang
 
   const KLEUR = {
-    karton: [.86, .88, .90],
-    as:     [.12, .37, .55],   // blauw: de constructie
-    schijf: [.17, .44, .62],
-    rood:   [.77, .23, .18],   // rood: wat beweegt
-    lager:  [.69, .48, .07],   // geel: het lager
+    hout:  [.84, .87, .90],   // kast: licht blauwgrijs
+    hout2: [.77, .81, .86],
+    as:    [.12, .37, .55],   // blauw: de constructie
+    nok:   [.20, .46, .64],
+    stang: [.77, .23, .18],   // rood: de beweging
+    dier:  [.69, .19, .15],
+    lager: [.69, .48, .07],   // geel: het lager
   };
 
-  /* ── de stand bij slingerhoek t ──
-     De as draait. Omdat de schijf er verschoven op zit, maakt haar middelpunt
-     een rondje om de as. De excenterband volgt dat middelpunt, en de stang duwt
-     de duwstang omhoog. De duwstang kan alleen recht omhoog (z = 0), dus volgt
-     zijn hoogte uit de lengte van de excenterstang.                            */
-  const stand = t => {
-    const my = AS_Y + EXC * Math.sin(t);   // middelpunt van de schijf
-    const mz = AS_Z + EXC * Math.cos(t);
-    const voet = my + Math.sqrt(DRIJF_L * DRIJF_L - mz * mz);
-    return { my, mz, voet };
-  };
-  // de slag is exact twee keer de excentriciteit: hoogste stand min laagste stand
-  const slagVan = () => 2 * EXC;
-  const laagste = () => (AS_Y - EXC) + DRIJF_L;
+  // nokprofiel: cirkel met één bult (dezelfde formule als in de 2D-tekening)
+  const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
+  const profiel = u => NOK_R0 + NOK_BULT * Math.exp(-(wrap(u) ** 2) / (2 * 0.6 ** 2));
+  // de stang raakt de nok recht boven de as: profielhoek π/2 − θ
+  const stangVoet = t => AS_Y + profiel(Math.PI / 2 - t);
 
-  /* ══════════ 2. Geometrie ══════════ */
+  /* ══════════ 2. Geometrie opbouwen ══════════
+     Alles wordt driehoeken (voor de vlakken) en lijnstukken (voor de randen
+     die iets betekenen). De dieptebuffer van WebGL bepaalt daarna zelf wat
+     vóór wat zit — dus geen sorteerfouten meer.                             */
 
-  let P = [], N = [], C = [], L = [];
+  let P = [], N = [], C = [], L = [];   // posities, normalen, kleuren, lijnen
+
   const nul = () => { P = []; N = []; C = []; L = []; };
 
   const normaal = (a, b, c) => {
@@ -310,18 +252,26 @@
     const len = Math.hypot(nx, ny, nz) || 1;
     return [nx / len, ny / len, nz / len];
   };
+
   const driehoek = (a, b, c, kl) => {
     const n = normaal(a, b, c);
     for (const p of [a, b, c]) {
-      P.push(p.x, p.y, p.z); N.push(n[0], n[1], n[2]); C.push(kl[0], kl[1], kl[2]);
+      P.push(p.x, p.y, p.z);
+      N.push(n[0], n[1], n[2]);
+      C.push(kl[0], kl[1], kl[2]);
     }
   };
+
   const lijn = (a, b) => L.push(a.x, a.y, a.z, b.x, b.y, b.z);
 
+  // een vlak (3 of meer hoekpunten, convex): waaier vanaf het eerste punt
   const vlak = (pts, kl, rand = true) => {
     for (let i = 1; i < pts.length - 1; i++) driehoek(pts[0], pts[i], pts[i + 1], kl);
     if (rand) for (let i = 0; i < pts.length; i++) lijn(pts[i], pts[(i + 1) % pts.length]);
   };
+
+  // een schijf: waaier vanuit het middelpunt. Werkt ook bij een nokvorm,
+  // want die is altijd stervormig vanuit het middelpunt gezien.
   const schijf = (mid, ring, kl, rand = true) => {
     for (let i = 0; i < ring.length; i++) {
       driehoek(mid, ring[i], ring[(i + 1) % ring.length], kl);
@@ -339,30 +289,40 @@
     vlak([p(x0,y0,z0), p(x1,y0,z0), p(x1,y0,z1), p(x0,y0,z1)], kl);
   };
 
-  // een staaf tussen twee punten: de as, de drijfstang, de duwstang, de pennen
-  const staaf = (a, b, r, n, kl) => {
-    const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
-    const len = Math.hypot(dx, dy, dz) || 1;
-    const d = { x: dx / len, y: dy / len, z: dz / len };
-    const hulp = Math.abs(d.y) < 0.9 ? { x: 0, y: 1, z: 0 } : { x: 1, y: 0, z: 0 };
-    let u = { x: d.y * hulp.z - d.z * hulp.y, y: d.z * hulp.x - d.x * hulp.z, z: d.x * hulp.y - d.y * hulp.x };
-    const ul = Math.hypot(u.x, u.y, u.z) || 1;
-    u = { x: u.x / ul, y: u.y / ul, z: u.z / ul };
-    const v = { x: d.y * u.z - d.z * u.y, y: d.z * u.x - d.x * u.z, z: d.x * u.y - d.y * u.x };
-    const ring = (p, i) => {
-      const w = (i / n) * TAU, cw = Math.cos(w) * r, sw = Math.sin(w) * r;
-      return { x: p.x + cw * u.x + sw * v.x, y: p.y + cw * u.y + sw * v.y, z: p.z + cw * u.z + sw * v.z };
+  // cilinder of nok om de X-as. `straal` mag per hoek verschillen: zo ontstaat de nok.
+  const omX = (x0, x1, cy, cz, straal, rot, n, kl) => {
+    const rand = i => {
+      const u = (i / n) * TAU, r = straal(u);
+      return { y: cy + r * Math.sin(u + rot), z: cz + r * Math.cos(u + rot) };
     };
-    const A2 = [], B2 = [];
+    const A = [], B = [];
     for (let i = 0; i < n; i++) {
-      const pa = ring(a, i), pb = ring(b, i), qa = ring(a, i + 1), qb = ring(b, i + 1);
-      vlak([pa, pb, qb, qa], kl, false);
-      A2.push(pa); B2.push(pb);
+      const p = rand(i), q = rand(i + 1);
+      // mantel zonder randlijnen: anders zie je de opdeling als ribbels
+      vlak([{x:x0,y:p.y,z:p.z}, {x:x1,y:p.y,z:p.z}, {x:x1,y:q.y,z:q.z}, {x:x0,y:q.y,z:q.z}], kl, false);
+      A.push({ x: x0, y: p.y, z: p.z });
+      B.push({ x: x1, y: p.y, z: p.z });
     }
-    schijf(a, A2.slice().reverse(), kl);
-    schijf(b, B2, kl);
+    schijf({ x: x0, y: cy, z: cz }, A.slice().reverse(), kl);   // kopse kanten wél omlijnd:
+    schijf({ x: x1, y: cy, z: cz }, B, kl);                     // dat geeft de nokvorm scherp weer
   };
 
+  // cilinder om de Y-as: de volgerstang
+  const omY = (y0, y1, cx, cz, r, n, kl) => {
+    const A = [], B = [];
+    for (let i = 0; i < n; i++) {
+      const u = (i / n) * TAU, v = ((i + 1) / n) * TAU;
+      const p = { x: cx + r * Math.cos(u), z: cz + r * Math.sin(u) };
+      const q = { x: cx + r * Math.cos(v), z: cz + r * Math.sin(v) };
+      vlak([{x:p.x,y:y0,z:p.z}, {x:q.x,y:y0,z:q.z}, {x:q.x,y:y1,z:q.z}, {x:p.x,y:y1,z:p.z}], kl, false);
+      A.push({ x: p.x, y: y0, z: p.z });
+      B.push({ x: p.x, y: y1, z: p.z });
+    }
+    schijf({ x: cx, y: y0, z: cz }, A, kl, false);
+    schijf({ x: cx, y: y1, z: cz }, B.slice().reverse(), kl);
+  };
+
+  // het lager: een ring om de X-as. Hol, zodat je de as er dwars doorheen ziet lopen.
   const ringX = (x0, x1, cy, cz, rin, rout, n, kl) => {
     const p = (r, i) => {
       const u = (i / n) * TAU;
@@ -371,24 +331,31 @@
     const q = (x, a) => ({ x, y: a.y, z: a.z });
     for (let i = 0; i < n; i++) {
       const bu = p(rout, i), bv = p(rout, i + 1), bi = p(rin, i), bj = p(rin, i + 1);
-      vlak([q(x0,bu), q(x1,bu), q(x1,bv), q(x0,bv)], kl, false);
-      vlak([q(x1,bi), q(x0,bi), q(x0,bj), q(x1,bj)], kl, false);
-      vlak([q(x0,bu), q(x0,bv), q(x0,bj), q(x0,bi)], kl, false);
-      vlak([q(x1,bv), q(x1,bu), q(x1,bi), q(x1,bj)], kl, false);
-      lijn(q(x0,bu), q(x0,bv)); lijn(q(x1,bu), q(x1,bv));
+      vlak([q(x0,bu), q(x1,bu), q(x1,bv), q(x0,bv)], kl, false);   // buitenkant
+      vlak([q(x1,bi), q(x0,bi), q(x0,bj), q(x1,bj)], kl, false);   // binnenkant: het gat
+      vlak([q(x0,bu), q(x0,bv), q(x0,bj), q(x0,bi)], kl, false);   // ringvlak links
+      vlak([q(x1,bv), q(x1,bu), q(x1,bi), q(x1,bj)], kl, false);   // ringvlak rechts
+      lijn(q(x0,bu), q(x0,bv)); lijn(q(x1,bu), q(x1,bv));          // alleen de twee cirkelranden
       lijn(q(x0,bi), q(x0,bj)); lijn(q(x1,bi), q(x1,bj));
     }
   };
 
+  /* Houten plaat met een rond boorgat erin.
+     as='x': de plaat staat rechtop (een kastwand), gat op de hartlijn van de as.
+     as='y': de plaat ligt plat (de bovenplaat), gat voor de volgerstang.        */
   const plaatGat = (as, t0, t1, u0, u1, v0, v1, cu, cv, r, kl, n = 28) => {
-    const Pt = as === 'x' ? (t, u, v) => ({ x: t, y: v, z: u })
-                          : (t, u, v) => ({ x: u, y: t, z: v });
+    const Pt = as === 'x'
+      ? (t, u, v) => ({ x: t, y: v, z: u })     // u = z, v = y
+      : (t, u, v) => ({ x: u, y: t, z: v });    // u = x, v = z
+
     const hoeken = [[u0,v0],[u1,v0],[u1,v1],[u0,v1]];
     const norm = a => (a % TAU + TAU) % TAU;
+    // de hoekpunten van de plaat meenemen, anders zaagt de waaier de hoeken eraf
     const alle = [...Array.from({ length: n }, (_, i) => norm(i / n * TAU)),
                   ...hoeken.map(([u, v]) => norm(Math.atan2(v - cv, u - cu)))].sort((a, b) => a - b);
     alle.push(alle[0] + TAU);
-    const rand = a => {
+
+    const rand = a => {   // vanuit het midden van het gat naar de rand van de plaat
       const du = Math.cos(a), dv = Math.sin(a);
       const tu = du > 1e-9 ? (u1 - cu) / du : du < -1e-9 ? (u0 - cu) / du : Infinity;
       const tv = dv > 1e-9 ? (v1 - cv) / dv : dv < -1e-9 ? (v0 - cv) / dv : Infinity;
@@ -396,72 +363,92 @@
       return [cu + s * du, cv + s * dv];
     };
     const gat = a => [cu + r * Math.cos(a), cv + r * Math.sin(a)];
+
     for (let i = 0; i < alle.length - 1; i++) {
       const a = alle[i], b = alle[i + 1];
       if (b - a < 1e-6) continue;
       const [gu, gv] = gat(a), [hu, hv] = gat(b);
       const [ru, rv] = rand(a), [su, sv] = rand(b);
-      vlak([Pt(t1,gu,gv), Pt(t1,hu,hv), Pt(t1,su,sv), Pt(t1,ru,rv)], kl, false);
-      vlak([Pt(t0,ru,rv), Pt(t0,su,sv), Pt(t0,hu,hv), Pt(t0,gu,gv)], kl, false);
-      vlak([Pt(t0,gu,gv), Pt(t0,hu,hv), Pt(t1,hu,hv), Pt(t1,gu,gv)], kl, false);
-      lijn(Pt(t0,gu,gv), Pt(t0,hu,hv));
+      vlak([Pt(t1,gu,gv), Pt(t1,hu,hv), Pt(t1,su,sv), Pt(t1,ru,rv)], kl, false);  // voorvlak
+      vlak([Pt(t0,ru,rv), Pt(t0,su,sv), Pt(t0,hu,hv), Pt(t0,gu,gv)], kl, false);  // achtervlak
+      vlak([Pt(t0,gu,gv), Pt(t0,hu,hv), Pt(t1,hu,hv), Pt(t1,gu,gv)], kl, false);  // wand van het boorgat
+      lijn(Pt(t0,gu,gv), Pt(t0,hu,hv));    // de rand van het boorgat, aan beide kanten
       lijn(Pt(t1,gu,gv), Pt(t1,hu,hv));
     }
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {   // de dikte van het hout aan de vier zijkanten
       const [a1, b1] = hoeken[i], [a2, b2] = hoeken[(i + 1) % 4];
       vlak([Pt(t0,a1,b1), Pt(t0,a2,b2), Pt(t1,a2,b2), Pt(t1,a1,b1)], kl);
     }
   };
 
-  const bouw = (t, toonKist) => {
-    nul();
-    const s = stand(t);
+  // platte plaat: 2D-vorm in het xy-vlak, uitgetrokken over z (het dier)
+  const dierPlaat = (vorm, dy, z0, z1, kl) => {
+    const A = vorm.map(([x, y]) => ({ x, y: y + dy, z: z1 }));
+    const B = vorm.map(([x, y]) => ({ x, y: y + dy, z: z0 }));
+    for (let i = 0; i < vorm.length; i++) {
+      const j = (i + 1) % vorm.length;
+      vlak([A[i], A[j], B[j], B[i]], kl, false);
+      lijn(A[i], A[j]); lijn(B[i], B[j]);
+    }
+    vlak(A, kl, false);
+    vlak(B.slice().reverse(), kl, false);
+  };
 
-    if (toonKist) {
-      balk(-BX, BX, 0, T, -BZ, BZ, KLEUR.karton);                                       // bodem
-      plaatGat('x', -BX, -BX + T, -BZ, BZ, T, BY - T, AS_Z, AS_Y, GAT_AS, KLEUR.karton); // linkerwand
-      plaatGat('x', BX - T, BX, -BZ, BZ, T, BY - T, AS_Z, AS_Y, GAT_AS, KLEUR.karton);   // rechterwand
-      balk(-BX + T, BX - T, T, BY - T, -BZ, -BZ + T, KLEUR.karton);                     // achterwand
-      plaatGat('y', BY - T, BY, -BX, BX, -BZ, BZ, STANG_X, 0, GAT_STANG, KLEUR.karton);  // deksel + geleidegat
-      ringX(-BX - 1, -BX + T + 1, AS_Y, AS_Z, LAGER_IN, LAGER_UIT, 18, KLEUR.lager);
-      ringX(BX - T - 1, BX + 1, AS_Y, AS_Z, LAGER_IN, LAGER_UIT, 18, KLEUR.lager);
+  const cirkel = (cx, cy, r, n) =>
+    Array.from({ length: n }, (_, i) => [cx + r * Math.cos(i / n * TAU), cy + r * Math.sin(i / n * TAU)]);
+
+  const ROMP = cirkel(0, 0, 1, 24).map(([x, y]) => [x * 20, y * 11]);
+  const KOP = cirkel(17, 11, 7, 16);
+  const SNAVEL = [[23, 12], [40, 8], [23, 6]];
+
+  /* ---- de hele automata opbouwen voor slingerhoek t ---- */
+  const bouw = (t, toonKast) => {
+    nul();
+
+    if (toonKast) {
+      balk(-BX, BX, 0, T, -BZ, BZ, KLEUR.hout);                              // bodem
+      // linker- en rechterwand: elk met een boorgat precies op de hartlijn van de as
+      plaatGat('x', -BX, -BX + T, -BZ, BZ, T, BY - T, AS_Z, AS_Y, GAT_AS, KLEUR.hout2);
+      plaatGat('x', BX - T, BX, -BZ, BZ, T, BY - T, AS_Z, AS_Y, GAT_AS, KLEUR.hout2);
+      balk(-BX + T, BX - T, T, BY - T, -BZ, -BZ + T, KLEUR.hout2);           // achterwand (voorkant open)
+      // bovenplaat met het geleidegat waar de volgerstang doorheen komt
+      plaatGat('y', BY - T, BY, -BX, BX, -BZ, BZ, 0, 0, GAT_STANG, KLEUR.hout);
+      // de lagers: ringen ín het boorgat, met de as er dwars doorheen
+      ringX(-BX - 1, -BX + T + 1, AS_Y, AS_Z, LAGER_IN, LAGER_UIT, 20, KLEUR.lager);
+      ringX(BX - T - 1, BX + 1, AS_Y, AS_Z, LAGER_IN, LAGER_UIT, 20, KLEUR.lager);
     }
 
-    // ── de as, dwars door beide wanden, met de slinger aan de rechterkant
-    staaf({ x: -BX - 6, y: AS_Y, z: AS_Z }, { x: BX + 22, y: AS_Y, z: AS_Z }, AS_R, 16, KLEUR.as);
-    const sx = BX + 22;
-    staaf({ x: sx, y: AS_Y, z: AS_Z }, { x: sx, y: AS_Y + 14 * Math.sin(t), z: AS_Z + 14 * Math.cos(t) }, 2.6, 12, KLEUR.as);
-    staaf({ x: sx, y: AS_Y + 14 * Math.sin(t), z: AS_Z + 14 * Math.cos(t) },
-          { x: sx + 16, y: AS_Y + 14 * Math.sin(t), z: AS_Z + 14 * Math.cos(t) }, 3, 12, KLEUR.as);
+    omX(-BX - 8, BX + 26, AS_Y, AS_Z, () => AS_R, 0, 20, KLEUR.as);          // de as
+    omX(-5, 5, AS_Y, AS_Z, profiel, t, 64, KLEUR.nok);                       // de nok, op dezelfde as
 
-    // ── de excenterschijf: zit verschóven op de as. Haar middelpunt maakt daardoor
-    //    een rondje, terwijl de as gewoon in het hart blijft draaien.
-    staaf({ x: -15, y: s.my, z: s.mz }, { x: -7, y: s.my, z: s.mz }, SCHIJF_R, 32, KLEUR.schijf);
+    // de slinger: kruk + greep, rechts buiten de kast — draaipunt óók op de hartlijn
+    const ax = BX + 26;
+    const hy = AS_Y + 20 * Math.sin(t), hz = AS_Z + 20 * Math.cos(t);
+    omX(ax, ax + 5, AS_Y, AS_Z, u => (Math.abs(wrap(u - t)) < 0.35 ? 21 : 4), 0, 40, KLEUR.as);
+    omX(ax + 5, ax + 22, hy, hz, () => 3.4, 0, 16, KLEUR.as);
 
-    // ── de excenterband: glijdt om de schijf heen en volgt dus het middelpunt
-    ringX(-16, -6, s.my, s.mz, BAND_IN, BAND_UIT, 32, KLEUR.rood);
+    // de volgerstang: rust op de nok, steekt door het gat in de bovenplaat
+    const voet = stangVoet(t);
+    omY(voet, voet + STANG_L, 0, 0, STANG_R, 18, KLEUR.stang);
+    balk(-9, 9, voet - 3, voet, -6, 6, KLEUR.stang);                         // het voetje op de nok
 
-    // ── de excenterstang: van de band naar de voet van de duwstang
-    staaf({ x: -6, y: s.my, z: s.mz }, { x: STANG_X + 3, y: s.my, z: s.mz }, 2, 10, KLEUR.as);   // de pen
-    staaf({ x: STANG_X, y: s.my, z: s.mz }, { x: STANG_X, y: s.voet, z: 0 }, 2.2, 10, KLEUR.rood);
+    const dy = voet + STANG_L + 10;                                          // de vogel bovenop
+    dierPlaat(ROMP, dy, -2, 2, KLEUR.dier);
+    dierPlaat(KOP, dy, -2, 2, KLEUR.dier);
+    dierPlaat(SNAVEL, dy, -1.5, 1.5, KLEUR.dier);
 
-    // ── de duwstang: recht omhoog, door het geleidegat in het deksel
-    staaf({ x: STANG_X, y: s.voet, z: 0 }, { x: STANG_X, y: s.voet + STANG_L, z: 0 }, STANG_R, 14, KLEUR.rood);
-    // het plaatje bovenop: hier komt straks jouw dier
-    balk(-9, 9, s.voet + STANG_L, s.voet + STANG_L + 3, -7, 7, KLEUR.rood);
-
-    return s;
+    return { voet, dy };
   };
 
   /* ══════════ 3. WebGL ══════════ */
 
   const maakProgramma = (vsBron, fsBron) => {
     const maak = (soort, bron) => {
-      const sh = gl.createShader(soort);
-      gl.shaderSource(sh, bron);
-      gl.compileShader(sh);
-      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
-      return sh;
+      const s = gl.createShader(soort);
+      gl.shaderSource(s, bron);
+      gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+      return s;
     };
     const p = gl.createProgram();
     gl.attachShader(p, maak(gl.VERTEX_SHADER, vsBron));
@@ -484,10 +471,10 @@
     varying vec3 vNor; varying vec3 vKleur;
     void main(){
       vec3 n = normalize(vNor);
-      if (!gl_FrontFacing) n = -n;
+      if (!gl_FrontFacing) n = -n;              // dunne platen zijn van twee kanten zichtbaar
       vec3 licht = normalize(vec3(-0.35, 0.78, 0.52));
       float d = max(dot(n, licht), 0.0);
-      float f = 0.42 + 0.58 * d;
+      float f = 0.42 + 0.58 * d;                // hard licht van linksboven + wat omgevingslicht
       gl_FragColor = vec4(vKleur * f, 1.0);
     }`);
 
@@ -496,7 +483,7 @@
     uniform mat4 uMVP;
     void main(){ gl_Position = uMVP * vec4(aPos, 1.0); }`, `
     precision mediump float;
-    void main(){ gl_FragColor = vec4(0.13, 0.15, 0.17, 0.5); }`);
+    void main(){ gl_FragColor = vec4(0.13, 0.15, 0.17, 0.55); }`);
 
   const bufPos = gl.createBuffer(), bufNor = gl.createBuffer(),
         bufKleur = gl.createBuffer(), bufLijn = gl.createBuffer();
@@ -508,7 +495,8 @@
     gl.vertexAttribPointer(plek, maat, gl.FLOAT, false, 0, 0);
   };
 
-  const maal = (a, b) => {
+  /* ---- matrices ---- */
+  const maal = (a, b) => {   // 4×4, kolom-major (zoals WebGL het wil)
     const r = new Float32Array(16);
     for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
       let s = 0;
@@ -520,8 +508,10 @@
   const perspectief = (fov, aspect, dichtbij, ver) => {
     const f = 1 / Math.tan(fov / 2), nf = 1 / (dichtbij - ver);
     return new Float32Array([
-      f / aspect, 0, 0, 0,  0, f, 0, 0,
-      0, 0, (ver + dichtbij) * nf, -1,  0, 0, 2 * ver * dichtbij * nf, 0,
+      f / aspect, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, (ver + dichtbij) * nf, -1,
+      0, 0, 2 * ver * dichtbij * nf, 0,
     ]);
   };
   const verschuif = (x, y, z) => new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1]);
@@ -534,18 +524,20 @@
     return new Float32Array([1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]);
   };
 
-  let hoekY = -0.52, hoekX = 0.16;
-  const AFSTAND = 250;
-  const MIKPUNT = { x: 0, y: 52, z: 0 };
+  let hoekY = -0.62, hoekX = 0.22;
+  const AFSTAND = 320;
+  const MIKPUNT = { x: 0, y: 62, z: 0 };
+
   let W = 1000, H = 620, dpr = 1, MVP = null, MV = null;
 
   const camera = () => {
     MV = maal(verschuif(0, 0, -AFSTAND),
          maal(draaiOmX(hoekX),
          maal(draaiOmY(hoekY), verschuif(-MIKPUNT.x, -MIKPUNT.y, -MIKPUNT.z))));
-    MVP = maal(perspectief(36 * Math.PI / 180, W / H, 20, 1400), MV);
+    MVP = maal(perspectief(35 * Math.PI / 180, W / H, 20, 1200), MV);
   };
 
+  // een punt uit de wereld naar een plek op het scherm (voor de namen)
   const naarScherm = p => {
     const x = MVP[0]*p.x + MVP[4]*p.y + MVP[8]*p.z + MVP[12];
     const y = MVP[1]*p.x + MVP[5]*p.y + MVP[9]*p.z + MVP[13];
@@ -560,6 +552,7 @@
     gl.enable(gl.DEPTH_TEST);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    // 1. de vlakken, iets naar achteren geduwd zodat de randlijnen er straks bovenop vallen
     gl.useProgram(progVlak);
     gl.enable(gl.POLYGON_OFFSET_FILL);
     gl.polygonOffset(1, 1);
@@ -571,6 +564,7 @@
     gl.drawArrays(gl.TRIANGLES, 0, P.length / 3);
     gl.disable(gl.POLYGON_OFFSET_FILL);
 
+    // 2. de randlijnen. De dieptebuffer verbergt vanzelf de lijnen die achter hout liggen.
     gl.useProgram(progLijn);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -580,64 +574,36 @@
     gl.disable(gl.BLEND);
   };
 
-  /* ---- namen én de maatpijl van de slag ---- */
+  /* ---- namen met aanwijslijn, op de laag erbovenop ---- */
   const NAAM_KLEUR = { blauw: '#1e5f8c', rood: '#c43b2e', geel: '#8a5f0e' };
-  const tekenNamen = (s, toonKist) => {
+  const tekenNamen = (maten, toonKast, aan) => {
     ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx2d.clearRect(0, 0, W, H);
-
-    // de maatpijl: hoe ver gaat de duwstang op en neer?
-    const laag = laagste(), hoog = laag + slagVan();
-    const a = naarScherm({ x: STANG_X - 22, y: laag + STANG_L + 2, z: 0 });
-    const b = naarScherm({ x: STANG_X - 22, y: hoog + STANG_L + 2, z: 0 });
-    ctx2d.strokeStyle = NAAM_KLEUR.rood;
-    ctx2d.lineWidth = 1;
-    ctx2d.setLineDash([4, 3]);
-    ctx2d.beginPath(); ctx2d.moveTo(a.x, a.y); ctx2d.lineTo(b.x, b.y); ctx2d.stroke();
-    ctx2d.setLineDash([]);
-    for (const [p, dy] of [[a, -5], [b, 5]]) {
-      ctx2d.beginPath();
-      ctx2d.moveTo(p.x - 4, p.y + dy); ctx2d.lineTo(p.x, p.y); ctx2d.lineTo(p.x + 4, p.y + dy);
-      ctx2d.stroke();
-    }
-    ctx2d.font = '700 13px "Space Mono", monospace';
-    ctx2d.fillStyle = NAAM_KLEUR.rood;
-    ctx2d.textAlign = 'right';
-    ctx2d.fillText('slag', a.x - 8, (a.y + b.y) / 2 + 4);
-
-    // de maatlijn van het verschoven middelpunt: van het hart van de as naar het
-    // hart van de schijf. Dít is de excentriciteit, en die stuurt alles aan.
-    const h = naarScherm({ x: -11, y: AS_Y, z: AS_Z });
-    const m = naarScherm({ x: -11, y: s.my, z: s.mz });
-    ctx2d.strokeStyle = NAAM_KLEUR.blauw;
-    ctx2d.lineWidth = 1.4;
-    ctx2d.beginPath(); ctx2d.moveTo(h.x, h.y); ctx2d.lineTo(m.x, m.y); ctx2d.stroke();
-    for (const p of [h, m]) {
-      ctx2d.beginPath(); ctx2d.arc(p.x, p.y, 3, 0, TAU);
-      ctx2d.fillStyle = NAAM_KLEUR.blauw; ctx2d.fill();
-    }
+    if (!aan) return;
 
     const n = [
-      { p: { x: -11, y: AS_Y, z: AS_Z }, uit: [-78, 40], txt: 'hart van de as', kl: 'blauw' },
-      { p: { x: -11, y: s.my, z: s.mz }, uit: [-92, -14], txt: 'hart van de schijf', kl: 'blauw' },
-      { p: { x: -11, y: s.my + BAND_UIT, z: s.mz }, uit: [-72, -34], txt: 'excenterband', kl: 'rood' },
-      { p: { x: STANG_X, y: (s.my + s.voet) / 2, z: s.mz / 2 }, uit: [74, 24], txt: 'excenterstang', kl: 'rood' },
-      { p: { x: STANG_X, y: s.voet + 26, z: 0 }, uit: [66, -10], txt: 'duwstang', kl: 'rood' },
-      { p: { x: STANG_X, y: s.voet + STANG_L + 3, z: 0 }, uit: [70, -26], txt: 'hier komt je figuur', kl: 'rood' },
+      { p: { x: -28, y: AS_Y, z: 0 }, uit: [-70, 34], txt: 'as', kl: 'blauw' },
+      { p: { x: 0, y: AS_Y + 26, z: 0 }, uit: [-78, -6], txt: 'nok', kl: 'blauw' },
+      { p: { x: 0, y: maten.voet + 26, z: 0 }, uit: [-84, -28], txt: 'volgerstang', kl: 'rood' },
+      { p: { x: 6, y: maten.dy + 4, z: 0 }, uit: [78, -18], txt: 'jouw figuur', kl: 'rood' },
     ];
-    if (toonKist) {
-      n.push({ p: { x: GAT_STANG + 2, y: BY, z: 0 }, uit: [78, 22], txt: 'geleidegat', kl: 'blauw' });
-      n.push({ p: { x: -BX + T / 2, y: AS_Y, z: 0 }, uit: [-34, 92], txt: 'lager', kl: 'geel' });
+    if (toonKast) {
+      n.push({ p: { x: -BX + T/2, y: AS_Y, z: 0 }, uit: [-64, 62], txt: 'lager', kl: 'geel' });
+      n.push({ p: { x: GAT_STANG + 3, y: BY, z: 0 }, uit: [86, 20], txt: 'gat in de bovenplaat', kl: 'blauw' });
     }
     ctx2d.font = '600 13px "Space Mono", monospace';
     for (const l of n) {
-      const p = naarScherm(l.p);
-      const tx = p.x + l.uit[0], ty = p.y + l.uit[1];
+      const s = naarScherm(l.p);
+      const tx = s.x + l.uit[0], ty = s.y + l.uit[1];
       ctx2d.strokeStyle = NAAM_KLEUR[l.kl];
       ctx2d.lineWidth = 1;
-      ctx2d.beginPath(); ctx2d.moveTo(p.x, p.y); ctx2d.lineTo(tx, ty); ctx2d.stroke();
-      ctx2d.beginPath(); ctx2d.arc(p.x, p.y, 2.6, 0, TAU);
-      ctx2d.fillStyle = NAAM_KLEUR[l.kl]; ctx2d.fill();
+      ctx2d.beginPath();
+      ctx2d.moveTo(s.x, s.y); ctx2d.lineTo(tx, ty);
+      ctx2d.stroke();
+      ctx2d.beginPath();
+      ctx2d.arc(s.x, s.y, 2.6, 0, TAU);
+      ctx2d.fillStyle = NAAM_KLEUR[l.kl];
+      ctx2d.fill();
       const rechts = l.uit[0] > 0;
       ctx2d.textAlign = rechts ? 'left' : 'right';
       const bw = ctx2d.measureText(l.txt).width;
@@ -653,14 +619,11 @@
   const knop = document.getElementById('knop');
   const slinger = document.getElementById('slinger');
   const hoek = document.getElementById('hoek');
-  const krukarm = document.getElementById('krukarm');
   const kastKnop = document.getElementById('kast');
-  const mHoogte = document.getElementById('m-hoogte');
-  const mSlag = document.getElementById('m-slag');
-  const mKruk = document.getElementById('m-kruk');
+  const namenKnop = document.getElementById('namenknop');
 
   const stil = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let theta = 0, draait = !stil, vorige = null, toonKist = true;
+  let theta = 0, draait = !stil, vorige = null, toonKast = true, toonNamen = true;
 
   const meet = () => {
     const b = doek.getBoundingClientRect();
@@ -673,15 +636,12 @@
   };
 
   const beeld = () => {
-    const s = bouw(theta, toonKist);
+    const maten = bouw(theta, toonKast);
     teken();
-    tekenNamen(s, toonKist);
+    tekenNamen(maten, toonKast, toonNamen);
     const g = Math.round(((theta % TAU) + TAU) % TAU * 180 / Math.PI);
     slinger.value = g;
     hoek.textContent = g + '°';
-    mHoogte.textContent = Math.round(s.voet - laagste()) + ' mm';
-    mSlag.textContent = slagVan() + ' mm';
-    mKruk.textContent = EXC + ' mm';
   };
 
   const zet = aan => {
@@ -696,17 +656,20 @@
     theta = slinger.value * Math.PI / 180;
     beeld();
   });
-  krukarm.addEventListener('input', () => {
-    EXC = Number(krukarm.value);
+  kastKnop.addEventListener('click', () => {
+    toonKast = !toonKast;
+    kastKnop.textContent = toonKast ? 'Kast weghalen' : 'Kast terugzetten';
+    kastKnop.setAttribute('aria-pressed', String(toonKast));
     beeld();
   });
-  kastKnop.addEventListener('click', () => {
-    toonKist = !toonKist;
-    kastKnop.textContent = toonKist ? 'Kist weghalen' : 'Kist terugzetten';
-    kastKnop.setAttribute('aria-pressed', String(toonKist));
+  namenKnop.addEventListener('click', () => {
+    toonNamen = !toonNamen;
+    namenKnop.textContent = toonNamen ? 'Namen uit' : 'Namen aan';
+    namenKnop.setAttribute('aria-pressed', String(toonNamen));
     beeld();
   });
 
+  /* slepen om te draaien — muis en touch */
   let sleept = false, lx = 0, ly = 0;
   doek.addEventListener('pointerdown', e => {
     sleept = true; lx = e.clientX; ly = e.clientY;
@@ -715,7 +678,7 @@
   doek.addEventListener('pointermove', e => {
     if (!sleept) return;
     hoekY += (e.clientX - lx) * 0.008;
-    hoekX = Math.max(-0.2, Math.min(1.1, hoekX + (e.clientY - ly) * 0.006));
+    hoekX = Math.max(-0.15, Math.min(1.15, hoekX + (e.clientY - ly) * 0.006));
     lx = e.clientX; ly = e.clientY;
     if (!draait) beeld();
   });
@@ -723,13 +686,14 @@
   doek.addEventListener('pointerup', los);
   doek.addEventListener('pointercancel', los);
 
+  /* met het toetsenbord: pijltjes draaien de kast */
   doek.tabIndex = 0;
   doek.addEventListener('keydown', e => {
     const k = { ArrowLeft: [-.1, 0], ArrowRight: [.1, 0], ArrowUp: [0, -.08], ArrowDown: [0, .08] }[e.key];
     if (!k) return;
     e.preventDefault();
     hoekY += k[0];
-    hoekX = Math.max(-0.2, Math.min(1.1, hoekX + k[1]));
+    hoekX = Math.max(-0.15, Math.min(1.15, hoekX + k[1]));
     if (!draait) beeld();
   });
 

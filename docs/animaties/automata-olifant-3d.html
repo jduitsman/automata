@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>De klapwiekende papegaai — tandwielen met draaipunt</title>
+<title>De knikkende olifant — kruk-drijfstang met draaipunt</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -50,13 +50,6 @@
     font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.08em;
     text-transform:uppercase;color:var(--steel);pointer-events:none;
   }
-  .teller{
-    position:absolute;right:12px;top:10px;
-    font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.06em;
-    color:var(--ink);background:rgba(255,255,255,.9);border:1px solid var(--line);
-    padding:5px 10px;pointer-events:none;
-  }
-  .teller b{color:var(--red);}
   .geen-webgl{padding:40px 24px;text-align:center;color:var(--steel);font-style:italic;}
 
   .drive{
@@ -85,12 +78,7 @@
   .sec-head h2{font-size:1.3rem;text-transform:uppercase;white-space:nowrap;}
   .sec-head .rule{flex:1;height:1px;background:var(--line);}
 
-  .som{border:1px solid var(--ink);border-left:5px solid var(--blue);padding:16px 18px;margin-bottom:20px;}
-  .som .reken{font-family:'Space Mono',monospace;font-size:1.05rem;color:var(--blue);font-weight:700;}
-  .som .reken b{color:var(--red);}
-  .som p{margin:8px 0 0;}
-
-  .keten{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+  .keten{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:6px;}
   .keten div{border:1px solid var(--line);border-top:3px solid var(--blue);padding:13px 15px;}
   .keten div.rood{border-top-color:var(--red);}
   .keten .stap{font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.14em;color:var(--steel);}
@@ -115,7 +103,6 @@
     body{font-size:16px;}
     .sheet{margin:0;border:none;padding:8px;}
     .frame{padding:0 14px 24px;}
-    .teller{display:none;}
   }
   @media print{
     @page{size:A4;margin:16mm;}
@@ -133,18 +120,17 @@
 <div class="sheet">
 <div class="frame">
 
-  <a class="terug" href="../automata.html">← Terug naar het projectdocument</a>
+  <a class="terug" href="../index.html">← Terug naar het projectdocument</a>
 
   <header>
-    <div class="eyebrow">Automata · voorbeeld · tandwielen + draaipunt</div>
-    <h1>De klapwiekende papegaai</h1>
-    <p>Twee tandwielen, een krukpen en een draaipunt in de schouder. Het grote wiel heeft twee keer zoveel tanden als het kleine — en dáárom klapt de vleugel twee keer per slag aan de slinger.</p>
+    <div class="eyebrow">Automata · voorbeeld · krukas + draaipunt</div>
+    <h1>De knikkende olifant</h1>
+    <p>Een kruk-drijfstang duwt een stang recht op en neer. Maar een olifant knikt niet recht omhoog — hij draait zijn nek om een punt. Hier zie je hoe je die twee bewegingen aan elkaar knoopt.</p>
   </header>
 
   <div class="viewer">
-    <canvas id="doek" aria-label="Draaibare 3D-doorkijk: een slinger draait een groot tandwiel, dat een klein tandwiel twee keer zo snel laat draaien; een krukpen en drijfstang laten de vleugel van een papegaai om zijn schouder klappen."></canvas>
+    <canvas id="doek" aria-label="Draaibare 3D-doorkijk: een kruk-drijfstang duwt een stang omhoog, die via een koppelstang de nek van een olifant om een draaipunt laat knikken."></canvas>
     <canvas id="namen" aria-hidden="true"></canvas>
-    <div class="teller" id="teller">slinger <b id="t-slag">0,00</b> slag · vleugel <b id="t-klap">0,00</b> slag</div>
     <div class="hint">Sleep om te draaien</div>
   </div>
 
@@ -154,6 +140,7 @@
       <input id="slinger" type="range" min="0" max="360" step="1" value="0" aria-label="Slinger: draai de as met de hand">
       <span class="hoek" id="hoek">0°</span>
     </label>
+    <button id="kast" class="uit" type="button" aria-pressed="true">Kast weghalen</button>
     <button id="namenknop" class="uit" type="button" aria-pressed="true">Namen uit</button>
   </div>
 
@@ -164,75 +151,68 @@
     <span><i style="background:var(--amber)"></i>geel = het lager</span>
   </div>
 
-  <div class="sec-head"><h2>De overbrenging</h2><span class="rule"></span></div>
-  <div class="som">
-    <div class="reken">24 tanden ÷ 12 tanden = <b>2</b></div>
-    <p>Het kleine wiel heeft half zoveel tanden, dus het draait twee keer rond terwijl het grote wiel één keer rondgaat. De krukpen zit op het kléine wiel. Eén slag aan de slinger geeft dus <strong>twee vleugelslagen</strong>. Kijk maar naar de teller rechtsboven in de tekening.</p>
-    <p>En let op de draairichting: waar de tanden in elkaar grijpen, duwt het ene wiel het andere de <strong>andere kant op</strong>. Dat krijg je er gratis bij.</p>
-  </div>
-
   <div class="sec-head"><h2>De keten van beweging</h2><span class="rule"></span></div>
   <div class="keten">
     <div>
       <div class="stap">STAP 1</div>
-      <h3>De slinger</h3>
-      <p>Zit vast op de as van het grote tandwiel. Jij bepaalt het tempo.</p>
+      <h3>De kruk</h3>
+      <p>Je draait aan de slinger. De krukpen maakt rondjes om de as.</p>
     </div>
     <div>
       <div class="stap">STAP 2</div>
-      <h3>De tandwielen</h3>
-      <p>Groot drijft klein aan. Half zoveel tanden, dus dubbele snelheid, en de andere kant op.</p>
+      <h3>De drijfstang</h3>
+      <p>Die is met de krukpen verbonden en duwt en trekt. Rondjes worden op-en-neer.</p>
     </div>
-    <div>
+    <div class="rood">
       <div class="stap">STAP 3</div>
-      <h3>De krukpen</h3>
-      <p>Zit uit het hart op het kleine wiel. Draaien wordt zo een heen-en-weer duwen.</p>
+      <h3>De duwstang</h3>
+      <p>Loopt recht omhoog door het gat in de bovenplaat. Alleen op en neer, verder niets.</p>
     </div>
     <div class="rood">
       <div class="stap">STAP 4</div>
-      <h3>De drijfstang</h3>
-      <p>Verbindt de krukpen met de vleugel. Hij scharniert aan twee kanten, dus hij loopt niet vast.</p>
+      <h3>De koppelstang</h3>
+      <p>Verbindt de duwstang met de nek. Hij mag meedraaien — daarom loopt hij niet vast.</p>
     </div>
     <div class="rood">
       <div class="stap">STAP 5</div>
       <h3>Het draaipunt</h3>
-      <p>De vleugel draait om een pen in de schouder. Het lijf blijft staan; alleen de vleugel klapt.</p>
+      <p>De kop draait om een pen in de schouder. Recht omhoog wordt knikken.</p>
     </div>
   </div>
 
   <div class="sec-head"><h2>Waar het misgaat</h2><span class="rule"></span></div>
   <div class="let-op">
     <div>
-      <h3>De tanden grijpen niet</h3>
-      <p>De afstand tussen de twee assen moet precies kloppen: te dichtbij en de tanden klemmen, te ver en ze slaan over. Meet vanuit het hart van de ene as naar het hart van de andere.</p>
-      <span class="maat">hart op hart = straal groot + straal klein</span>
-    </div>
-    <div>
-      <h3>De drijfstang vastlijmen</h3>
-      <p>Aan beide uiteinden moet een scharnierende pen zitten. Lijm je hem vast aan de vleugel, dan loopt je automata na een kwartslag klem.</p>
+      <h3>De koppelstang vastzetten</h3>
+      <p>Zet je de duwstang vást aan de nek, dan loopt je automata na een kwartslag klem. De nek draait namelijk weg, en de stang kan alleen recht omhoog. Er móéten twee scharnierende pennen in.</p>
       <span class="maat">2 losse pennen, geen lijm</span>
     </div>
     <div>
-      <h3>De vleugel te zwaar</h3>
-      <p>De vleugel hangt aan één pen en wordt heen en weer geslingerd. Maak hem van karton, niet van multiplex, anders trekt hij de drijfstang krom.</p>
-      <span class="maat">vleugel: karton of foamboard</span>
+      <h3>Het draaipunt te strak</h3>
+      <p>De pen in de schouder moet ronddraaien, niet klemmen. Boor het gat in de kop iets ruimer dan de pen.</p>
+      <span class="maat">pen Ø3 mm → gat Ø3,5 mm</span>
     </div>
     <div>
-      <h3>Hoe ver klapt hij?</h3>
-      <p>Dat volgt uit de krukpen: hoe verder die uit het hart zit, hoe groter de slag. Zit hij in het hart, dan beweegt er niets.</p>
-      <span class="maat">krukpen uit het hart = de slag</span>
+      <h3>De kop hangt te ver door</h3>
+      <p>Hoe verder de kop van het draaipunt af steekt, hoe zwaarder hij aan de koppelstang trekt. Houd de slurf licht: karton, geen hout.</p>
+      <span class="maat">kop en slurf: karton of foamboard</span>
+    </div>
+    <div>
+      <h3>Hoe groot wordt de knik?</h3>
+      <p>Die volgt uit de kruk: een grotere kruk geeft een grotere slag, en dus een grotere knik. Hier is het ongeveer 22°.</p>
+      <span class="maat">kruk Ø12 mm → knik ± 22°</span>
     </div>
   </div>
 
   <div class="denk">
     <span class="denk-label">Denkvraag</span>
-    <p>Wat gebeurt er als je de tandwielen omdraait — de slinger op het kléine wiel en de krukpen op het grote? Klapt de vleugel dan vaker of juist minder vaak? En wat merk je aan hoe zwaar de slinger draait?</p>
+    <p>Zet de slinger stil op 90° en op 270°. Waarom staat de nek op die twee standen niet even ver uit elkaar? En wat gebeurt er met de knik als je het draaipunt dichter bij de duwstang zet?</p>
   </div>
 
   <footer>
     <span>Automata — Natuur in beweging</span>
     <span>Techniek · havo 2</span>
-    <span>Voorbeeld: tandwielen + draaipunt</span>
+    <span>Voorbeeld: krukas + draaipunt</span>
   </footer>
 
 </div>
@@ -253,80 +233,82 @@
   const ctx2d = naamDoek.getContext('2d');
 
   /* ══════════ 1. De maten ══════════
-     Bij deze automata wijzen de assen naar je toe (de z-richting), net als op de
-     foto. Alle tandwielen, stangen en de papegaai liggen dus in één plat vlak.   */
+     x = links-rechts (langs de as), y = omhoog, z = voor-achter.
+     Oorsprong: midden van de bodemplaat.                          */
 
-  const T = 6;   // dikte multiplex
+  const T = 5;
+  const BX = 50, BZ = 35, BY = 80;
 
-  /* ── DE TWEE HARTLIJNEN ──
-     Elke as heeft één hartlijn. Het tandwiel, het lager, het boorgat en de krukpen
-     van die as hangen allemaal aan diezelfde lijn — nooit los daarvan.            */
-  const AS1 = { x: -6, y: 30 };    // grote tandwiel + slinger
-  const TAND1 = 24, R1 = 20;       // 24 tanden, steekcirkel 20
-  const TAND2 = 12, R2 = 10;       // 12 tanden, steekcirkel 10
-  const AS2 = { x: AS1.x, y: AS1.y + R1 + R2 };   // hart op hart = R1 + R2, anders grijpen ze niet
+  /* ── DE HARTLIJN VAN DE AS ──
+     As, kruk, lagers, boorgaten en de slinger delen deze ene lijn. */
+  const AS_Y = 22, AS_Z = 0;
 
   const AS_R = 3.2;
   const LAGER_IN = 3.9, LAGER_UIT = 6;
   const GAT_AS = LAGER_UIT + 0.25;
 
-  const KRUK_R = 4;                // de krukpen zit hier uit het hart van het kleine wiel
-  const DRIJF_L = 40;              // lengte van de drijfstang
+  const KRUK_R = 6;        // krukstraal: bepaalt de slag (slag = 2 × krukstraal)
+  const DRIJF_L = 38;      // lengte van de drijfstang
+  const KRUK_X = -15;      // de kruk zit hier op de as
 
-  /* ── HET DRAAIPUNT VAN DE VLEUGEL ── */
-  const SCHOUDER = { x: 8, y: 100 };
-  const ARM = 10;                  // van de schouder naar de pen op de vleugel
+  const STANG_X = -7;      // de duwstang loopt hier omhoog, door de bovenplaat
+  const STANG_R = 3.2;
+  const GAT_STANG = 4.2;   // geleidegat: iets ruimer dan de stang
+  const PEN_HOOG = 37;     // hoe hoog de bovenste pen boven de voet van de stang zit
 
-  // de stand waarin de vleugel getekend is (halverwege de slag)
-  const Z_FRAME = [-14, -8];       // de staander
-  const Z_WIEL1 = [-6, -1], Z_WIEL2 = [-6, -1];
-  const Z_LIJF = [2, 8], Z_VLEUGEL = [8, 14], Z_DRIJF = 16;
+  /* ── HET DRAAIPUNT VAN DE OLIFANT ──
+     De kop draait om deze pen. Alles wat meedraait, draait hierom.  */
+  const A = { x: 6, y: 104 };
+  const ARM = 12;          // korte arm: van het draaipunt naar de pen op de nek
+  const KOPPEL = 14;       // lengte van de koppelstang
+  const BETA_RUST = -96.7 * Math.PI / 180;   // stand van de arm waarin de olifant getekend is
+
+  const Z_ROMP = [4, 10];      // de olifant is gelaagd, net als een kartonnen figuur
+  const Z_KOP = [10, 16];
+  const Z_ARM = 19, Z_KOPPEL = 22;
 
   const KLEUR = {
     hout:  [.84, .87, .90],
-    wiel1: [.12, .37, .55],   // blauw: de constructie
-    wiel2: [.20, .48, .66],
+    hout2: [.77, .81, .86],
+    as:    [.12, .37, .55],   // blauw: de constructie
+    kruk:  [.16, .43, .62],
     rood:  [.77, .23, .18],   // rood: wat beweegt
+    kop:   [.72, .26, .21],
     rust:  [.55, .53, .51],   // grijs: wat stil staat
     lager: [.69, .48, .07],   // geel: het lager
     oog:   [.13, .15, .17],
   };
 
   /* ── de stand van het hele mechanisme bij slingerhoek t ──
-     Eén berekening: de tekening kan dus niet uit de pas lopen met de beweging.  */
+     Eén berekening. De tekening kan dus niet uit de pas lopen met de beweging. */
+  const stand = t => {
+    // 1. de krukpen draait rond in het vlak van de as
+    const py = AS_Y + KRUK_R * Math.sin(t);
+    const pz = AS_Z + KRUK_R * Math.cos(t);
 
-  // de tanden moeten in elkaar grijpen: bij t = 0 staat er een tand van het grote
-  // wiel omhoog, en precies daar moet het kleine wiel een gat hebben.
-  const FASE2 = Math.PI * 3 / 2 - Math.PI / TAND2;
-  const rot2Van = t => -t * (TAND1 / TAND2) + FASE2;
+    // 2. de drijfstang duwt de duwstang omhoog. De duwstang kan alleen recht
+    //    omhoog (z = 0), dus volgt zijn hoogte uit de lengte van de drijfstang.
+    const voet = py + Math.sqrt(DRIJF_L * DRIJF_L - pz * pz);
+    const yq = voet + PEN_HOOG;                    // de pen boven op de duwstang
 
-  const kinematiek = t => {
-    const rot2 = rot2Van(t);
-    // de krukpen draait mee met het kleine wiel
-    const P = { x: AS2.x + KRUK_R * Math.cos(rot2), y: AS2.y + KRUK_R * Math.sin(rot2) };
-
-    // de pen op de vleugel ligt op twee cirkels tegelijk: op ARM van de schouder,
-    // en op DRIJF_L van de krukpen. Het snijpunt van die cirkels is de vleugelstand.
-    const dx = P.x - SCHOUDER.x, dy = P.y - SCHOUDER.y;
+    // 3. de koppelstang verbindt die pen met de arm aan de nek. De pen op de nek
+    //    ligt op twee cirkels tegelijk: op ARM van het draaipunt, op KOPPEL van
+    //    de duwstang. Het snijpunt van die twee cirkels is de stand van de nek.
+    const dx = STANG_X - A.x, dy = yq - A.y;
     const c = Math.hypot(dx, dy);
     const ux = dx / c, uy = dy / c;
-    const a = (ARM * ARM - DRIJF_L * DRIJF_L + c * c) / (2 * c);
+    const a = (ARM * ARM - KOPPEL * KOPPEL + c * c) / (2 * c);
     const h = Math.sqrt(Math.max(0, ARM * ARM - a * a));
-    const B = { x: SCHOUDER.x + a * ux - h * uy, y: SCHOUDER.y + a * uy + h * ux };
+    const B = { x: A.x + a * ux - h * uy, y: A.y + a * uy + h * ux };
 
-    return { rot1: t, rot2, P, B, beta: Math.atan2(B.y - SCHOUDER.y, B.x - SCHOUDER.x) };
-  };
-
-  const BETA_RUST = kinematiek(Math.PI / 2).beta;   // hierin is de vleugel getekend
-  const stand = t => {
-    const k = kinematiek(t);
-    k.klap = k.beta - BETA_RUST;
-    return k;
+    const beta = Math.atan2(B.y - A.y, B.x - A.x);
+    return { py, pz, voet, yq, B, knik: beta - BETA_RUST };
   };
 
   /* ══════════ 2. Geometrie ══════════ */
 
   let P = [], N = [], C = [], L = [];
+
   const nul = () => { P = []; N = []; C = []; L = []; };
 
   const normaal = (a, b, c) => {
@@ -365,7 +347,38 @@
     vlak([p(x0,y0,z0), p(x1,y0,z0), p(x1,y0,z1), p(x0,y0,z1)], kl);
   };
 
-  // een staaf tussen twee punten: de assen, de drijfstang, de pennen, de slinger
+  const omX = (x0, x1, cy, cz, r, n, kl) => {
+    const A2 = [], B2 = [];
+    for (let i = 0; i < n; i++) {
+      const u = (i / n) * TAU, v = ((i + 1) / n) * TAU;
+      const p = { y: cy + r * Math.sin(u), z: cz + r * Math.cos(u) };
+      const q = { y: cy + r * Math.sin(v), z: cz + r * Math.cos(v) };
+      vlak([{x:x0,y:p.y,z:p.z}, {x:x1,y:p.y,z:p.z}, {x:x1,y:q.y,z:q.z}, {x:x0,y:q.y,z:q.z}], kl, false);
+      A2.push({ x: x0, y: p.y, z: p.z });
+      B2.push({ x: x1, y: p.y, z: p.z });
+    }
+    schijf({ x: x0, y: cy, z: cz }, A2.slice().reverse(), kl);
+    schijf({ x: x1, y: cy, z: cz }, B2, kl);
+  };
+
+  const ringX = (x0, x1, cy, cz, rin, rout, n, kl) => {
+    const p = (r, i) => {
+      const u = (i / n) * TAU;
+      return { y: cy + r * Math.sin(u), z: cz + r * Math.cos(u) };
+    };
+    const q = (x, a) => ({ x, y: a.y, z: a.z });
+    for (let i = 0; i < n; i++) {
+      const bu = p(rout, i), bv = p(rout, i + 1), bi = p(rin, i), bj = p(rin, i + 1);
+      vlak([q(x0,bu), q(x1,bu), q(x1,bv), q(x0,bv)], kl, false);
+      vlak([q(x1,bi), q(x0,bi), q(x0,bj), q(x1,bj)], kl, false);
+      vlak([q(x0,bu), q(x0,bv), q(x0,bj), q(x0,bi)], kl, false);
+      vlak([q(x1,bv), q(x1,bu), q(x1,bi), q(x1,bj)], kl, false);
+      lijn(q(x0,bu), q(x0,bv)); lijn(q(x1,bu), q(x1,bv));
+      lijn(q(x0,bi), q(x0,bj)); lijn(q(x1,bi), q(x1,bj));
+    }
+  };
+
+  // een staaf tussen twee punten in de ruimte: drijfstang, koppelstang, arm, pennen
   const staaf = (a, b, r, n, kl) => {
     const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
     const len = Math.hypot(dx, dy, dz) || 1;
@@ -389,58 +402,40 @@
     schijf(b, B2, kl);
   };
 
-  // het lager: een ring om een as die naar je toe wijst
-  const ringZ = (z0, z1, cx, cy, rin, rout, n, kl) => {
-    const p = (r, i) => {
-      const u = (i / n) * TAU;
-      return { x: cx + r * Math.cos(u), y: cy + r * Math.sin(u) };
-    };
-    const q = (z, a) => ({ x: a.x, y: a.y, z });
-    for (let i = 0; i < n; i++) {
-      const bu = p(rout, i), bv = p(rout, i + 1), bi = p(rin, i), bj = p(rin, i + 1);
-      vlak([q(z0,bu), q(z1,bu), q(z1,bv), q(z0,bv)], kl, false);
-      vlak([q(z1,bi), q(z0,bi), q(z0,bj), q(z1,bj)], kl, false);
-      vlak([q(z0,bu), q(z0,bv), q(z0,bj), q(z0,bi)], kl, false);
-      vlak([q(z1,bv), q(z1,bu), q(z1,bi), q(z1,bj)], kl, false);
-      lijn(q(z0,bu), q(z0,bv)); lijn(q(z1,bu), q(z1,bv));
-      lijn(q(z0,bi), q(z0,bj)); lijn(q(z1,bi), q(z1,bj));
-    }
-  };
-
-  // een houten plaat (naar je toe gericht) met één rond boorgat erin
-  const plaatGat = (z0, z1, x0, x1, y0, y1, cx, cy, r, kl, n = 28) => {
-    const Pt = (z, x, y) => ({ x, y, z });
-    const hoeken = [[x0,y0],[x1,y0],[x1,y1],[x0,y1]];
+  const plaatGat = (as, t0, t1, u0, u1, v0, v1, cu, cv, r, kl, n = 28) => {
+    const Pt = as === 'x' ? (t, u, v) => ({ x: t, y: v, z: u })
+                          : (t, u, v) => ({ x: u, y: t, z: v });
+    const hoeken = [[u0,v0],[u1,v0],[u1,v1],[u0,v1]];
     const norm = a => (a % TAU + TAU) % TAU;
     const alle = [...Array.from({ length: n }, (_, i) => norm(i / n * TAU)),
-                  ...hoeken.map(([x, y]) => norm(Math.atan2(y - cy, x - cx)))].sort((a, b) => a - b);
+                  ...hoeken.map(([u, v]) => norm(Math.atan2(v - cv, u - cu)))].sort((a, b) => a - b);
     alle.push(alle[0] + TAU);
     const rand = a => {
-      const dx = Math.cos(a), dy = Math.sin(a);
-      const tx = dx > 1e-9 ? (x1 - cx) / dx : dx < -1e-9 ? (x0 - cx) / dx : Infinity;
-      const ty = dy > 1e-9 ? (y1 - cy) / dy : dy < -1e-9 ? (y0 - cy) / dy : Infinity;
-      const s = Math.min(tx, ty);
-      return [cx + s * dx, cy + s * dy];
+      const du = Math.cos(a), dv = Math.sin(a);
+      const tu = du > 1e-9 ? (u1 - cu) / du : du < -1e-9 ? (u0 - cu) / du : Infinity;
+      const tv = dv > 1e-9 ? (v1 - cv) / dv : dv < -1e-9 ? (v0 - cv) / dv : Infinity;
+      const s = Math.min(tu, tv);
+      return [cu + s * du, cv + s * dv];
     };
-    const gat = a => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    const gat = a => [cu + r * Math.cos(a), cv + r * Math.sin(a)];
     for (let i = 0; i < alle.length - 1; i++) {
       const a = alle[i], b = alle[i + 1];
       if (b - a < 1e-6) continue;
-      const [gx, gy] = gat(a), [hx, hy] = gat(b);
-      const [rx, ry] = rand(a), [sx, sy] = rand(b);
-      vlak([Pt(z1,gx,gy), Pt(z1,hx,hy), Pt(z1,sx,sy), Pt(z1,rx,ry)], kl, false);
-      vlak([Pt(z0,rx,ry), Pt(z0,sx,sy), Pt(z0,hx,hy), Pt(z0,gx,gy)], kl, false);
-      vlak([Pt(z0,gx,gy), Pt(z0,hx,hy), Pt(z1,hx,hy), Pt(z1,gx,gy)], kl, false);
-      lijn(Pt(z0,gx,gy), Pt(z0,hx,hy));
-      lijn(Pt(z1,gx,gy), Pt(z1,hx,hy));
+      const [gu, gv] = gat(a), [hu, hv] = gat(b);
+      const [ru, rv] = rand(a), [su, sv] = rand(b);
+      vlak([Pt(t1,gu,gv), Pt(t1,hu,hv), Pt(t1,su,sv), Pt(t1,ru,rv)], kl, false);
+      vlak([Pt(t0,ru,rv), Pt(t0,su,sv), Pt(t0,hu,hv), Pt(t0,gu,gv)], kl, false);
+      vlak([Pt(t0,gu,gv), Pt(t0,hu,hv), Pt(t1,hu,hv), Pt(t1,gu,gv)], kl, false);
+      lijn(Pt(t0,gu,gv), Pt(t0,hu,hv));
+      lijn(Pt(t1,gu,gv), Pt(t1,hu,hv));
     }
     for (let i = 0; i < 4; i++) {
       const [a1, b1] = hoeken[i], [a2, b2] = hoeken[(i + 1) % 4];
-      vlak([Pt(z0,a1,b1), Pt(z0,a2,b2), Pt(z1,a2,b2), Pt(z1,a1,b1)], kl);
+      vlak([Pt(t0,a1,b1), Pt(t0,a2,b2), Pt(t1,a2,b2), Pt(t1,a1,b1)], kl);
     }
   };
 
-  /* ---- vlakke figuren, die om een draaipunt kunnen kantelen ---- */
+  /* ---- vlakke kartonnen figuren, die om een draaipunt kunnen kantelen ---- */
   const draaiOm = (p, piv, hk) => {
     if (!piv) return p;
     const c = Math.cos(hk), s = Math.sin(hk);
@@ -448,7 +443,7 @@
     return [piv.x + dx * c - dy * s, piv.y + dx * s + dy * c];
   };
 
-  // een bolle vorm (lijf, kop, snavel, poot)
+  // een convexe vorm (romp, kop, oor, poot), uitgetrokken over z
   const figuur = (vorm, z0, z1, kl, piv = null, hk = 0) => {
     const pts = vorm.map(p => draaiOm(p, piv, hk));
     const voor = pts.map(([x, y]) => ({ x, y, z: z1 }));
@@ -462,30 +457,15 @@
     vlak(achter.slice().reverse(), kl, false);
   };
 
-  // een stervormige vorm (het tandwiel): waaier vanuit het middelpunt
-  const ster = (ring, mid, z0, z1, kl, piv = null, hk = 0) => {
-    const pts = ring.map(p => draaiOm(p, piv, hk));
-    const m = draaiOm([mid.x, mid.y], piv, hk);
-    const voor = pts.map(([x, y]) => ({ x, y, z: z1 }));
-    const achter = pts.map(([x, y]) => ({ x, y, z: z0 }));
-    schijf({ x: m[0], y: m[1], z: z1 }, voor, kl, false);
-    schijf({ x: m[0], y: m[1], z: z0 }, achter.slice().reverse(), kl, false);
-    for (let i = 0; i < pts.length; i++) {
-      const j = (i + 1) % pts.length;
-      vlak([voor[i], voor[j], achter[j], achter[i]], kl, false);
-      lijn(voor[i], voor[j]); lijn(achter[i], achter[j]);
-    }
-  };
-
-  // een taps toelopende vorm: de vleugel en de staart
-  const veer = (mid, breed, z0, z1, kl, piv, hk) => {
+  // een taps toelopende slinger van vlakken: de slurf
+  const slurf = (mid, breed, z0, z1, kl, piv, hk) => {
     const p = mid.map(m => draaiOm(m, piv, hk));
     const links = [], rechts = [];
     for (let i = 0; i < p.length; i++) {
       const a = p[Math.max(i - 1, 0)], b = p[Math.min(i + 1, p.length - 1)];
       const dx = b[0] - a[0], dy = b[1] - a[1];
       const len = Math.hypot(dx, dy) || 1;
-      const nx = -dy / len, ny = dx / len;
+      const nx = -dy / len, ny = dx / len;      // dwars op de slurf
       const w = breed[i] / 2;
       links.push([p[i][0] + nx * w, p[i][1] + ny * w]);
       rechts.push([p[i][0] - nx * w, p[i][1] - ny * w]);
@@ -510,75 +490,63 @@
     Array.from({ length: n }, (_, i) => [cx + rx * Math.cos(i / n * TAU), cy + ry * Math.sin(i / n * TAU)]);
   const rechthoek = (x0, x1, y0, y1) => [[x0,y0],[x1,y0],[x1,y1],[x0,y1]];
 
-  // de tandvorm van een tandwiel: tanden om een steekcirkel
-  const tandRing = (cx, cy, r, n) => {
-    const pts = [], stap = TAU / n, tip = r + 3.5, voet = r - 3.5;
-    const w = stap * 0.22, w2 = stap * 0.32;
-    const pt = (a, rr) => [cx + rr * Math.cos(a), cy + rr * Math.sin(a)];
-    for (let i = 0; i < n; i++) {
-      const a = i * stap;
-      pts.push(pt(a - w2, voet), pt(a - w, tip), pt(a + w, tip), pt(a + w2, voet));
-    }
-    return pts;
-  };
-  const WIEL1 = tandRing(AS1.x, AS1.y, R1, TAND1);
-  const WIEL2 = tandRing(AS2.x, AS2.y, R2, TAND2);
+  /* ---- de olifant. Romp en poten staan stil; kop, oor en slurf draaien mee. ---- */
+  const ROMP = ovaal(-12, 97, 24, 15, 28);
+  const POTEN = [rechthoek(-33,-27, 80, 88), rechthoek(-23,-17, 80, 88),
+                 rechthoek(-9,-3, 80, 88),   rechthoek(1, 7, 80, 88)];
+  const OOR = rond(2, 106, 8.5, 18);
+  const KOP = rond(17, 100, 11.5, 22);
+  const OOG = rond(21, 104, 1.6, 8);
+  const SLURF_MID = [[24,98],[29,94],[34,91],[38,93],[39,98],[36,100]];
+  const SLURF_BREED = [9, 7.5, 6, 5, 4, 3];
 
-  /* ---- de papegaai. Lijf, kop en staart staan stil; de vleugel draait mee. ---- */
-  const LIJF = ovaal(10, 96, 16, 12, 26);
-  const KOP = rond(26, 108, 9, 20);
-  const SNAVEL = [[33, 110], [45, 105], [33, 100]];
-  const OOG = rond(29, 111, 1.6, 8);
-  const STAART_MID = [[-4, 94], [-15, 91], [-26, 88], [-37, 84]];
-  const STAART_BREED = [11, 8, 6, 3];
-  const POTEN = [rechthoek(6, 9, 78, 88), rechthoek(15, 18, 78, 88)];
-  const VLEUGEL_MID = [[7, 99], [-1, 97], [-9, 93], [-16, 88]];
-  const VLEUGEL_BREED = [17, 15, 11, 5];
-
-  const bouw = t => {
+  const bouw = (t, toonKast) => {
     nul();
     const s = stand(t);
 
-    // ── de staander: onderstuk met het gat voor as 1, bovenstuk met het gat voor as 2
-    balk(-46, 46, 0, 6, -26, 26, KLEUR.hout);                                     // voetplaat
-    plaatGat(Z_FRAME[0], Z_FRAME[1], -26, 14, 6, 46, AS1.x, AS1.y, GAT_AS, KLEUR.hout);
-    plaatGat(Z_FRAME[0], Z_FRAME[1], -18, 6, 46, 80, AS2.x, AS2.y, GAT_AS, KLEUR.hout);
-    balk(16, 22, 6, 74, Z_FRAME[0], Z_FRAME[1], KLEUR.hout);                      // staander voor de zitstok
-    balk(-8, 28, 74, 78, Z_FRAME[0], 6, KLEUR.hout);                              // de zitstok
+    if (toonKast) {
+      balk(-BX, BX, 0, T, -BZ, BZ, KLEUR.hout);                                    // bodem
+      plaatGat('x', -BX, -BX + T, -BZ, BZ, T, BY - T, AS_Z, AS_Y, GAT_AS, KLEUR.hout2);  // linkerwand
+      plaatGat('x', BX - T, BX, -BZ, BZ, T, BY - T, AS_Z, AS_Y, GAT_AS, KLEUR.hout2);    // rechterwand
+      balk(-BX + T, BX - T, T, BY - T, -BZ, -BZ + T, KLEUR.hout2);                 // achterwand
+      plaatGat('y', BY - T, BY, -BX, BX, -BZ, BZ, STANG_X, 0, GAT_STANG, KLEUR.hout);    // bovenplaat + geleidegat
+      ringX(-BX - 1, -BX + T + 1, AS_Y, AS_Z, LAGER_IN, LAGER_UIT, 20, KLEUR.lager);
+      ringX(BX - T - 1, BX + 1, AS_Y, AS_Z, LAGER_IN, LAGER_UIT, 20, KLEUR.lager);
+    }
 
-    // ── de lagers: ringen ín de boorgaten, met de as er dwars doorheen
-    ringZ(Z_FRAME[0] - 1, Z_FRAME[1] + 1, AS1.x, AS1.y, LAGER_IN, LAGER_UIT, 20, KLEUR.lager);
-    ringZ(Z_FRAME[0] - 1, Z_FRAME[1] + 1, AS2.x, AS2.y, LAGER_IN, LAGER_UIT, 20, KLEUR.lager);
+    // de as, met de slinger rechts — alles op de hartlijn
+    omX(-BX - 8, BX + 26, AS_Y, AS_Z, AS_R, 20, KLEUR.as);
+    const sx = BX + 26, sy = AS_Y + 16 * Math.sin(t), sz = AS_Z + 16 * Math.cos(t);
+    staaf({ x: sx + 3, y: AS_Y, z: AS_Z }, { x: sx + 3, y: sy, z: sz }, 3, 12, KLEUR.as);
+    staaf({ x: sx + 3, y: sy, z: sz }, { x: sx + 20, y: sy, z: sz }, 3.4, 14, KLEUR.as);
 
-    // ── de twee assen, elk op hun eigen hartlijn
-    staaf({ x: AS1.x, y: AS1.y, z: -18 }, { x: AS1.x, y: AS1.y, z: 24 }, AS_R, 16, KLEUR.wiel1);
-    staaf({ x: AS2.x, y: AS2.y, z: -18 }, { x: AS2.x, y: AS2.y, z: 4 }, AS_R, 16, KLEUR.wiel2);
+    // de kruk: een schijf op de as, met de krukpen op KRUK_R uit het hart
+    omX(KRUK_X - 3, KRUK_X + 3, AS_Y, AS_Z, 11, 26, KLEUR.kruk);
+    staaf({ x: KRUK_X - 3, y: s.py, z: s.pz }, { x: STANG_X + 3, y: s.py, z: s.pz }, 2.4, 12, KLEUR.kruk);
 
-    // ── de tandwielen. Het kleine draait TAND1/TAND2 keer zo snel, en de andere kant op.
-    ster(WIEL1, AS1, Z_WIEL1[0], Z_WIEL1[1], KLEUR.wiel1, AS1, s.rot1);
-    ster(WIEL2, AS2, Z_WIEL2[0], Z_WIEL2[1], KLEUR.wiel2, AS2, s.rot2);
+    // de drijfstang: van de krukpen naar de voet van de duwstang
+    staaf({ x: STANG_X, y: s.py, z: s.pz }, { x: STANG_X, y: s.voet, z: 0 }, 2.6, 12, KLEUR.rood);
 
-    // ── de slinger: een kruk met een greep, vóór op as 1
-    const sy = AS1.y + 16 * Math.sin(t), sx = AS1.x + 16 * Math.cos(t);
-    staaf({ x: AS1.x, y: AS1.y, z: 22 }, { x: sx, y: sy, z: 22 }, 3, 12, KLEUR.wiel1);
-    staaf({ x: sx, y: sy, z: 22 }, { x: sx, y: sy, z: 36 }, 3.4, 14, KLEUR.wiel1);
+    // de duwstang: recht omhoog, door het gat in de bovenplaat
+    const top = s.voet + PEN_HOOG + 5;
+    staaf({ x: STANG_X, y: s.voet, z: 0 }, { x: STANG_X, y: top, z: 0 }, STANG_R, 16, KLEUR.rood);
 
-    // ── de papegaai: lijf, kop, snavel, staart en poten staan stil
-    figuur(LIJF, Z_LIJF[0], Z_LIJF[1], KLEUR.rust);
-    figuur(KOP, Z_LIJF[0], Z_LIJF[1], KLEUR.rust);
-    figuur(SNAVEL, Z_LIJF[0], Z_LIJF[1], KLEUR.rust);
-    figuur(OOG, Z_LIJF[1], Z_LIJF[1] + 1, KLEUR.oog);
-    veer(STAART_MID, STAART_BREED, Z_LIJF[0], Z_LIJF[1], KLEUR.rust, null, 0);
-    for (const poot of POTEN) figuur(poot, Z_LIJF[0], Z_LIJF[1], KLEUR.rust);
+    // de olifant: romp en poten staan stil
+    figuur(ROMP, Z_ROMP[0], Z_ROMP[1], KLEUR.rust);
+    for (const poot of POTEN) figuur(poot, Z_ROMP[0], Z_ROMP[1], KLEUR.rust);
 
-    // ── de vleugel draait om de schouder
-    veer(VLEUGEL_MID, VLEUGEL_BREED, Z_VLEUGEL[0], Z_VLEUGEL[1], KLEUR.rood, SCHOUDER, s.klap);
+    // kop, oor en slurf draaien om het draaipunt
+    figuur(OOR, Z_KOP[0], Z_KOP[1], KLEUR.kop, A, s.knik);
+    figuur(KOP, Z_KOP[0], Z_KOP[1], KLEUR.rood, A, s.knik);
+    figuur(OOG, Z_KOP[1], Z_KOP[1] + 1, KLEUR.oog, A, s.knik);
+    slurf(SLURF_MID, SLURF_BREED, Z_KOP[0], Z_KOP[1], KLEUR.rood, A, s.knik);
 
-    // ── de drijfstang van de krukpen naar de pen op de vleugel, en de drie pennen
-    staaf({ x: s.P.x, y: s.P.y, z: Z_DRIJF }, { x: s.B.x, y: s.B.y, z: Z_DRIJF }, 2.4, 12, KLEUR.rood);
-    staaf({ x: s.P.x, y: s.P.y, z: Z_WIEL2[0] }, { x: s.P.x, y: s.P.y, z: Z_DRIJF + 3 }, 1.8, 10, KLEUR.wiel2);
-    staaf({ x: s.B.x, y: s.B.y, z: Z_VLEUGEL[0] }, { x: s.B.x, y: s.B.y, z: Z_DRIJF + 3 }, 1.8, 10, KLEUR.wiel2);
-    staaf({ x: SCHOUDER.x, y: SCHOUDER.y, z: Z_LIJF[0] }, { x: SCHOUDER.x, y: SCHOUDER.y, z: Z_VLEUGEL[1] + 3 }, 2, 12, KLEUR.wiel1);
+    // de arm aan de nek, de koppelstang, en de drie pennen
+    staaf({ x: A.x, y: A.y, z: Z_ARM }, { x: s.B.x, y: s.B.y, z: Z_ARM }, 2.4, 12, KLEUR.rood);
+    staaf({ x: STANG_X, y: s.yq, z: Z_KOPPEL }, { x: s.B.x, y: s.B.y, z: Z_KOPPEL }, 2.2, 12, KLEUR.rood);
+    staaf({ x: A.x, y: A.y, z: 2 }, { x: A.x, y: A.y, z: 25 }, 2, 12, KLEUR.as);          // het draaipunt
+    staaf({ x: s.B.x, y: s.B.y, z: Z_KOP[0] }, { x: s.B.x, y: s.B.y, z: 25 }, 1.8, 10, KLEUR.as);
+    staaf({ x: STANG_X, y: s.yq, z: -3 }, { x: STANG_X, y: s.yq, z: 25 }, 1.8, 10, KLEUR.as);
 
     return s;
   };
@@ -650,8 +618,10 @@
   const perspectief = (fov, aspect, dichtbij, ver) => {
     const f = 1 / Math.tan(fov / 2), nf = 1 / (dichtbij - ver);
     return new Float32Array([
-      f / aspect, 0, 0, 0,  0, f, 0, 0,
-      0, 0, (ver + dichtbij) * nf, -1,  0, 0, 2 * ver * dichtbij * nf, 0,
+      f / aspect, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, (ver + dichtbij) * nf, -1,
+      0, 0, 2 * ver * dichtbij * nf, 0,
     ]);
   };
   const verschuif = (x, y, z) => new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1]);
@@ -664,9 +634,9 @@
     return new Float32Array([1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]);
   };
 
-  let hoekY = -0.30, hoekX = 0.10;
-  const AFSTAND = 245;
-  const MIKPUNT = { x: 0, y: 56, z: 0 };
+  let hoekY = -0.42, hoekX = 0.18;
+  const AFSTAND = 290;
+  const MIKPUNT = { x: 0, y: 58, z: 0 };
   let W = 1000, H = 620, dpr = 1, MVP = null, MV = null;
 
   const camera = () => {
@@ -711,19 +681,19 @@
   };
 
   const NAAM_KLEUR = { blauw: '#1e5f8c', rood: '#c43b2e', geel: '#8a5f0e' };
-  const tekenNamen = (s, aan) => {
+  const tekenNamen = (s, toonKast, aan) => {
     ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx2d.clearRect(0, 0, W, H);
     if (!aan) return;
+
     const n = [
-      { p: { x: AS1.x - R1, y: AS1.y, z: -1 }, uit: [-64, 30], txt: '24 tanden', kl: 'blauw' },
-      { p: { x: AS2.x - R2, y: AS2.y, z: -1 }, uit: [-72, -14], txt: '12 tanden', kl: 'blauw' },
-      { p: { x: s.P.x, y: s.P.y, z: Z_DRIJF }, uit: [70, -30], txt: 'krukpen', kl: 'blauw' },
-      { p: { x: (s.P.x + s.B.x) / 2, y: (s.P.y + s.B.y) / 2, z: Z_DRIJF }, uit: [76, 16], txt: 'drijfstang', kl: 'rood' },
-      { p: { x: SCHOUDER.x, y: SCHOUDER.y, z: Z_VLEUGEL[1] }, uit: [72, -40], txt: 'draaipunt', kl: 'blauw' },
-      { p: { x: -20, y: 82, z: Z_VLEUGEL[1] }, uit: [-58, -34], txt: 'vleugel', kl: 'rood' },
-      { p: { x: AS1.x, y: AS1.y, z: -9 }, uit: [-58, 66], txt: 'lager', kl: 'geel' },
+      { p: { x: KRUK_X, y: AS_Y - 11, z: 0 }, uit: [-80, 30], txt: 'kruk', kl: 'blauw' },
+      { p: { x: STANG_X, y: (s.py + s.voet) / 2, z: s.pz / 2 }, uit: [-74, 44], txt: 'drijfstang', kl: 'rood' },
+      { p: { x: STANG_X, y: s.voet + 22, z: 0 }, uit: [-88, -22], txt: 'duwstang', kl: 'rood' },
+      { p: { x: (STANG_X + s.B.x) / 2, y: (s.yq + s.B.y) / 2, z: Z_KOPPEL }, uit: [-70, -46], txt: 'koppelstang', kl: 'rood' },
+      { p: { x: A.x, y: A.y, z: 25 }, uit: [58, -40], txt: 'draaipunt', kl: 'blauw' },
     ];
+    if (toonKast) n.push({ p: { x: -BX + T/2, y: AS_Y, z: 0 }, uit: [-52, 58], txt: 'lager', kl: 'geel' });
     ctx2d.font = '600 13px "Space Mono", monospace';
     for (const l of n) {
       const p = naarScherm(l.p);
@@ -748,12 +718,11 @@
   const knop = document.getElementById('knop');
   const slinger = document.getElementById('slinger');
   const hoek = document.getElementById('hoek');
+  const kastKnop = document.getElementById('kast');
   const namenKnop = document.getElementById('namenknop');
-  const tSlag = document.getElementById('t-slag');
-  const tKlap = document.getElementById('t-klap');
 
   const stil = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let theta = 0, draait = !stil, vorige = null, toonNamen = true;
+  let theta = 0, draait = !stil, vorige = null, toonKast = true, toonNamen = true;
 
   const meet = () => {
     const b = doek.getBoundingClientRect();
@@ -766,16 +735,12 @@
   };
 
   const beeld = () => {
-    const s = bouw(theta);
+    const s = bouw(theta, toonKast);
     teken();
-    tekenNamen(s, toonNamen);
+    tekenNamen(s, toonKast, toonNamen);
     const g = Math.round(((theta % TAU) + TAU) % TAU * 180 / Math.PI);
     slinger.value = g;
     hoek.textContent = g + '°';
-    // de teller laat zien wat de overbrenging doet: het kleine wiel draait 2× zo vaak
-    const slag = ((theta % TAU) + TAU) % TAU / TAU;
-    tSlag.textContent = slag.toFixed(2).replace('.', ',');
-    tKlap.textContent = (slag * TAND1 / TAND2).toFixed(2).replace('.', ',');
   };
 
   const zet = aan => {
@@ -788,6 +753,12 @@
   slinger.addEventListener('input', () => {
     zet(false);
     theta = slinger.value * Math.PI / 180;
+    beeld();
+  });
+  kastKnop.addEventListener('click', () => {
+    toonKast = !toonKast;
+    kastKnop.textContent = toonKast ? 'Kast weghalen' : 'Kast terugzetten';
+    kastKnop.setAttribute('aria-pressed', String(toonKast));
     beeld();
   });
   namenKnop.addEventListener('click', () => {
@@ -805,7 +776,7 @@
   doek.addEventListener('pointermove', e => {
     if (!sleept) return;
     hoekY += (e.clientX - lx) * 0.008;
-    hoekX = Math.max(-0.3, Math.min(1.0, hoekX + (e.clientY - ly) * 0.006));
+    hoekX = Math.max(-0.15, Math.min(1.15, hoekX + (e.clientY - ly) * 0.006));
     lx = e.clientX; ly = e.clientY;
     if (!draait) beeld();
   });
@@ -819,7 +790,7 @@
     if (!k) return;
     e.preventDefault();
     hoekY += k[0];
-    hoekX = Math.max(-0.3, Math.min(1.0, hoekX + k[1]));
+    hoekX = Math.max(-0.15, Math.min(1.15, hoekX + k[1]));
     if (!draait) beeld();
   });
 
@@ -829,7 +800,7 @@
     if (vorige === null) vorige = nu;
     const dt = Math.min((nu - vorige) / 1000, .05);
     vorige = nu;
-    if (draait) theta += dt * 0.9;
+    if (draait) theta += dt * 1.1;
     beeld();
   };
 
