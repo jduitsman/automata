@@ -57,6 +57,9 @@
   .stage{background:var(--teal); border-radius:24px; padding:16px 16px 12px; box-shadow:0 18px 40px -24px rgba(15,61,58,.65);
     width:100%; max-width:580px; margin-inline:auto}
   .stage img,.stage svg{display:block; width:100%; height:auto; border-radius:14px}
+  .stage .video{position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden; background:#000}
+  .stage .video iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+  .stage .alleen-print{display:none}   /* een iframe drukt niet af: op papier de foto */
   .controls{display:flex; align-items:center; gap:12px; margin-top:8px; flex-wrap:wrap}
   .play{border:0; cursor:pointer; font:inherit; font-weight:800; font-size:14.5px; background:var(--marigold); color:var(--ink);
     padding:9px 15px; border-radius:11px; box-shadow:0 3px 0 var(--wood-d)}
@@ -204,7 +207,8 @@
     .wrap{max-width:none; padding:0}
     .stage{background:#fff; box-shadow:none; border:1px solid var(--line); max-width:none}
     .stage svg{max-height:230px}
-    .stage img{max-height:420px; object-fit:contain}
+    .stage .video{display:none}
+    .stage .alleen-print{display:block; max-height:420px; object-fit:contain}
     section{margin-top:26px; break-inside:avoid}
     .denk{break-inside:avoid} .deliv,.mech,.box{break-inside:avoid}
     .caption,.legend{color:#556}
@@ -236,8 +240,14 @@
     </div>
 
     <div class="stage">
-      <img src="afbeeldingen/houthakker-vos.jpg" alt="Een werkend automata van hout. Bovenop staan een houthakker met een bijl, een boomstam, een spar en een vos met een beweegbare staart. In de open kast eronder zit het mechanisme: een horizontale draai-as met een grote schijf en een kleinere kruk, twee duwstangen naar boven, en rechts de slinger.">
-      <p class="caption">Zo ziet een werkend automata eruit. Rechts zit de <b>slinger</b>; die draait de <b>as</b> in de kast. De grote schijf duwt de <b>houthakker</b> op en neer, de kleine kruk laat de <b>staart van de vos</b> zwaaien. Eén as, twee bewegingen — precies wat jij gaat bouwen.</p>
+      <div class="video">
+        <iframe src="https://www.youtube-nocookie.com/embed/8NCCWeMjqhg?start=6&amp;rel=0"
+                title="Vigilant Seagulls — houten automaton van Barry Falkner"
+                loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+      </div>
+      <img class="alleen-print" src="afbeeldingen/houthakker-vos.jpg" alt="Een werkend automata van hout. Bovenop staan een houthakker met een bijl, een boomstam, een spar en een vos met een beweegbare staart. In de open kast eronder zit het mechanisme: een horizontale draai-as met een grote schijf en een kleinere kruk, twee duwstangen naar boven, en rechts de slinger.">
     </div>
   </header>
 
