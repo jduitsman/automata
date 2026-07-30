@@ -56,7 +56,7 @@
   /* de hero is één kolom: tekst volle breedte, animatie eronder op eigen maat */
   .stage{background:var(--teal); border-radius:24px; padding:16px 16px 12px; box-shadow:0 18px 40px -24px rgba(15,61,58,.65);
     width:100%; max-width:580px; margin-inline:auto}
-  .stage svg{display:block; width:100%; height:auto}
+  .stage img,.stage svg{display:block; width:100%; height:auto; border-radius:14px}
   .controls{display:flex; align-items:center; gap:12px; margin-top:8px; flex-wrap:wrap}
   .play{border:0; cursor:pointer; font:inherit; font-weight:800; font-size:14.5px; background:var(--marigold); color:var(--ink);
     padding:9px 15px; border-radius:11px; box-shadow:0 3px 0 var(--wood-d)}
@@ -204,6 +204,7 @@
     .wrap{max-width:none; padding:0}
     .stage{background:#fff; box-shadow:none; border:1px solid var(--line); max-width:none}
     .stage svg{max-height:230px}
+    .stage img{max-height:420px; object-fit:contain}
     section{margin-top:26px; break-inside:avoid}
     .denk{break-inside:avoid} .deliv,.mech,.box{break-inside:avoid}
     .caption,.legend{color:#556}
@@ -235,62 +236,8 @@
     </div>
 
     <div class="stage">
-      <!-- Mechanisch kloppende animatie: kruk -> horizontale as -> nok/excenter -> volger -> verticale stang -> vogel bovenop de kast. -->
-      <svg id="mech" viewBox="0 0 360 330" role="img" aria-label="Technische animatie: je draait rechts aan de slinger, de horizontale as met de nok draait, de volger duwt een verticale stang omhoog door de bovenkant van de kast, en de vogel die er bovenop staat wipt op en neer.">
-        <!-- grond -->
-        <ellipse cx="180" cy="312" rx="140" ry="12" fill="#0a2b28"/>
-        <!-- KAST (frame met doorkijk) -->
-        <rect x="64" y="150" width="232" height="150" rx="12" fill="#FBF6EE" stroke="#0F3D3A" stroke-width="3"/>
-        <!-- horizontale draai-as op de hartlijn -->
-        <line x1="40" y1="236" x2="316" y2="236" stroke="#0F3D3A" stroke-width="7" stroke-linecap="round"/>
-        <!-- eindkapje links -->
-        <circle cx="44" cy="236" r="9" fill="#0F3D3A"/>
-        <circle cx="44" cy="236" r="3" fill="#FBF6EE"/>
-        <!-- (de as loopt door de zijwanden; de lagers zitten in de wand en zie je in dit aanzicht niet) -->
-        <!-- NOK / excenter: schijf dwars op de as, van opzij gezien (edge-on) -->
-        <g>
-          <ellipse id="excDisc" cx="180" cy="253" rx="11" ry="30" fill="#16514C" stroke="#0F3D3A" stroke-width="2.5"/>
-          <circle id="excMark" cx="180" cy="232" r="4.5" fill="#FBF6EE"/>
-        </g>
-        <!-- as-hart: de as zit uit het midden van de schijf (= excenter) -->
-        <circle cx="180" cy="236" r="4" fill="#FBF6EE"/>
-        <!-- VOLGER + VERTICALE STANG + VOGEL (de op-neer-beweging) -->
-        <g id="mover">
-          <rect x="174" y="104" width="12" height="98" rx="3" fill="#FF6A4D"/>
-          <!-- nokvolger rust op de nok -->
-          <rect x="156" y="197" width="48" height="9" rx="3" fill="#FF6A4D" stroke="#1B2A26" stroke-width="2"/>
-          <!-- vogel, bovenop de stang -->
-          <g>
-            <path d="M150 90 q-26 -4 -36 9 q24 4 36 -5 Z" fill="#e0553c" stroke="#1B2A26" stroke-width="2" stroke-linejoin="round"/>
-            <ellipse cx="180" cy="88" rx="30" ry="22" fill="#FF6A4D" stroke="#1B2A26" stroke-width="2.5"/>
-            <circle cx="204" cy="70" r="15" fill="#FF6A4D" stroke="#1B2A26" stroke-width="2.5"/>
-            <circle cx="208" cy="66" r="6" fill="#fff" stroke="#1B2A26" stroke-width="2"/>
-            <circle cx="210" cy="67" r="2.6" fill="#1B2A26"/>
-            <polygon points="218,68 238,72 218,78" fill="#e0553c" stroke="#1B2A26" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M204 52 l-2 -10 l7 5 l5 -7 l1 10" fill="#e0553c" stroke="#1B2A26" stroke-width="2" stroke-linejoin="round"/>
-          </g>
-        </g>
-        <!-- (de verticale stang loopt door de bovenkant van de kast) -->
-        <!-- SLINGER / kruk: draait om de as; van voren zie je een smalle (foreshortened) cirkel -->
-        <circle cx="312" cy="236" r="6" fill="#0F3D3A"/>
-        <g id="crank">
-          <line id="crankArm" x1="312" y1="236" x2="312" y2="214" stroke="#0F3D3A" stroke-width="6" stroke-linecap="round"/>
-          <circle id="crankKnob" cx="312" cy="214" r="8" fill="#F6B12B" stroke="#0F3D3A" stroke-width="2.5"/>
-        </g>
-      </svg>
-
-      <div class="controls">
-        <button class="play" id="playBtn" aria-pressed="false">▶ Draai</button>
-        <label for="slinger">Slinger</label>
-        <input type="range" id="slinger" min="0" max="360" value="0" step="1" aria-label="Draai de slinger met de hand">
-        <span class="angle" id="angle">0°</span>
-      </div>
-      <div class="legend">
-        <span><i class="li-con"></i> constructie (kast, as, nok)</span>
-        <span><i class="li-mov"></i> de beweging van de figuur</span>
-        <span><i class="li-lag"></i> de slinger (hier draai je)</span>
-      </div>
-      <p class="caption">Draai rechts aan de <b>slinger</b> → de horizontale as met de <b>nok</b> draait → de <b>volger</b> duwt de verticale stang omhoog → de <b>vogel bovenop de kast</b> wipt op en neer. Eén omwenteling = één keer op en neer.</p>
+      <img src="afbeeldingen/houthakker-vos.jpg" alt="Een werkend automata van hout. Bovenop staan een houthakker met een bijl, een boomstam, een spar en een vos met een beweegbare staart. In de open kast eronder zit het mechanisme: een horizontale draai-as met een grote schijf en een kleinere kruk, twee duwstangen naar boven, en rechts de slinger.">
+      <p class="caption">Zo ziet een werkend automata eruit. Rechts zit de <b>slinger</b>; die draait de <b>as</b> in de kast. De grote schijf duwt de <b>houthakker</b> op en neer, de kleine kruk laat de <b>staart van de vos</b> zwaaien. Eén as, twee bewegingen — precies wat jij gaat bouwen.</p>
     </div>
   </header>
 
@@ -533,63 +480,6 @@
 
 <script>
 (function(){
-  /* ---------- Hero: mechanisch kloppende excenter-animatie ---------- */
-  var A = {x:180, y:236};   // hartlijn / draaipunt op de horizontale as
-  var e = 17;               // excentriciteit (as zit uit het midden van de nok)
-  var R = 30;               // straal nok/excenterschijf
-  var CR = {x:312, y:236};  // draaipunt slinger (rechter aseind)
-  var disc = document.getElementById('excDisc');
-  var mark = document.getElementById('excMark');
-  var mover = document.getElementById('mover');
-  var crankArm = document.getElementById('crankArm');
-  var crankKnob = document.getElementById('crankKnob');
-  var angleOut = document.getElementById('angle');
-  var slider = document.getElementById('slinger');
-  var playBtn = document.getElementById('playBtn');
-
-  var theta = 0;            // graden
-  var playing = false, raf = null, last = null;
-  var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-
-  function render(){
-    var r = theta * Math.PI/180;
-    // NOK edge-on: het middelpunt van de schijf beweegt op en neer (de as zit uit het midden)
-    var camY = A.y + e*Math.cos(r);
-    disc.setAttribute('cy', camY.toFixed(2));   // cx blijft op de as (180)
-    // merkteken op de rand; kleine x-uitslag geeft de indruk dat de schijf ronddraait
-    mark.setAttribute('cx', (A.x + 8*Math.sin(r)).toFixed(2));
-    mark.setAttribute('cy', (camY - (R-9)*Math.cos(r)).toFixed(2));
-    // volger + stang + vogel: de voet rust op de noktop (camY - R); getekend op y=206 => dy
-    var dy = e*Math.cos(r);
-    mover.setAttribute('transform', 'translate(0 ' + dy.toFixed(2) + ')');
-    // kruk draait om de as; van voren zie je een smalle verticale ellips (foreshortened)
-    var hx = CR.x + 9*Math.sin(r), hy = CR.y - 22*Math.cos(r);
-    crankArm.setAttribute('x2', hx.toFixed(2));
-    crankArm.setAttribute('y2', hy.toFixed(2));
-    crankKnob.setAttribute('cx', hx.toFixed(2));
-    crankKnob.setAttribute('cy', hy.toFixed(2));
-    // uitlezing
-    var deg = ((Math.round(theta)%360)+360)%360;
-    angleOut.textContent = deg + '°';
-    if(document.activeElement !== slider) slider.value = deg;
-  }
-
-  function loop(ts){
-    if(last==null) last = ts;
-    var dt = (ts-last)/1000; last = ts;
-    theta = (theta + dt*70) % 360;      // 70°/s
-    render();
-    raf = requestAnimationFrame(loop);
-  }
-  function play(){ if(playing) return; playing=true; last=null; playBtn.textContent='⏸ Pauze'; playBtn.setAttribute('aria-pressed','true'); raf=requestAnimationFrame(loop); }
-  function pause(){ playing=false; playBtn.textContent='▶ Draai'; playBtn.setAttribute('aria-pressed','false'); if(raf) cancelAnimationFrame(raf); raf=null; }
-
-  playBtn.addEventListener('click', function(){ playing ? pause() : play(); });
-  slider.addEventListener('input', function(){ pause(); theta = +slider.value; render(); });
-
-  render();
-  if(!reduce) play();   // bij reduced-motion: gepauzeerd, slinger werkt met de hand
-
   /* ---------- Think-first reveal ---------- */
   document.querySelectorAll('[data-reveal]').forEach(function(b){
     b.addEventListener('click', function(){
