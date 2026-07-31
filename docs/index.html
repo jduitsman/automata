@@ -124,6 +124,7 @@
   table.wide td strong{color:var(--teal)}
 
   /* mechanismen cards */
+  .op-papier{display:none}
   .denklink,.zelflink{display:block; width:fit-content; margin-top:5px; font-size:12px; font-weight:700;
     color:var(--teal); text-decoration:none; border-bottom:1.5px solid var(--marigold)}
   .denklink:hover,.zelflink:hover{color:var(--coral)}
@@ -219,6 +220,8 @@
     .stage .alleen-print{display:block; max-height:420px; object-fit:contain}
     section{margin-top:26px; break-inside:avoid}
     .denk{break-inside:avoid} .deliv,.mech,.box{break-inside:avoid}
+    .reveal-btn{display:none!important}   /* op papier niet in te drukken */
+    .op-scherm{display:none!important} .op-papier{display:inline!important}
     .caption,.legend{color:#556}
     a{color:var(--teal)}
   }
@@ -434,7 +437,7 @@
   <!-- DENKVRAGEN -->
   <section id="denkvragen">
     <div class="sec-head"><h2>Opdrachten &amp; denkvragen per les</h2><div class="rule"></div><div class="code">denk eerst zelf</div></div>
-    <p>Bij elke vraag: schrijf <b>eerst zelf</b> een antwoord. Pas daarna klik je op “Toon voorbeeldantwoord”.</p>
+    <p>Bij elke vraag: schrijf <b>eerst zelf</b> een antwoord. <span class="op-scherm">Pas daarna klik je op “Toon voorbeeldantwoord”.</span><span class="op-papier">Het voorbeeldantwoord staat online op <b>jduitsman.github.io/automata</b>.</span></p>
 
     <div class="denk" id="denk-les1"><span class="tag">💡 Les 1</span><h3>Figuur &amp; beweging kiezen</h3><p class="q">Wat denk jij dat er achter een pikkende vogel in een tentoonstelling zit — en welke van jouw twee bewegingen wordt het moeilijkst om na te maken met techniek?</p><textarea placeholder="Jouw antwoord…"></textarea><button class="reveal-btn" data-reveal>Toon voorbeeldantwoord</button><div class="denk-a">Achter de vogel zit een draaiende as met een nok die de kop steeds op-en-neer duwt. Het moeilijkst is de beweging die het verst of het snelst moet, of een beweging die uit twee delen tegelijk bestaat (kop omhoog én bek open), want dan moeten twee mechanismen op één as precies samenwerken zonder elkaar te hinderen.</div></div>
 
