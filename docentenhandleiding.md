@@ -35,7 +35,7 @@ Aannames: **28 leerlingen = 14 groepen**. Schaal de klas-kolom naar je eigen aan
 | Karton / foamboard (proefmodel + figuur) | 2 vel karton + 1 vel foamboard A4 | stapel karton + 15 vel foamboard |
 | **Rietjes** (lagers) | 3–4 | 1 pak (100+) |
 | **Kralen** — gat ± 6,5–7 mm (lager + afstandhouder) | 10 | zakje 200+ |
-| Multiplex-schijfjes Ø 4–5 cm (nokken/excenters) | 3–4 | ± 50 (voorgezaagd = steun) |
+| Multiplex-schijfjes Ø 4–5 cm (nokken/excenters) | 3–4 | ± 50 (voorgesneden = steun) |
 | Houtlijm | gedeeld flesje | 4–5 flesjes |
 | Lijmsticks | 2–3 | 1 pak |
 | Veiligheidsbrillen | — | 3 per boorstation |
@@ -44,17 +44,16 @@ Aannames: **28 leerlingen = 14 groepen**. Schaal de klas-kolom naar je eigen aan
 
 ### Voorzagen en bestellen
 - **Multiplex 6 mm** minstens **een week** van tevoren bestellen. Neem geen 4 mm — dan is het lager te kort en gaat de as slingeren; dat is geen bezuiniging maar een gegarandeerde faalmodus.
-- **Zaag vóór les 4 een set kastblanks voor** (de vier tot vijf kastdelen op maat per groep, of in elk geval de twee lagerwanden). Zonder voorgezaagde blanks wordt les 4 een flessenhals (zie Timingrisico's). Reken op ± 45 minuten voorzagen voor 14 sets.
+- **Snijd vóór les 4 de kastdelen op de lasersnijder** (de vier tot vijf kastdelen op maat per groep, of in elk geval de twee lagerwanden). Zonder gesneden kastdelen wordt les 4 een flessenhals (zie Timingrisico's). Reken op ± 45 minuten voorzagen voor 14 sets.
 - Maak of print **1–2 boormallen**: een blokje/plaatje met een voorgeboord Ø6,5-gat waar de leerling doorheen boort, zodat het gat loodrecht staat.
 
 ### Machines — wie bedient wat
 | Machine | Wie |
 |---|---|
 | Figuurzaag | leerling zelfstandig |
-| Decoupeerzaag | alleen onder toezicht of **door de docent** bediend |
 | Boormachine — **begeleid boorstation met mal** | docent of TOA, **één groep tegelijk** |
 | Lijmpistool (± 180 °C, standaard + bakje koud water) | leerling, na instructie |
-| Lasersnijder (afzuiging aan, nooit pvc) | **alleen docent** |
+| Lasersnijder (afzuiging aan, nooit pvc) | **alleen docent** — snijdt de kastdelen |
 | 3D-printer (optioneel/verdieping) | docent/TOA |
 
 Controleer vóór les 4 dat de boormachine werkt en dat er een scherpe 6,5- én 7 mm-boor in het rek ligt.
@@ -98,13 +97,13 @@ Elke les duurt 100 minuten. De tijdsverdelingen tellen op tot 100.
 | **Waar het vastloopt** | Beide mechanismen staan getekend maar de tweede beweging ontbreekt in de maten (zie feedbackvoorbeeld: "de nok hebben we nog niet ingetekend"). Eis dat **beide** mechanismen mét maat op de as staan vóór ze mogen zagen. |
 | **Klaar als** | De tekening toont kastmaten, aslengte, de plek van **beide** mechanismen en de lagers, en jij hebt hem afgetekend. |
 
-### Les 4 — Kast zagen & uitlijnend boren
+### Les 4 — Kastdelen & uitlijnend boren
 | Onderdeel | Inhoud |
 |---|---|
 | **Doel** | Elk groepje heeft een gezaagde kast met twee uitgelijnde, ruime asgaten. |
-| **Tijdsverdeling** | Veiligheidsinstructie boormachine + demo uitlijnend boren 15 · kast zagen (of voorgezaagde blanks pakken) 30 · twee lagerwanden op elkaar klemmen + uitlijnend boren aan het boorstation (roulerend) 35 · randen glad schuren 15 · opruimen 5 = **100** |
-| **Klaarleggen** | Voorgezaagde kastblanks, boormal, 6,5- en 7 mm-boren, lijmklemmen, onderlegplaatjes, veiligheidsbrillen, schuurpapier, decoupeerzaag klaar (docent bedient). |
-| **Veiligheid** | **Vóór het eerste boorgat, aan het boorstation:** werkstuk vastklemmen; bril op; **géén handschoenen, geen sjaal of koordjes, lang haar vast**; onderlegplaatje eronder. Boren **alleen** aan het begeleide station met de mal, **één groep tegelijk**. Decoupeerzaag: alleen door of onder toezicht van de docent. |
+| **Tijdsverdeling** | Veiligheidsinstructie boormachine + demo uitlijnend boren 15 · gesneden kastdelen ophalen en controleren 10 · twee lagerwanden op elkaar klemmen + uitlijnend boren aan het boorstation (roulerend) 35 · randen glad schuren 15 · opruimen 5 = **100** |
+| **Klaarleggen** | Gesneden kastdelen, boormal, 6,5- en 7 mm-boren, lijmklemmen, onderlegplaatjes, veiligheidsbrillen, schuurpapier. De kastdelen zijn vooraf gesneden op de lasersnijder. |
+| **Veiligheid** | **Vóór het eerste boorgat, aan het boorstation:** werkstuk vastklemmen; bril op; **géén handschoenen, geen sjaal of koordjes, lang haar vast**; onderlegplaatje eronder. Boren **alleen** aan het begeleide station met de mal, **één groep tegelijk**. De lasersnijder bedien je zelf; leerlingen komen daar niet aan. |
 | **Waar het vastloopt** | Het boorstation is de flessenhals — de rij loopt vast. Zaag daarom vooraf blanks voor en laat groepen die wachten alvast randen schuren of hun mechanismeschijfjes zagen. Groepen die apart boren krijgen een scheve as; klem de twee wanden op elkaar en boor in één keer door beide. |
 | **Klaar als** | Elke kast heeft twee asgaten die boven elkaar in lijn staan en 0,5–1 mm ruimer zijn dan de as; de as glijdt er soepel doorheen. |
 
@@ -200,7 +199,7 @@ Dit is het hart van de handleiding. Bij elke vastloper: het signaal (vaak zie je
 
 Drie lessen zijn in de praktijk te krap. Concreet wat er gebeurt en wat je schrapt als je achterloopt.
 
-- **Les 4 (zagen + uitlijnend boren)** loopt uit doordat er **één begeleid boorstation** is en iedereen daar tegelijk wil boren. *Wat je doet:* zaag de kastblanks **vooraf** voor (scheelt de hele zaagronde) en zet als het kan een tweede boorstation of tweede begeleider bij. Loop je alsnog achter: laat wachtende groepen randen schuren en mechanismeschijfjes zagen, zodat de wachtrij productief is. Groepen die aan het eind van de les nog niet geboord hebben, boren aan het begin van les 5 — dan schuift de figuur naar de restijd.
+- **Les 4 (kastdelen + uitlijnend boren)** loopt uit doordat er **één begeleid boorstation** is en iedereen daar tegelijk wil boren. *Wat je doet:* snijd de kastdelen **vooraf** op de lasersnijder (scheelt de hele zaagronde) en zet als het kan een tweede boorstation of tweede begeleider bij. Loop je alsnog achter: laat wachtende groepen randen schuren en mechanismeschijfjes zagen, zodat de wachtrij productief is. Groepen die aan het eind van de les nog niet geboord hebben, boren aan het begin van les 5 — dan schuift de figuur naar de restijd.
 
 - **Les 6 (wrijving oplossen)** is de kern van het project en juist daarom vaak te kort, omdat de tweede beweging pas hier echt getest wordt. *Wat je doet:* bescherm deze les door de **figuur al in les 5 of thuis** te laten starten, zodat les 6 volledig aan wrijving/speling gaat. Loop je achter: laat de decoratie los en concentreer alles op "beide bewegingen soepel" — dat is criterium 4, decoratie is criterium 2 en weegt lichter.
 
@@ -213,10 +212,10 @@ Drie lessen zijn in de praktijk te krap. Concreet wat er gebeurt en wat je schra
 ## 6. Differentiatie
 
 ### Leerlingen die vastlopen (steun binnen dezelfde opdracht)
-- Geef de **voorgezaagde kastblanks** en de **boormal**, zodat ze meteen bij het bouwen zijn in plaats van bij het zagen te blijven hangen.
+- Geef de **gesneden kastdelen** en de **boormal**, zodat ze meteen bij het bouwen zijn in plaats van bij het zagen te blijven hangen.
 - Laat ze de **excenter** kiezen — het makkelijkste en gladst lopende mechanisme.
 - Laat ze **eerst één beweging** helemaal werkend en vast maken, en pas dán de tweede toevoegen. Één werkende beweging is een basis, geen halve opdracht.
-- Geef voorgezaagde multiplex-schijfjes zodat het nok/excenter-zagen geen struikelblok wordt.
+- Geef gesneden multiplex-schijfjes zodat het nok/excenter-zagen geen struikelblok wordt.
 
 ### Leerlingen die snel klaar zijn (verdieping binnen dezelfde opdracht)
 - Voeg een **derde beweging** toe op dezelfde as.
@@ -256,7 +255,7 @@ Beoordeel **proces tijdens de lessen** — achteraf kun je het niet meer terugzi
 - **Boormachine kapot (les 4):** boor de asgaten voor de groepen die aan de beurt waren zelf voor, of verplaats het boren naar les 5. Laat les 4 dan draaien om zagen, schuren en mechanismeschijfjes voorbereiden. Zorg dat je altijd een reserveboor 6,5 én 7 mm hebt — een botte boor levert een scheve as.
 - **Materiaal op (multiplex/rondstok):** laat groepen die nog niet zagen op karton/foamboard doorwerken aan de figuur en de tekening; bestel bij. Rondstok is te vervangen door een gladde satéprikker-dikke stok bij lichte modellen, maar niet voor de definitieve as. Houd altijd een noodvoorraad multiplex-schijfjes achter de hand.
 - **Groep uit elkaar gevallen:** laat de twee als solo verder werken aan hetzelfde automata mag niet dubbel — splits de opdracht: de één maakt het mechaniek af, de ander de figuur en decoratie, en ze koppelen in les 7. Beoordeel samenwerken (criterium 7) dan naar wat ze daarna nog samen doen, en noteer de situatie.
-- **Groep ver achter:** schakel over op de steun-route — voorgezaagde blanks, boormal, excenter, en **eerst één beweging** werkend. Eén soepel werkende beweging plus een eerlijk logboek scoort hoger dan twee haperende bewegingen. De tweede beweging voegen ze toe als er tijd is; forceer hem niet in het laatste half uur, want dan hapert hij gegarandeerd tijdens de presentatie.
+- **Groep ver achter:** schakel over op de steun-route — gesneden kastdelen, boormal, excenter, en **eerst één beweging** werkend. Eén soepel werkende beweging plus een eerlijk logboek scoort hoger dan twee haperende bewegingen. De tweede beweging voegen ze toe als er tijd is; forceer hem niet in het laatste half uur, want dan hapert hij gegarandeerd tijdens de presentatie.
 
 ---
 

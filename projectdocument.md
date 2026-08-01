@@ -75,8 +75,8 @@ Dit is puur een schema: wat je doet en wat je aan het eind van de les klaar hebt
 |-----|-------|-------------|--------------------------|
 | 1 | Opdracht, figuur & beweging kiezen | Bekijk de opdracht van Staatsbosbeheer en de mechanismen-demo's. Kies met je groepje een figuur en de **twee bewegingen** die hij gaat maken. Lees de zes deelvragen als kompas. Zoek online drie bestaande automata (zie de zoektermen in Achtergrond) en beschrijf ze in je dummy. | Figuur + twee bewegingen gekozen; drie voorbeelden beschreven in je dummy |
 | 2 | Mechanisme kiezen & proefmodel | Kies per beweging een mechanisme. Plan je twee bewegingen op **één draai-as** (bijv. nokkenas met 2 nokken, of excenter + hefboom, of kruk + nok) — niet twee losse assen. Bouw een kartonnen proefmodel en draai eraan. | Werkend kartonnen proefmodel + schetsen; keuze voor de één-as-oplossing genoteerd |
-| 3 | Technische tekening & maten | Werk je ontwerp uit met echte maten: de kast, de aslengte (rondstok Ø6 mm), waar beide mechanismen op de as komen, en waar de lagers zitten. Laat je maten controleren voordat je gaat zagen. | Technische tekening met maten + materiaal klaargelegd |
-| 4 | Kast zagen & uitlijnend boren | Zaag de kast (of gebruik de voorgezaagde blanks). Klem de **twee lagerwanden op elkaar** en boor de as-gaten in één keer door beide wanden — zo staan ze automatisch in lijn. Boor 0,5–1 mm ruimer dan je as. Schuur de randen glad. | Gezaagde kast met twee uitgelijnde, ruime as-gaten |
+| 3 | Technische tekening & maten | Werk je ontwerp uit met echte maten: de kast, de aslengte (rondstok Ø6 mm), waar beide mechanismen op de as komen, en waar de lagers zitten. Laat je maten controleren voordat ze naar de lasersnijder gaan. | Technische tekening met maten + materiaal klaargelegd |
+| 4 | Kastdelen & uitlijnend boren | Haal je kastdelen op — die zijn op de lasersnijder gesneden. Klem de **twee lagerwanden op elkaar** en boor de as-gaten in één keer door beide wanden — zo staan ze automatisch in lijn. Boor 0,5–1 mm ruimer dan je as. Schuur de randen glad. | Gezaagde kast met twee uitgelijnde, ruime as-gaten |
 | 5 | Mechaniek bouwen & eerste draaitest | Monteer de as met **beide** mechanismen (je twee bewegingen). Zet er een slinger aan en doe je eerste draaitest. Begin in de restijd — of thuis — alvast met je figuur. | Draaiend basismechaniek met twee bewegingen + figuur begonnen |
 | 6 | Wrijving & speling oplossen + feedback | Spoor op waar het schuurt (wrijving) en waar het te los zit (speling) — juist ook bij je **tweede** beweging. Voeg lagers toe (rietje/kraal), zet afstandhouders (kraaltjes), schuur nokranden glad. **Vul daarna de zelfevaluatie in** (ronde 1): scoor jezelf op de rubric vóór je docent dat doet. **Ruil daarna met een ander groepje:** laat elkaars automata draaien en geef één concrete tip — waar hapert de tweede beweging nog? | Beide bewegingen draaien soepel en betrouwbaar; één peer-tip ontvangen en genoteerd; **zelfevaluatie ronde 1** ingevuld |
 | 7 | Afmonteren, koppelen & decoreren | Koppel je figuur aan beide bewegingen. Controleer of de figuurbeweging klopt met de mechanismen. Decoreer je automata passend bij Staatsbosbeheer. Zet alles stevig vast. | Afgemonteerd, gedecoreerd automata |
@@ -176,11 +176,11 @@ Nauwkeurig werken en veilig werken horen bij elkaar: een goed vastgeklemd werkst
 
 **Gereedschap**
 - Figuurzaag (mag je zelfstandig gebruiken)
-- Decoupeerzaag (alleen onder toezicht of door de docent bediend)
 - Boormachine bij het **begeleide boorstation**, met boren die 0,5–1 mm ruimer zijn dan de as, plus een **boormal**
 - Lijmpistool op een vaste standaard, met een bakje koud water ernaast
 - Schuurpapier, snijmat, handmes
-- Optioneel: lasersnijder (alleen docent) en 3D-printer
+- Lasersnijder (alleen de docent bedient dit) — hiermee worden de kastdelen gesneden
+- Optioneel: 3D-printer
 
 **Materialen (met maten)**
 - **Multiplex 6 mm** voor de lagerwanden en de kast (géén 4 mm — te kort lager, dan gaat de as slingeren)
@@ -194,13 +194,12 @@ Nauwkeurig werken en veilig werken horen bij elkaar: een goed vastgeklemd werkst
 **Veiligheid (per machine)**
 - **Boormachine:** klem je werkstuk vast; zet je veiligheidsbril op; draag géén handschoenen en geen sjaal of koordjes, en bind lange haren vast; leg een onderlegplaatje onder je werkstuk. Boor alleen bij het begeleide boorstation met de mal.
 - **Figuurzaag:** houd je vingers uit de zaaglijn. Deze mag je zelfstandig gebruiken.
-- **Decoupeerzaag:** alleen onder toezicht of door de docent bediend.
 - **Lijmpistool:** het mondstuk wordt ongeveer **180 °C** — brandwondgevaar. Leg hem altijd terug op de standaard en houd het bakje koud water bij de hand voor als je je brandt.
 - **Handmes:** snijden op de snijmat, altijd van je af, nooit naar je hand toe.
 - **Lasersnijder:** alleen de docent bedient dit, met de afzuiging aan. Nooit pvc snijden (giftige damp).
 
 **Differentiatie**
-- *Loop je vast?* Gebruik de **voorgezaagde kastblanks** en de **boormal**, zodat je meteen bij het bouwen bent. Kies de **excenter** — dat is de makkelijkste en gladste beweging. Krijg je één beweging goed werkend? Zet die eerst vast en voeg dan pas de tweede toe.
+- *Loop je vast?* Gebruik de **boormal**, zodat je meteen bij het bouwen bent. Kies de **excenter** — dat is de makkelijkste en gladste beweging. Krijg je één beweging goed werkend? Zet die eerst vast en voeg dan pas de tweede toe.
 - *Snel klaar?* Voeg een **derde beweging** toe, of gebruik een **tandwiel of kroonwiel** voor een 90°-draaiing (bijv. een kop die opzij draait). Of maak je nokken digitaal: **3D-print** een nok of **lasersnijd** onderdelen. Grote uitdaging: vervang de slinger door een **elektromotor met schakeling** als aandrijving.
 
 ---
