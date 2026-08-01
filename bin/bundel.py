@@ -71,10 +71,10 @@ def bouw(uit, velden, ih_items, bronnen, bladwijzers, springpunten):
         page.draw_line(fitz.Point(40, r.height - 30), fitz.Point(r.width - 40, r.height - 30),
                        color=(0.87, 0.84, 0.77), width=0.6)
         page.insert_text(fitz.Point(40, r.height - 19), "Automata voor Staatsbosbeheer",
-                         fontname="helv", fontsize=7.5, color=GRIJS)
+                         fontname="helv", fontsize=8.5, color=GRIJS)
         nr = str(pno + 1)
-        page.insert_text(fitz.Point(r.width - 40 - fitz.get_text_length(nr, "hebo", 9), r.height - 19),
-                         nr, fontname="hebo", fontsize=9, color=TEAL)
+        page.insert_text(fitz.Point(r.width - 40 - fitz.get_text_length(nr, "hebo", 10), r.height - 19),
+                         nr, fontname="hebo", fontsize=10, color=TEAL)
 
     # klikbare inhoudsopgave
     for titel, blz in springpunten:

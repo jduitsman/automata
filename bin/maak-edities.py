@@ -37,6 +37,7 @@ regels_bouw = [("Bouwplaat proefmodel — blad 1 t/m 5", bouwplaat_start)]
 bouw(
     uit=f"{A}/docs/automata-leerlingeditie.pdf",
     velden={
+        "__FONTS__": f"{A}/docs/fonts/",
         "__VAK__": "Techniek · havo 2", "__DUUR__": "8 lessen · 100 min",
         "__EDITIE__": "Leerlingeditie", "__FOTO__": FOTO,
         "__INVUL__": '<div class="invul">'
@@ -75,6 +76,7 @@ if not regels_h:
 bouw(
     uit=f"{A}/automata-docenteneditie.pdf",
     velden={
+        "__FONTS__": f"{A}/docs/fonts/",
         "__VAK__": "Techniek · havo 2", "__DUUR__": "8 lessen · 100 min",
         "__EDITIE__": "Docenteneditie", "__FOTO__": FOTO, "__INVUL__": "",
         "__ONDER__": "Voorbereiding, timing per les, waar leerlingen vastlopen en hoe je "
